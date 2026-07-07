@@ -1,5 +1,178 @@
 <!DOCTYPE html>
+
+<!-- 
+    ParserSweet v2.0.html
+    Features
+    - AXL response parser
+    - POS Data Code DE22 parser for EFTEX
+    - CBA MTI parser
+	  - New UI
+	  - New Name
+-->
+
+<!-- 
+    Parser v1.5.html
+    Version: 1.5
+    Last Updated: July 22, 2025
+    Changes:
+    - Fixed posDataDefinitions initialization error
+    - Improved displayDefinitions formatting
+    - Added toggle button for showing/hiding definitions
+	  - Improved Request and Response output display
+-->
+
+<!-- 
+    ParserSweet v2.0.html
+    Version: 2.0
+    Last Updated: July 24, 2025
+    Changes:
+    - New UI
+	  - New Tool Name
+-->
+
+<!-- 
+    ParserSweet v2.1.html
+    Version: 2.1
+    Last Updated: July 26, 2025
+    Changes:
+    - Added Paymark Host Record parser
+	  - Added Message Alert
+	  - Changed Request and Response output display
+	  - Added logo and icon
+-->
+
+<!-- 
+    ParserSweet v3.0.html
+    Version: 3.0
+    Last Updated: July 29, 2025
+    Changes:
+    - Add popup info for parse successfully
+    - Move script.js to script.js
+-->
+
+<!-- 
+    ParserSweet v3.1.html
+    Version: 3.1
+    Last Updated: August 29, 2025
+    Changes:
+    - Rename from AXL Parser to Json Parser
+    - Support for Json with createdAt key
+-->
+
+<!-- 
+    ParserSweet v3.2.html
+    Version: 3.2
+    Last Updated: September 03, 2025
+    Changes:
+    - Rework JSON parser when iccdata is null
+    - Rework customdata to display as a new table in value column
+-->
+
+<!-- 
+    ParserSweet v3.3.html
+    Version: 3.3
+    Last Updated: September 05, 2025
+    Changes:
+    - Rework CBA MTI parser using new JSON format in datadog
+    - Rework CBA MTI parser to display output in separate tables and make nested tables full width
+-->
+
+<!-- 
+    ParserSweet v3.4.html
+    Version: 3.4
+    Last Updated: September 06, 2025
+    Changes:
+    - Add tooltip for tag emv 9F07, 9B, 9F34, 95 and 82
+-->
+
+<!-- 
+    ParserSweet v3.5.html
+    Version: 3.5
+    Last Updated: September 10, 2025
+    Changes:
+    - Add logic for DE047 if it's not include length then display the value
+    - Add logic for DE055 if it's not include length then display the value
+-->
+
+<!-- 
+    ParserSweet v3.6.html
+    Version: 3.6
+    Last Updated: September 14, 2025
+    Changes:
+    - Add paste from clipboard button, append and clear button for MTI parser
+-->
+
+<!-- 
+    ParserSweet v3.7.html
+    Version: 3.7
+    Last Updated: October 07, 2025
+    Changes:
+    - Add Hex to ASCII converter side tab tools
+    - Add json transform for json without need to check specific key
+-->
+
+<!-- 
+    ParserSweet v3.8.html
+    Version: 3.8
+    Last Updated: October 17, 2025
+    Changes:
+    - Add tooltip for 9F53, 9F35, 9F33, 9F40 and 9F06
+-->
+
+<!-- 
+    ParserSweet v3.9.html
+    Version: 3.9
+    Last Updated: November 15, 2025
+    Changes:
+    - Add bitmap decoder side tab tools
+-->
+
+<!-- 
+    ParserSweet v4.0.html
+    Version: 4.0
+    Last Updated: November 29, 2025
+    Changes:
+    - Add EMV Tools
+      - TVR Decoder
+      - CVM List Decoder
+      - CVM Results Decoder
+      - TSI Decoder
+      - AIP Decoder
+      - AUC Decoder
+      - CTQ Decoder
+      - TTQ Decoder
+      - TCC Decoder
+      - ATCC Decoder
+      - DE55 Parser
+-->
+
+<!-- 
+    ParserSweet v4.1.html
+    Version: 4.1
+    Last Updated: January 15, 2026
+    Changes:
+    - Add mxa receipt viewer tool pages
+    - Add cba receipt parser tool pages
+    - Add DE012 and DE007 converter in CBA MTI parser
+    - Add passcode protection before access the tool (disabled by default, can be enabled by uncomment the code in script.js and index.html)
+    - Add 5F24, 5F25, 9A tooltip in DE55
+    - Add handler for custom_field and customField in JSON parser to extract embedded JSON from the string value
+-->
+
+<!-- 
+    ParserSweet v5.0.html
+    Version: 5.0
+    Last Updated: July 08, 2026
+    Changes:
+    - Create json.html, mti.html, receipt_parser.html, base64_receipt_viewer.html as separate pages
+    - Rework UI to be more colorful and fun
+    - Add theme switcher to toggle between dark and light mode
+    - Some minor bug fixes and improvements
+    
+-->
+
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,11 +180,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-    
+
     <style>
         /* --- Themes Configurations --- */
         :root {
             /* Default: Bitter Cocoa / Dark Mode */
+            --font-family: 'Space Grotesk', sans-serif;
             --bg-dark: #1a111e;
             --card-bg: #251a2b;
             --text-bright: #f5effa;
@@ -20,7 +194,7 @@
             --card-hover-bg: rgba(255, 255, 255, 0.05);
             --border-color: rgba(255, 255, 255, 0.05);
             --title-gradient: linear-gradient(to right, #fff, #a393b0);
-            
+
             /* Candy Accents */
             --flavor-strawberry: #ff4757;
             --flavor-mint: #2ed573;
@@ -40,7 +214,7 @@
             --card-hover-bg: #fffbfe;
             --border-color: rgba(155, 93, 229, 0.1);
             --title-gradient: linear-gradient(to right, #2d1e2f, #63436a);
-            background-image: 
+            background-image:
                 radial-gradient(at 20% 20%, rgba(255, 118, 117, 0.15) 0px, transparent 50%),
                 radial-gradient(at 80% 80%, rgba(116, 185, 255, 0.15) 0px, transparent 50%);
         }
@@ -52,9 +226,9 @@
         }
 
         body {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: var(--font-family);
             background-color: var(--bg-dark);
-            background-image: 
+            background-image:
                 radial-gradient(at 20% 20%, rgba(155, 93, 229, 0.15) 0px, transparent 50%),
                 radial-gradient(at 80% 80%, rgba(255, 71, 87, 0.1) 0px, transparent 50%);
             min-height: 100vh;
@@ -89,12 +263,24 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+
         .flavor-toggle:hover {
-            transform: translateY(-2px);
+            /* transform: translateY(-2px); */
+            transform: scale(1.05);
             border-color: var(--flavor-grape);
+        }
+
+        body:not(.sweet-mode) .flavor-toggle {
+            background: linear-gradient(135deg, #6D4C8A, #251A2B);
+            color: white;
+        }
+
+        body.sweet-mode .flavor-toggle {
+            background: linear-gradient(135deg, #F9A8D4, #C084FC);
+            color: white;
         }
 
         /* --- Main Box Window --- */
@@ -125,10 +311,38 @@
             -webkit-text-fill-color: transparent;
             transition: background 0.5s ease;
         }
-        .brand-title span {
+
+        /*         .brand-title span {
             background: linear-gradient(135deg, var(--flavor-strawberry), var(--flavor-grape));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+ */
+
+        .brand-title span {
+            background: linear-gradient(135deg, var(--flavor-strawberry), var(--flavor-grape));
+            background: linear-gradient(90deg,
+                    #ff4d79,
+                    #ffb347,
+                    #8b5cf6,
+                    #38bdf8,
+                    #22c55e,
+                    #ff4d79);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: sweet-run 3.5s linear infinite;
+        }
+
+        @keyframes sweet-run {
+            0% {
+                background-position: 200% 50%;                
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         .brand-tagline {
@@ -148,19 +362,23 @@
             cursor: pointer;
             transition: all 0.3s;
         }
+
         .candy-jar-drop:hover {
             border-color: var(--flavor-grape);
             transform: scale(1.01);
         }
+
         .jar-icon {
             font-size: 2.2rem;
             margin-bottom: 8px;
             display: inline-block;
         }
+
         .candy-jar-drop p {
             font-size: 0.95rem;
             color: var(--text-muted);
         }
+
         .candy-jar-drop strong {
             color: var(--text-bright);
         }
@@ -176,6 +394,7 @@
             align-items: center;
             gap: 10px;
         }
+
         .section-title::after {
             content: '';
             flex: 1;
@@ -200,6 +419,9 @@
             position: relative;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: block;
+            text-decoration: none;
+            color: inherit;
         }
 
         .flavor-card h3 {
@@ -232,26 +454,56 @@
         .flavor-card:hover {
             transform: scale(1.02) translateY(-3px);
             background: var(--card-hover-bg);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
         }
 
-        .card-strawberry:hover::before { background: var(--flavor-strawberry); }
-        .card-strawberry:hover h3 { color: var(--flavor-strawberry); }
-        
-        .card-blueberry:hover::before { background: var(--flavor-blueberry); }
-        .card-blueberry:hover h3 { color: var(--flavor-blueberry); }
+        .card-strawberry:hover::before {
+            background: var(--flavor-strawberry);
+        }
 
-        .card-mint:hover::before { background: var(--flavor-mint); }
-        .card-mint:hover h3 { color: var(--flavor-mint); }
+        .card-strawberry:hover h3 {
+            color: var(--flavor-strawberry);
+        }
 
-        .card-grape:hover::before { background: var(--flavor-grape); }
-        .card-grape:hover h3 { color: var(--flavor-grape); }
+        .card-blueberry:hover::before {
+            background: var(--flavor-blueberry);
+        }
 
-        .card-lemon:hover::before { background: var(--flavor-lemon); }
-        .card-lemon:hover h3 { color: var(--flavor-lemon); }
+        .card-blueberry:hover h3 {
+            color: var(--flavor-blueberry);
+        }
 
-        .card-peach:hover::before { background: var(--flavor-peach); }
-        .card-peach:hover h3 { color: var(--flavor-peach); }
+        .card-mint:hover::before {
+            background: var(--flavor-mint);
+        }
+
+        .card-mint:hover h3 {
+            color: var(--flavor-mint);
+        }
+
+        .card-grape:hover::before {
+            background: var(--flavor-grape);
+        }
+
+        .card-grape:hover h3 {
+            color: var(--flavor-grape);
+        }
+
+        .card-lemon:hover::before {
+            background: var(--flavor-lemon);
+        }
+
+        .card-lemon:hover h3 {
+            color: var(--flavor-lemon);
+        }
+
+        .card-peach:hover::before {
+            background: var(--flavor-peach);
+        }
+
+        .card-peach:hover h3 {
+            color: var(--flavor-peach);
+        }
 
         /* --- Footer --- */
         footer {
@@ -262,12 +514,21 @@
         }
 
         @media (max-width: 768px) {
-            .candy-box { padding: 30px 20px; }
-            .brand-title { font-size: 2.2rem; }
-            .menu-grid { grid-template-columns: 1fr; }
+            .candy-box {
+                padding: 30px 20px;
+            }
+
+            .brand-title {
+                font-size: 2.2rem;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <!-- Utility Switcher Row -->
@@ -279,14 +540,15 @@
 
     <!-- Main Container -->
     <div class="candy-box">
-        
+
         <!-- Header -->
         <header class="brand-header">
             <h1 class="brand-title">Parser<span>Sweet</span></h1>
             <!-- <p class="brand-tagline">Zero bitter data. Just sweet, readable insights.</p> -->
-			<p class="brand-tagline">"Parsing made sweet and simple. <br> Your data has stories to tell — let ParserSweet help you read them."</p>
-		
-		</header>
+            <p class="brand-tagline">"Parsing made sweet and simple. <br> Your data has stories to tell — let
+                ParserSweet help you read them."</p>
+
+        </header>
 
         <!-- Dropzone Jar Layout Feature -->
         <!-- <div class="candy-jar-drop">
@@ -296,27 +558,27 @@
  -->
         <!-- Divided Grid Layout -->
         <div class="section-title">Pick Your Flavor</div>
-        
+
         <div class="menu-grid">
-            <div class="flavor-card card-strawberry">
+            <a class="flavor-card card-strawberry" href="json.html">
                 <h3>JSON <span>🍓</span></h3>
                 <p>Format and clean nested objects seamlessly.</p>
-            </div>
+            </a>
 
-            <div class="flavor-card card-blueberry">
+            <a class="flavor-card card-blueberry" href="mti.html">
                 <h3>CBA MTI <span>🫐</span></h3>
                 <p>Deconstruct financial message transaction indicators.</p>
-            </div>
+            </a>
 
-            <div class="flavor-card card-mint">
+            <a class="flavor-card card-mint" href="receipt_parser.html">
                 <h3>Receipt Parser <span>🌿</span></h3>
                 <p>Extract clean transactional nodes instantly.</p>
-            </div>
+            </a>
 
-            <div class="flavor-card card-grape">
+            <a class="flavor-card card-grape" href="base64_receipt_viewer.html">
                 <h3>Base64 Viewer <span>🍇</span></h3>
                 <p>Unwrap encoded receipt imagery strings.</p>
-            </div>
+            </a>
 
             <div class="flavor-card card-lemon">
                 <h3>DE22 for EFTEX <span>🍋</span></h3>
@@ -331,28 +593,17 @@
 
     </div>
 
+
+
+
     <!-- Footer -->
     <footer>
-        Version 4.1 &copy; 2025–2026 hji
+        Version 5.0 &copy; 2025–2026 hji
     </footer>
 
-    <!-- Logic to animate and switch states safely -->
-    <script>
-        const themeBtn = document.getElementById('themeBtn');
-        const themeIcon = document.getElementById('themeIcon');
-        const themeText = document.getElementById('themeText');
-        
-        themeBtn.addEventListener('click', () => {
-            document.body.classList.toggle('sweet-mode');
-            
-            if (document.body.classList.contains('sweet-mode')) {
-                themeIcon.textContent = '🍫';
-                themeText.textContent = 'Switch to Bitter Mode';
-            } else {
-                themeIcon.textContent = '🧁';
-                themeText.textContent = 'Switch to Sweet Mode';
-            }
-        });
-    </script>
+    <!-- Script -->
+    <script type="module" src="script.js"></script>
+
 </body>
+
 </html>

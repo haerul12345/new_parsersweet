@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+
+<!-- 
+    mxa_receipt_viewer v1.0.html
+    Version: 1.0
+    Last Updated: January 15, 2026
+    Changes:
+    - embed this page into parsersweet package
+-->
+
+<!-- 
+    base64_receipt_viewer v1.0.html
+    Version: 1.0
+    Last Updated: January 22, 2026
+    Changes:
+    - rename
+-->
+
+<!-- 
+    base64_receipt_viewer v1.1.html
+    Version: 1.1
+    Last Updated: May 09, 2026
+    Changes:
+    - Add dark/light theme toggle with icons
+    - Refactor CSS to use theme variables
+    - support logs from drrreceiver (customer_receipt_data) as fallback if printData is not found
+-->
+
+<!-- 
+    base64_receipt_viewer v1.2.html
+    Version: 1.2
+    Last Updated: July 08, 2026
+    Changes:
+    - Rework UI
+-->
+
+<html>
+
+<head>
+        <meta charset="UTF-8" />
+        <link rel="icon"
+                href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='48'>🧾</text></svg>">
+
+        <title>Base64 Receipt Viewer</title>
+
+        <style>
+                /* :root {
+    --thumb-width: 280px;
+    --tile-pad: 20px;
+    --tile-width: calc(var(--thumb-width) + (var(--tile-pad) * 2));
+}
+
+ ===== Global Theme ===== 
+body {
+    font-family: Consolas, monospace;
+    /* background: #00AFDA; 
+    background: #0d4647;
+    /* color: #ffffff; 
+    color: #E6FFFA;
+    padding: 20px;
+} */
+
+                :root {
+                        /* --font-family: 'Space Grotesk', sans-serif; */
+                        --font-family: Consolas, monospace;
+                        --bg-dark: #1a111e;
+                        --card-bg: #251a2b;
+                        --text-bright: #f5effa;
+                        --text-muted: #a393b0;
+                        --border-color: rgba(255, 255, 255, 0.05);
+                        --title-gradient: linear-gradient(to right, #fff, #a393b0);
+
+                        --table-bg: rgba(255, 255, 255, 0.06);
+                        --table-head-bg: rgba(0, 175, 218, 0.18);
+                        --table-border: rgba(255, 255, 255, 0.12);
+                        --table-border-strong: rgba(255, 255, 255, 0.18);
+                        --table-row-even: rgba(255, 255, 255, 0.04);
+                        --table-row-odd: rgba(255, 255, 255, 0.02);
+                        --table-text: var(--text-bright);
+
+                        --button-bg: #14B8A6;
+                        --button-text: #062E2E;
+                        --filter-bg: #18333e;
+                        --tile-bg: rgba(255, 255, 255, 0.06);
+                        --tile-border: rgba(255, 255, 255, 0.12);
+                        --surface-color: rgba(255, 255, 255, 0.06);
+                        --placeholder-color: rgba(230, 255, 250, 0.45);
+
+                        --thumb-width: 280px;
+                        --tile-pad: 20px;
+                        --tile-width: calc(var(--thumb-width) + (var(--tile-pad) * 2));
+                }
+
+                body {
+                        font-family: var(--font-family);
+                        margin: 0;
+                        padding: 40px 20px;
+                        background: var(--bg-dark);
+                        color: var(--text-bright);
+                        transition: background 0.3s ease, color 0.3s ease;
+                }
+
+                /* Professional Light Mode*/
+                body.sweet-mode {
+                        --bg-dark: #fbf0f3;
+                        --card-bg: #ffffff;
+
+                        --text-bright: #1e293b;
+                        --text-muted: #64748b;
+
+                        --border-color: rgba(15, 23, 42, 0.08);
+
+                        --title-gradient: linear-gradient(to right,
+                                        #0f172a,
+                                        #0284c7);
+
+                        --table-bg: #ffffff;
+                        --table-head-bg: rgba(0, 175, 218, 0.10);
+
+                        --table-border: rgba(15, 23, 42, 0.08);
+                        --table-border-strong: rgba(15, 23, 42, 0.12);
+
+                        --table-row-even: #ffffff;
+                        --table-row-odd: #f8fafc;
+
+                        --table-text: var(--text-bright);
+                }
+
+
+                .page-wrapper {
+                        width: 100%;
+                        max-width: 100%;
+                        margin: 0 auto;
+                }
+
+                .container {
+                        max-width: 90%;
+                        width: 100%;
+                        margin: 0 auto;
+                        background: var(--card-bg);
+                        padding: 30px;
+                        border-radius: 32px;
+                        border: 1px solid var(--border-color);
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+                        position: relative;
+                        z-index: 1;
+                }
+
+                .utility-bar {
+                        width: 95%;
+                        max-width: 100%;
+                        display: flex;
+                        justify-content: flex-end;
+                        margin: 0 auto 16px;
+                        position: relative;
+                        z-index: 3;
+                }
+
+                /* Borrowed .btn style from json.html (higher-specificity to override global button rules) */
+                button.btn {
+                        padding: 12px 24px;
+                        border: 1px solid var(--border-color);
+                        border-radius: 30px;
+                        font-size: 1em;
+                        cursor: pointer;
+                        transition: transform 0.18s ease, background 0.22s ease, border-color 0.18s ease;
+                        background: var(--card-bg);
+                        color: var(--text-bright);
+                        margin: 0 8px 0 0;
+                }
+
+                /* Dark (bitter) mode */
+                body:not(.sweet-mode) button.btn {
+                        background: #4C3A63;
+                        color: white;
+                        border-color: rgba(255, 255, 255, 0.12);
+                }
+
+                /* Sweet mode */
+                body.sweet-mode button.btn {
+                        background: #7aaec2;
+                        color: white;
+                        border: 1px solid #6da3b8;
+                }
+
+                /* Hover */
+                button.btn:hover {
+                        transform: scale(1.05);
+                        filter: brightness(0.80);
+                        border-color: rgba(155, 93, 229, 0.35);
+                }
+
+                button,
+                .copyFilterBtn {
+                        padding: 10px 14px;
+                        border: none;
+                        border-radius: 30px;
+                        cursor: pointer;
+                        margin-bottom: 10px;
+                        background: var(--button-bg);
+                        color: var(--button-text);
+                        transition: filter 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+                }
+
+                button:hover,
+                .copyFilterBtn:hover {
+                        filter: brightness(0.9);
+                }
+
+                .flavor-toggle {
+                        background: var(--card-bg);
+                        border: 1px solid var(--border-color);
+                        padding: 8px 18px;
+                        border-radius: 20px;
+                        color: var(--text-bright);
+                        font-family: inherit;
+                        font-size: 0.85rem;
+                        font-weight: 500;
+                        cursor: pointer;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+                        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+                        transition: all 0.24s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                }
+
+                .flavor-toggle:hover {
+                        transform: scale(1.05);
+                        border-color: rgba(155, 93, 229, 0.6);
+                        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+                }
+
+                body.sweet-mode .flavor-toggle {
+                        background: linear-gradient(135deg, #F9A8D4, #C084FC);
+                        border-color: rgba(155, 93, 229, 0.32);
+                        box-shadow: 0 10px 30px rgba(155, 93, 229, 0.08);
+                        color: #2d1e2f;
+                        padding: 10px 20px;
+                }
+
+                body:not(.sweet-mode) .flavor-toggle {
+                        background: linear-gradient(135deg, #6D4C8A, #251A2B);
+                        border-color: rgba(255, 255, 255, 0.06);
+                        color: var(--text-bright);
+                        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+                        padding: 9px 18px;
+                }
+
+
+                textarea {
+                        width: 100%;
+                        min-height: 200px;
+                        resize: vertical;
+                        border: 1px solid var(--tile-border);
+                        padding: 14px;
+                        border-radius: 12px;
+                        font-family: Consolas, monospace;
+                        background: var(--tile-bg);
+                        color: var(--text-bright);
+                        transition: background 0.2s ease, color 0.2s ease;
+                }
+
+                textarea:focus {
+                        outline: none;
+                        border-color: rgba(0, 175, 218, 0.5);
+                }
+
+                /* spacing around the main textarea */
+                .input-wrap {
+                        margin: 18px 0 22px;
+                        /* space before (18px) and after (22px) */
+                }
+
+                /* ensure textarea itself has no stray margin and fills wrapper */
+                textarea#logInput {
+                        margin: 0;
+                        display: block;
+                        width: 100%;
+                }
+
+                .filterBox {
+                        display: flex;
+                        align-items: center;
+                        padding: 0 12px;
+                        border: 1px solid var(--tile-border);
+                        border-right: none;
+                        border-radius: 6px 0 0 6px;
+                        height: 36px;
+                        background: var(--tile-bg);
+                        color: var(--text-bright);
+                }
+
+                /* remove filter box border in Sweet Mode */
+                body.sweet-mode .filterBox {
+                        border: 1px solid var(--tile-border);
+                        border-right: none;
+                        background: var(--tile-bg);
+                        /* keep the sweet-mode background */
+                        box-shadow: none;
+
+                }
+
+                .copyFilterBtn {
+                        border-left: none;
+                        background: #ffffff;
+                        color: #062e2e;
+                        border: 1px solid var(--tile-border);
+                        border-radius: 0 6px 6px 0;
+                }
+
+                body.sweet-mode .copyFilterBtn {
+                        border: 1px solid var(--tile-border);
+                        background: #ffffff;
+                }
+
+                .copyFilterBtn:hover {
+                        background: #e7ecff;
+                }
+
+                .controls {
+                        display: flex;
+                        flex-wrap: wrap;
+                        align-items: center;
+                        gap: 12px;
+                        margin: 10px 0 18px 0;
+                }
+                
+                .info,
+                footer,
+                .countBadge,
+                .sizeReadout,
+                h2,
+                h3 {
+                        color: var(--text-bright);
+                }
+
+                .controls label {
+                        color: var(--text-bright);
+                }
+
+                .sizeReadout {
+                        padding: 2px 8px;
+                        background: rgba(0, 0, 0, 0.06);
+                        border: 1px solid var(--tile-border);
+                        border-radius: 4px;
+                        color: var(--text-bright);
+                }
+
+                .imgTile {
+                        background: var(--surface-color);
+                        border: 1px solid var(--tile-border);
+                        padding: var(--tile-pad);
+                        border-radius: 16px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                }
+
+                img.multiImg {
+                        width: var(--thumb-width);
+                        max-width: 100%;
+                        height: auto;
+                        display: block;
+                        /* border-radius: 12px; */
+                        background: #000;
+                }
+
+                body.sweet-mode {
+                        --bg-dark: #fbf0f3;
+                        --card-bg: #ffffff;
+                        --text-bright: #1e293b;
+                        --text-muted: #64748b;
+                        --border-color: rgba(15, 23, 42, 0.08);
+                        --table-bg: #ffffff;
+                        --table-head-bg: rgba(0, 175, 218, 0.10);
+                        --table-border: rgba(15, 23, 42, 0.08);
+                        --table-row-even: #ffffff;
+                        --table-row-odd: #f8fafc;
+                        --tile-bg: #eef9f9;
+                        --tile-border: #bfe7e6;
+                        --surface-color: #ffffff;
+                        --filter-bg: #bfe7e6;
+                        --placeholder-color: rgba(1, 46, 44, 0.45);
+                }
+
+                footer {
+                        color: #FFF;
+                        text-align: center;
+                        border-top: 1px solid#ddd;
+                        padding-top: 1rem;
+                        margin-top: 3rem;
+                        justify-content: center;
+                        align-items: center;
+                }
+
+                /* Ensure container aligns children exactly */
+                .filterContainer {
+                        display: flex;
+                        align-items: center;
+                        gap: 0;
+                        width: 100%;
+                }
+
+                /* Flush, single-line filter area */
+                .filterBox {
+                        flex: 1;
+                        min-width: 0;
+                        max-width: 60%;
+                        display: flex;
+                        align-items: center;
+                        padding: 0 14px;
+                        height: 42px;
+                        box-sizing: border-box;
+                        border: 1px solid rgba(255, 255, 255, 0.12);
+                        border-right: none;
+                        border-radius: 12px 0 0 12px;
+                        background: rgba(255, 255, 255, 0.06);
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        margin: 0;
+                }
+
+                /* Make the text inside behave */
+                .filterBox .filterText {
+                        display: block;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        line-height: 1;
+                }
+
+                /* Button flush to the right, same height, no extra margin */
+                .copyFilterBtn {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 42px;
+                        padding: 0 14px;
+                        margin: 0;
+                        /* override global button margin */
+                        border-left: none;
+                        border-radius: 0 12px 12px 0;
+                        box-sizing: border-box;
+                        background: #ffffff;
+                        color: #062e2e;
+                }
+
+                /* remove hover shift that can make it look misaligned */
+                .copyFilterBtn:hover {
+                        transform: none;
+                }
+
+                /* theme-aware control accent */
+                :root {
+                        --control-accent: #4C3A63;
+                }
+
+                body.sweet-mode {
+                        --control-accent: #7aaec2;
+                }
+
+                /* track / thumb sizes */
+                .controls input[type="range"] {
+                        height: 8px;
+                        padding: 0;
+                        background: transparent;
+                        border-radius: 8px;
+                        outline: none;
+                }
+
+                /* Slider controls */
+                .controls {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        margin: 10px 0 18px 0;
+                        flex-wrap: wrap;
+                }
+
+                .controls input[type="range"] {
+                        width: 280px;
+                        height: 8px;
+                        background: transparent;
+                        border-radius: 8px;
+                        outline: none;
+                        accent-color: var(--control-accent);
+                }
+
+                #outputBox {
+                        display: none;
+                }
+
+                /* Image preview single */
+                #imgPreview {
+                        display: none;
+                        margin-top: 40px;
+                        border: 1px solid #004654;
+                        max-width: 320px;
+                        background: #000;
+                }
+
+                /* ======== Image Grid ======== */
+
+                .imgGrid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(var(--tile-width, 320px), 1fr));
+                        gap: 12px;
+                        padding: 16px;
+                        margin-top: 12px;
+                        justify-content: start;
+                }
+
+
+                .imgTile {
+                        background: #FFFFFF;
+                        border: 1px solid #007a94;
+                        padding: var(--tile-pad);
+                        border-radius: 6px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                }
+
+                .imgTile img.multiImg {
+                        width: var(--thumb-width);
+                        height: auto;
+                        display: block;
+                        background: #000;
+                }
+
+                img.multiImg {
+                        width: var(--thumb-width, 280px);
+                        max-width: 100%;
+                        height: auto;
+                }
+        </style>
+</head>
+
+<body>
+
+        <div class="page-wrapper">
+                <div class="utility-bar">
+                        <button class="flavor-toggle" id="themeBtn">
+                                <span id="themeIcon">🧁</span>
+                                <span id="themeText">Switch to Sweet Mode</span>
+                        </button>
+                </div>
+
+                <div class="container">
+                        <div class="titleRow">
+                                <h1>Base64 Receipt Viewer</h1>
+                        </div>
+
+                        <p class="info">Use this filter in Android Studio Logcat to capture printable receipts.</p>
+                        <div class="filterContainer">
+                                <div class="filterBox">
+                                        <span id="filterText" class="filterText">
+                                                package:com.ingenico.nar.unified_api_service
+                                                tag:PrinterEndpointProcessorV1
+                                        </span>
+                                </div>
+
+                                <button id="copyFilterBtn" class="copyFilterBtn">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#4a64ff"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path
+                                                        d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2">
+                                                </path>
+                                                <rect x="8" y="2" width="8" height="4" rx="1"></rect>
+                                        </svg>
+                                </button>
+                        </div>
+
+                        <div class="input-wrap">
+                                <textarea id="logInput" placeholder="Paste logcat output here..."></textarea>
+                        </div>
+
+                        <button class="btn" id="pasteBtn">Paste</button>
+                        <button class="btn" id="clearBtn">Clear</button>
+                        <button class="btn" id="runBtn" onclick="formatLogs()">Generate</button>
+                        <!-- <button onclick="processLog()">Extract & View</button> -->
+                        <div class="controls">
+                                <label for="thumbSize">Thumbnail size:</label>
+
+                                <input id="thumbSize" type="range" min="120" max="480" step="10" value="280"
+                                        oninput="setThumbSize(this.value)">
+                                <span class="sizeReadout" id="sizeReadout">280 px</span>
+
+                        </div>
+
+                        <textarea id="outputBox" readonly></textarea>
+
+                        <h3>
+                                Receipts Preview:
+                                <span id="imgCount" class="countBadge" aria-live="polite" style="display:none;"></span>
+                        </h3>
+
+
+                        <img id="imgPreview" />
+
+                        <div id="grid" class="imgGrid"></div>
+                </div>
+        </div>
+
+
+        <!-- <h1>Base64 Receipt Viewer</h1> -->
+
+        <!-- <div class="filterBox">
+    <span id="filterText" class="filterText">
+        package:com.ingenico.nar.unified_api_service tag:PrinterEndpointProcessorV1
+    </span>
+
+
+<button id="copyFilterBtn" class="copyFilterBtn">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none"
+         stroke="#4a64ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+        <rect x="8" y="2" width="8" height="4" rx="1"></rect>
+    </svg>
+</button>
+
+
+</div> -->
+
+
+
+
+
+
+        <footer>
+                <ft id="app-version"></ft>
+        </footer>
+
+        <script>
+
+                document.getElementById("app-version").textContent = `Version 1.1 © 2026 hji`;
+
+                const MAX_IMAGES = 20;
+
+                /* ================= Helpers (unchanged) ================= */
+                function extractMessage(line) {
+                        const fullHeader = /^(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\.\d+)\s+\d+-\d+\s+\S+\s+\S+\s+[A-Z]\s{2}(.*)$/;
+                        const shortHeader = /^(\d{2}:\d{2}:\d{2}\.\d+)\s+[A-Z]\s{2}(.*)$/;
+                        let m = line.match(fullHeader);
+                        if (m) return m[2].trim();
+                        m = line.match(shortHeader);
+                        if (m) return m[2].trim();
+                        return line.trim();
+                }
+
+                function extractCustomerReceiptData(logText) {
+                        if (!logText) return null;
+
+                        const key = "customer_receipt_data=";
+                        const lines = logText.split("\n");
+
+                        let collecting = false;
+                        let result = "";
+
+                        for (let line of lines) {
+
+                                if (!collecting) {
+                                        const startIndex = line.indexOf(key);
+                                        if (startIndex !== -1) {
+                                                collecting = true;
+
+                                                let part = line.substring(startIndex + key.length);
+
+                                                const commaIndex = part.indexOf(",");
+                                                if (commaIndex !== -1) {
+                                                        result += part.substring(0, commaIndex);
+                                                        break;
+                                                } else {
+                                                        result += part;
+                                                }
+                                        }
+
+                                } else {
+                                        // ✅ Remove BOTH short & long logcat prefixes
+                                        const cleanedLine = line.replace(
+                                                /^(?:\d{2}:\d{2}:\d{2}\.\d{3}|\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\.\d{3}).*?\s[DIEVWA]\s+/,
+                                                ""
+                                        );
+
+                                        const commaIndex = cleanedLine.indexOf(",");
+                                        if (commaIndex !== -1) {
+                                                result += cleanedLine.substring(0, commaIndex);
+                                                break;
+                                        } else {
+                                                result += cleanedLine;
+                                        }
+                                }
+                        }
+
+                        // remove spaces and line breaks
+                        return result.replace(/\s/g, "");
+                }
+
+                function processLog() {
+                        const logText = document.getElementById("logInput").value.trim();
+
+                        if (!logText) {
+                                alert("Log input is empty.\nPlease paste logcat output first.");
+                                return;
+                        }
+
+                        // ✅ Clear previous results (same style as formatLogs)
+                        document.getElementById("outputBox").value = "";
+                        const grid = document.getElementById("grid");
+                        grid.innerHTML = "";
+
+                        const imgCountEl = document.getElementById("imgCount");
+                        imgCountEl.style.display = "none";
+                        imgCountEl.textContent = "";
+
+                        // ✅ Extract Base64
+                        const base64 = extractCustomerReceiptData(logText);
+
+                        if (!base64) {
+                                alert("No customer_receipt_data found in logs.");
+                                return;
+                        }
+
+                        const cleaned = base64.replace(/\s/g, "");
+
+                        // ✅ Optional: detect image type
+                        function detectImageType(b64) {
+                                if (b64.startsWith("/9j/")) return "image/jpeg";
+                                if (b64.startsWith("iVBOR")) return "image/png";
+                                if (b64.startsWith("R0lGOD")) return "image/gif";
+                                return "image/png";
+                        }
+
+                        const mimeType = detectImageType(cleaned);
+
+                        // ✅ Create SAME tile style as existing viewer
+                        const tile = document.createElement("div");
+                        tile.className = "imgTile";
+
+                        const img = document.createElement("img");
+                        img.className = "multiImg";
+                        img.src = `data:${mimeType};base64,` + cleaned;
+                        img.alt = "Customer Receipt";
+
+                        tile.appendChild(img);
+
+                        // ✅ Copy button (reuse your logic)
+                        // ✅ Copy button follows .btn theme
+                        const copyBtn = document.createElement("button");
+                        copyBtn.className = "btn";
+                        copyBtn.textContent = "Copy Image";
+                        copyBtn.style.marginTop = "8px";
+
+                        copyBtn.onclick = async () => {
+                                try {
+                                        const byteCharacters = atob(cleaned);
+                                        const byteNumbers = new Array(byteCharacters.length);
+
+                                        for (let i = 0; i < byteCharacters.length; i++) {
+                                                byteNumbers[i] = byteCharacters.charCodeAt(i);
+                                        }
+
+                                        const byteArray = new Uint8Array(byteNumbers);
+                                        const blob = new Blob([byteArray], { type: mimeType });
+
+                                        await navigator.clipboard.write([
+                                                new ClipboardItem({ [mimeType]: blob })
+                                        ]);
+
+                                        copyBtn.textContent = "Copied ✔";
+                                        setTimeout(() => (copyBtn.textContent = "Copy Image"), 1500);
+
+                                } catch (err) {
+                                        console.error(err);
+                                        alert("Clipboard does not allow image copy in this browser.");
+                                }
+                        };
+
+                        tile.appendChild(copyBtn);
+                        grid.appendChild(tile);
+
+                        // ✅ Update counter (same style)
+                        imgCountEl.textContent = "1 image";
+                        imgCountEl.style.display = "inline-block";
+
+                        console.log("Customer receipt rendered");
+                }
+
+
+                function extractAllPrintDataBlocks(logText) {
+                        const blocks = [];
+                        const lines = logText.split("\n");
+                        let current = [];
+                        let inside = false;
+
+                        for (const raw of lines) {
+                                let line = extractMessage(raw);
+                                if (line.includes("printData=")) {
+                                        if (inside && current.length > 0) {
+                                                blocks.push(current.join("\n"));
+                                                current = [];
+                                        }
+                                        inside = true;
+                                }
+
+                                if (inside) {
+                                        if (line.trim().startsWith("textPrintData=")) {
+                                                inside = false;
+                                                blocks.push(current.join("\n"));
+                                                current = [];
+                                                continue;
+                                        }
+                                        current.push(line);
+                                }
+                        }
+
+                        if (current.length > 0) blocks.push(current.join("\n"));
+                        return blocks;
+                }
+
+                function stripAfterTextPrintData(msg) {
+                        return msg.split(",textPrintData=")[0];
+                }
+
+                function setThumbSize(px) {
+                        document.documentElement.style.setProperty('--thumb-width', px + 'px');
+                        document.getElementById('sizeReadout').textContent = px + ' px';
+                }
+
+
+                (function () {
+                        const range = document.getElementById('thumbSize');
+                        if (!range) return;
+
+                        function updateRangeFill(el) {
+                                const min = Number(el.min || 0);
+                                const max = Number(el.max || 100);
+                                const val = Number(el.value);
+                                const pct = Math.round(((val - min) / (max - min)) * 100 * 100) / 100; // percent with 2dp
+
+                                const styles = getComputedStyle(document.documentElement);
+                                const accent = styles.getPropertyValue('--control-accent').trim() || '#14B8A6';
+                                const unfilled = '#ffffff';
+
+                                el.style.background = `linear-gradient(90deg, ${accent} ${pct}%, ${unfilled} ${pct}%)`;
+                        }
+
+                        // keep existing oninput behaviour but also update fill
+                        range.addEventListener('input', (e) => {
+                                updateRangeFill(e.target);
+                        });
+
+                        // initialize on load
+                        updateRangeFill(range);
+                })();
+
+                /* ================= Paste Button ================= */
+                document.getElementById("pasteBtn").addEventListener("click", async () => {
+                        try {
+                                const text = await navigator.clipboard.readText();
+                                document.getElementById("logInput").value = text;
+                        } catch (err) {
+                                alert("Clipboard access denied.\nUse HTTPS or enable permission.");
+                        }
+                });
+
+                /* =================== MAIN =================== */
+                function formatLogs() {
+
+                        const input = document.getElementById("logInput").value.trim();
+
+                        if (input === "") {
+                                alert("Log input is empty.\nPlease paste logcat output first.");
+                                return;
+                        }
+
+                        // ✅ Clear previous results
+                        document.getElementById("outputBox").value = "";
+                        document.getElementById("grid").innerHTML = "";
+                        document.getElementById("imgPreview").style.display = "none";
+                        document.getElementById("imgPreview").src = "";
+
+                        const imgCountEl = document.getElementById("imgCount");
+                        imgCountEl.style.display = "none";
+                        imgCountEl.textContent = "";
+
+                        const grid = document.getElementById("grid");
+                        const outputBox = document.getElementById("outputBox");
+
+                        let images = [];
+
+                        /* =========================
+                           1. TRY printData (existing)
+                        ========================= */
+                        const blocks = extractAllPrintDataBlocks(input);
+
+                        if (blocks.length > 0) {
+
+                                blocks.forEach((block, index) => {
+                                        let cleaned = block.replace(/^.*printData=/, "").replace(/\s+/g, "");
+                                        cleaned = stripAfterTextPrintData(cleaned);
+                                        cleaned = cleaned.replace(/\s+/g, "");
+
+                                        images.push(cleaned);
+                                        outputBox.value += `=== IMAGE ${index + 1} ===\n${cleaned}\n\n`;
+                                });
+
+                        } else {
+
+                                /* =========================
+                                   2. FALLBACK → customer_receipt_data
+                                ========================= */
+                                const base64 = extractCustomerReceiptData(input);
+
+                                if (!base64) {
+                                        alert("No valid receipt data found.\nSupports:\n- printData\n- customer_receipt_data");
+                                        return;
+                                }
+
+                                images.push(base64.replace(/\s/g, ""));
+                                outputBox.value = base64;
+                        }
+
+                        /* =========================
+                           3. RENDER (same UI)
+                        ========================= */
+
+                        const LIMIT = 10;
+                        const total = images.length;
+                        const shown = Math.min(total, LIMIT);
+
+                        function detectImageType(b64) {
+                                if (b64.startsWith("/9j/")) return "image/jpeg";
+                                if (b64.startsWith("iVBOR")) return "image/png";
+                                if (b64.startsWith("R0lGOD")) return "image/gif";
+                                return "image/png";
+                        }
+
+                        images.forEach((cleaned, index) => {
+                                if (index >= LIMIT) return;
+
+                                const mimeType = detectImageType(cleaned);
+
+                                const tile = document.createElement("div");
+                                tile.className = "imgTile";
+
+                                const img = document.createElement("img");
+                                img.className = "multiImg";
+                                img.src = `data:${mimeType};base64,` + cleaned;
+                                img.alt = `Image ${index + 1}`;
+                                tile.appendChild(img);
+
+                                const copyBtn = document.createElement("button");
+                                copyBtn.className = "btn";
+                                copyBtn.textContent = "Copy Image";
+                                copyBtn.style.marginTop = "8px";
+
+                                copyBtn.onclick = async () => {
+                                        try {
+                                                const byteCharacters = atob(cleaned);
+                                                const byteNumbers = new Array(byteCharacters.length);
+
+                                                for (let i = 0; i < byteCharacters.length; i++) {
+                                                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                                                }
+
+                                                const byteArray = new Uint8Array(byteNumbers);
+                                                const blob = new Blob([byteArray], { type: mimeType });
+
+                                                await navigator.clipboard.write([
+                                                        new ClipboardItem({ [mimeType]: blob })
+                                                ]);
+
+                                                copyBtn.textContent = "Copied ✔";
+                                                setTimeout(() => (copyBtn.textContent = "Copy Image"), 1500);
+
+                                        } catch (err) {
+                                                console.error(err);
+                                                alert("Clipboard does not allow image copy in this browser.");
+                                        }
+                                };
+
+                                tile.appendChild(copyBtn);
+                                grid.appendChild(tile);
+                        });
+
+                        /* =========================
+                           4. COUNTER
+                        ========================= */
+                        if (shown > 0) {
+                                imgCountEl.textContent =
+                                        total <= LIMIT
+                                                ? `${shown} image${shown === 1 ? "" : "s"}`
+                                                : `${shown} of ${total} images`;
+
+                                imgCountEl.style.display = "inline-block";
+                        }
+
+                        if (total > LIMIT) {
+                                setTimeout(() => {
+                                        alert(`Found ${total} receipts.\nShowing first ${LIMIT}.`);
+                                }, 5);
+                        }
+
+                }
+
+                // original receipt log format function
+                /* 
+                function formatLogs() {
+                    
+                const input = document.getElementById("logInput").value.trim();
+                
+                    if (input === "") {
+                        alert("Log input is empty.\nPlease paste logcat output first.");
+                        return;
+                    }
+                
+                	
+                // === Exception #4: Clear previous results BEFORE generating ===
+                    document.getElementById("outputBox").value = "";
+                    document.getElementById("grid").innerHTML = "";
+                    document.getElementById("imgPreview").style.display = "none";
+                    document.getElementById("imgPreview").src = "";
+                
+                	
+                 // Prepare the counter element: hide it until success
+                    const imgCountEl = document.getElementById("imgCount");
+                    imgCountEl.style.display = "none";         // hide by default
+                    imgCountEl.textContent = "";               // clear text
+                
+                	
+                    const blocks = extractAllPrintDataBlocks(input);
+                	
+                        if (blocks.length === 0) {
+                        alert("No printData found in the logs.\nMake sure log contains printData=...");
+                        return;
+                    }
+                
+                	
+                    const outputBox = document.getElementById("outputBox");
+                    outputBox.value = "";
+                
+                    const grid = document.getElementById("grid");
+                    grid.innerHTML = "";
+                        const LIMIT = 10;
+                	
+                const total = blocks.length;
+                const shown = Math.min(total, LIMIT);
+                
+                	
+                    blocks.forEach((block, index) => {
+                                if (index >= LIMIT) {
+                                        //alert(`Found ${blocks.length} images.\nOnly the first ${LIMIT} will be previewed.`);
+                                        return;  // ⬅️ stop creating more than 10 preview tiles
+                                }
+                        let cleaned = block.replace(/^.*printData=/, "").replace(/\s+/g, "");
+                        cleaned = stripAfterTextPrintData(cleaned);
+                        cleaned = cleaned.replace(/\s+/g, "");
+                
+                        outputBox.value += `=== IMAGE ${index + 1} ===\n${cleaned}\n\n`;
+                
+                        const tile = document.createElement("div");
+                        tile.className = "imgTile";
+                
+                        const img = document.createElement("img");
+                        img.className = "multiImg";
+                        img.src = "data:image/png;base64," + cleaned;
+                        img.alt = `Image ${index + 1}`;
+                        tile.appendChild(img);
+                
+                        // ===== Copy Image Button ===== 
+                        const copyBtn = document.createElement("button");
+                        copyBtn.textContent = "Copy Image";
+                        copyBtn.style.marginTop = "8px";
+                        // copyBtn.style.background = "#008fb3"; 
+                        copyBtn.style.background = "#14B8A6";
+                
+                        copyBtn.onclick = async () => {
+                            try {
+                                // Convert Base64 to binary
+                                const byteCharacters = atob(cleaned);
+                                const byteNumbers = new Array(byteCharacters.length);
+                                for (let i = 0; i < byteCharacters.length; i++) {
+                                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                                }
+                                const byteArray = new Uint8Array(byteNumbers);
+                
+                                // Create PNG blob
+                                const blob = new Blob([byteArray], { type: "image/png" });
+                
+                                // Copy to clipboard as image
+                                await navigator.clipboard.write([
+                                    new ClipboardItem({ "image/png": blob })
+                                ]);
+                
+                                copyBtn.textContent = "Copied ✔";
+                                setTimeout(() => (copyBtn.textContent = "Copy Image"), 1500);
+                
+                            } catch (err) {
+                                console.error(err);
+                                alert("Clipboard does not allow image copy in this browser.");
+                            }
+                        };
+                
+                        tile.appendChild(copyBtn);
+                        grid.appendChild(tile);
+                    });
+                	
+                	
+                
+                	
+                // === Show counter only if generation produced at least 1 image ===
+                    
+                if (shown > 0) {
+                    // If total <= LIMIT → show normal count
+                    // If total > LIMIT → show "10 of 27 images"
+                    imgCountEl.textContent =
+                        total <= LIMIT
+                            ? `${shown} image${shown === 1 ? "" : "s"}`
+                            : `${shown} of ${total} images`;
+                
+                    imgCountEl.style.display = "inline-block";
+                } else {
+                    imgCountEl.style.display = "none";
+                    imgCountEl.textContent = "";
+                }
+                
+                
+                	
+                if (blocks.length > LIMIT) {
+                    setTimeout(() => {
+                        alert(`Found ${blocks.length} receipts data.\n\nShowing only the first ${LIMIT} of ${blocks.length} receipts.`);
+                    }, 5);  // small delay so DOM can render first
+                }
+                
+                }
+                 */
+
+
+                // Small copy button for filter
+                document.getElementById("copyFilterBtn").addEventListener("click", async () => {
+                        const text = document.getElementById("filterText").innerText;
+
+                        try {
+                                await navigator.clipboard.writeText(text);
+                                const btn = document.getElementById("copyFilterBtn");
+                                btn.style.background = "#d4e2ff";
+                                setTimeout(() => btn.style.background = "#ffffff", 500);
+                        } catch (err) {
+                                alert("Clipboard access denied.");
+                        }
+                });
+
+
+                document.getElementById("clearBtn").addEventListener("click", () => {
+
+                        document.getElementById("logInput").value = "";
+                        document.getElementById("outputBox").value = "";
+                        document.getElementById("imgPreview").style.display = "none";
+                        document.getElementById("imgPreview").src = "";
+                        document.getElementById("grid").innerHTML = "";
+
+                        const imgCountEl = document.getElementById("imgCount");
+                        imgCountEl.style.display = "none"; // hide after clear
+                        imgCountEl.textContent = "";       // remove text
+
+                });
+
+                /*                 (() => {
+                                        const THEME_KEY = 'ps_theme';
+                                        const btn = document.getElementById('themeBtn');
+                                        const icon = btn.querySelector('.icon');
+                
+                                        const SVGS = {
+                                                sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>`,
+                                                moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>`
+                                        };
+                
+                                        function applyTheme(theme) {
+                                                document.documentElement.setAttribute('data-theme', theme);
+                                                btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+                                                btn.setAttribute('title', theme === 'dark' ? 'Switch to Light' : 'Switch to Dark');
+                                                // Show moon when dark, sun when light (user request)
+                                                icon.innerHTML = theme === 'dark' ? SVGS.moon : SVGS.sun;
+                                        }
+                
+                                        const saved = localStorage.getItem(THEME_KEY) || 'dark';
+                                        applyTheme(saved);
+                
+                                        btn.addEventListener('click', () => {
+                                                const current = document.documentElement.getAttribute('data-theme') || 'dark';
+                                                const next = current === 'dark' ? 'light' : 'dark';
+                                                applyTheme(next);
+                                                localStorage.setItem(THEME_KEY, next);
+                                        });
+                
+                                        // keyboard support
+                                        btn.addEventListener('keydown', (e) => {
+                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                        e.preventDefault();
+                                                        btn.click();
+                                                }
+                                        });
+                                })(); */
+
+                (() => {
+                        const THEME_STORAGE_KEY = 'parserSweetTheme';
+                        const btn = document.getElementById('themeBtn');
+                        const icon = document.getElementById('themeIcon');
+                        const text = document.getElementById('themeText');
+
+                        if (!btn) return;
+
+                        function applyFlavor(isSweet) {
+                                document.body.classList.toggle('sweet-mode', isSweet);
+                                if (icon) icon.textContent = isSweet ? '🍫' : '🧁';
+                                if (text) text.textContent = isSweet
+                                        ? 'Switch to Bitter Mode'
+                                        : 'Switch to Sweet Mode';
+                        }
+
+                        const saved = localStorage.getItem(THEME_STORAGE_KEY);
+                        const isSweet = saved === 'sweet';
+                        applyFlavor(isSweet);
+
+                        btn.addEventListener('click', () => {
+                                const nextSweet = !document.body.classList.contains('sweet-mode');
+                                applyFlavor(nextSweet);
+                                localStorage.setItem(THEME_STORAGE_KEY, nextSweet ? 'sweet' : 'bitter');
+                        });
+                })();
+
+        </script>
+
+</body>
+
+</html>
