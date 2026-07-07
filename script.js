@@ -40,7 +40,7 @@ function applyTheme(isSweet) {
     });
 })(); */
 
-(() => {
+/* (() => {
   const THEME_STORAGE_KEY = "parserSweetTheme";
   const btn = document.getElementById("themeBtn");
   const icon = document.getElementById("themeIcon");
@@ -83,7 +83,47 @@ if (themeBtn) {
     });
 }
 
-initTheme();
+initTheme(); */
+
+(() => {
+    const THEME_STORAGE_KEY = "parserSweetTheme";
+
+    const btn = document.getElementById("themeBtn");
+    const icon = document.getElementById("themeIcon");
+    const text = document.getElementById("themeText");
+
+    function applyTheme(isSweet) {
+        document.body.classList.toggle("sweet-mode", isSweet);
+
+        if (icon) icon.textContent = isSweet ? "🍫" : "🧁";
+        if (text) {
+            text.textContent = isSweet
+                ? "Switch to Bitter Mode"
+                : "Switch to Sweet Mode";
+        }
+    }
+
+    function initTheme() {
+        const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+        applyTheme(savedTheme === "sweet");
+    }
+
+    if (btn) {
+        btn.addEventListener("click", () => {
+            const isSweet =
+                !document.body.classList.contains("sweet-mode");
+
+            applyTheme(isSweet);
+
+            localStorage.setItem(
+                THEME_STORAGE_KEY,
+                isSweet ? "sweet" : "bitter"
+            );
+        });
+    }
+
+    initTheme();
+})();
 
 
 document.addEventListener("DOMContentLoaded", function () {
