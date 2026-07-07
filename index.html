@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParserSweet - Pick Your Flavor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Themes Configurations --- */
+        :root {
+            /* Default: Bitter Cocoa / Dark Mode */
+            --bg-dark: #1a111e;
+            --card-bg: #251a2b;
+            --text-bright: #f5effa;
+            --text-muted: #a393b0;
+            --dropzone-bg: rgba(0, 0, 0, 0.15);
+            --card-hover-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.05);
+            --title-gradient: linear-gradient(to right, #fff, #a393b0);
+            
+            /* Candy Accents */
+            --flavor-strawberry: #ff4757;
+            --flavor-mint: #2ed573;
+            --flavor-blueberry: #1e90ff;
+            --flavor-grape: #9b5de5;
+            --flavor-lemon: #ffa502;
+            --flavor-peach: #ff6b81;
+        }
+
+        /* Sweet Theme override classes triggered by JavaScript */
+        body.sweet-mode {
+            --bg-dark: #fbf0f3;
+            --card-bg: #ffffff;
+            --text-bright: #2d1e2f;
+            --text-muted: #7c6a85;
+            --dropzone-bg: #fff5f7;
+            --card-hover-bg: #fffbfe;
+            --border-color: rgba(155, 93, 229, 0.1);
+            --title-gradient: linear-gradient(to right, #2d1e2f, #63436a);
+            background-image: 
+                radial-gradient(at 20% 20%, rgba(255, 118, 117, 0.15) 0px, transparent 50%),
+                radial-gradient(at 80% 80%, rgba(116, 185, 255, 0.15) 0px, transparent 50%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 20% 20%, rgba(155, 93, 229, 0.15) 0px, transparent 50%),
+                radial-gradient(at 80% 80%, rgba(255, 71, 87, 0.1) 0px, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            color: var(--text-bright);
+            transition: background 0.5s ease, color 0.3s ease;
+        }
+
+        /* --- Top Utility Bar --- */
+        .utility-bar {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .flavor-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 8px 18px;
+            border-radius: 20px;
+            color: var(--text-bright);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .flavor-toggle:hover {
+            transform: translateY(-2px);
+            border-color: var(--flavor-grape);
+        }
+
+        /* --- Main Box Window --- */
+        .candy-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 32px;
+            padding: 50px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+            transition: background 0.5s ease, border-color 0.5s ease;
+        }
+
+        /* --- Brand Header --- */
+        .brand-header {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .brand-title {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+            background: var(--title-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: background 0.5s ease;
+        }
+        .brand-title span {
+            background: linear-gradient(135deg, var(--flavor-strawberry), var(--flavor-grape));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-tagline {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        /* --- The Candy Jar Dropzone --- */
+        .candy-jar-drop {
+            border: 2px dashed var(--border-color);
+            background: var(--dropzone-bg);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 45px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .candy-jar-drop:hover {
+            border-color: var(--flavor-grape);
+            transform: scale(1.01);
+        }
+        .jar-icon {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+        .candy-jar-drop p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+        .candy-jar-drop strong {
+            color: var(--text-bright);
+        }
+
+        /* --- Organized Flavor Grid Section --- */
+        .section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* --- Jelly Gummy Buttons --- */
+        .flavor-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 18px;
+            text-align: left;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .flavor-card h3 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-bright);
+        }
+
+        .flavor-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .flavor-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: transparent;
+            transition: background 0.3s;
+        }
+
+        /* Interactive Dynamic Highlight triggers on hover */
+        .flavor-card:hover {
+            transform: scale(1.02) translateY(-3px);
+            background: var(--card-hover-bg);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .card-strawberry:hover::before { background: var(--flavor-strawberry); }
+        .card-strawberry:hover h3 { color: var(--flavor-strawberry); }
+        
+        .card-blueberry:hover::before { background: var(--flavor-blueberry); }
+        .card-blueberry:hover h3 { color: var(--flavor-blueberry); }
+
+        .card-mint:hover::before { background: var(--flavor-mint); }
+        .card-mint:hover h3 { color: var(--flavor-mint); }
+
+        .card-grape:hover::before { background: var(--flavor-grape); }
+        .card-grape:hover h3 { color: var(--flavor-grape); }
+
+        .card-lemon:hover::before { background: var(--flavor-lemon); }
+        .card-lemon:hover h3 { color: var(--flavor-lemon); }
+
+        .card-peach:hover::before { background: var(--flavor-peach); }
+        .card-peach:hover h3 { color: var(--flavor-peach); }
+
+        /* --- Footer --- */
+        footer {
+            margin-top: 40px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            .candy-box { padding: 30px 20px; }
+            .brand-title { font-size: 2.2rem; }
+            .menu-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Utility Switcher Row -->
+    <div class="utility-bar">
+        <button class="flavor-toggle" id="themeBtn">
+            <span id="themeIcon">🧁</span> <span id="themeText">Switch to Sweet Mode</span>
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="candy-box">
+        
+        <!-- Header -->
+        <header class="brand-header">
+            <h1 class="brand-title">Parser<span>Sweet</span></h1>
+            <!-- <p class="brand-tagline">Zero bitter data. Just sweet, readable insights.</p> -->
+			<p class="brand-tagline">"Parsing made sweet and simple. <br> Your data has stories to tell — let ParserSweet help you read them."</p>
+		
+		</header>
+
+        <!-- Dropzone Jar Layout Feature -->
+        <!-- <div class="candy-jar-drop">
+            <span class="jar-icon">🫙</span>
+            <p>Drop your file into the <strong>Data Jar</strong> to automatically detect flavor</p>
+        </div>
+ -->
+        <!-- Divided Grid Layout -->
+        <div class="section-title">Pick Your Flavor</div>
+        
+        <div class="menu-grid">
+            <div class="flavor-card card-strawberry">
+                <h3>JSON <span>🍓</span></h3>
+                <p>Format and clean nested objects seamlessly.</p>
+            </div>
+
+            <div class="flavor-card card-blueberry">
+                <h3>CBA MTI <span>🫐</span></h3>
+                <p>Deconstruct financial message transaction indicators.</p>
+            </div>
+
+            <div class="flavor-card card-mint">
+                <h3>Receipt Parser <span>🌿</span></h3>
+                <p>Extract clean transactional nodes instantly.</p>
+            </div>
+
+            <div class="flavor-card card-grape">
+                <h3>Base64 Viewer <span>🍇</span></h3>
+                <p>Unwrap encoded receipt imagery strings.</p>
+            </div>
+
+            <div class="flavor-card card-lemon">
+                <h3>DE22 for EFTEX <span>🍋</span></h3>
+                <p>Parse complex point of service data elements.</p>
+            </div>
+
+            <div class="flavor-card card-peach">
+                <h3>Paymark Host <span>🍑</span></h3>
+                <p>Decode host terminal log structures smoothly.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        Version 4.1 &copy; 2025–2026 hji
+    </footer>
+
+    <!-- Logic to animate and switch states safely -->
+    <script>
+        const themeBtn = document.getElementById('themeBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeText = document.getElementById('themeText');
+        
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('sweet-mode');
+            
+            if (document.body.classList.contains('sweet-mode')) {
+                themeIcon.textContent = '🍫';
+                themeText.textContent = 'Switch to Bitter Mode';
+            } else {
+                themeIcon.textContent = '🧁';
+                themeText.textContent = 'Switch to Sweet Mode';
+            }
+        });
+    </script>
+</body>
+</html>
