@@ -257,7 +257,8 @@ body {
                         font-family: Consolas, monospace;
                         background: var(--tile-bg);
                         color: var(--text-bright);
-                        transition: background 0.2s ease, color 0.2s ease;
+                        transition: background 0.2s ease, color 0.2s ease;        
+                        box-sizing: border-box;                
                 }
 
                 textarea:focus {
@@ -268,6 +269,7 @@ body {
                 /* spacing around the main textarea */
                 .input-wrap {
                         margin: 18px 0 22px;
+                        box-sizing: border-box;
                         /* space before (18px) and after (22px) */
                 }
 
@@ -275,7 +277,7 @@ body {
                 textarea#logInput {
                         margin: 0;
                         display: block;
-                        width: 100%;
+                        width: 100%;                        
                 }
 
                 .filterBox {
