@@ -590,7 +590,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Header row
         const headerRow = document.createElement('tr');
         const byteHeader = document.createElement('th');
-        byteHeader.textContent = 'Byte';
+        byteHeader.textContent = '';
         headerRow.appendChild(byteHeader);
         for (let col = 0; col < 8; col++) {
             const th = document.createElement('th');
@@ -1243,73 +1243,110 @@ function tvr(scheme) {
     const tvrLabels = getTvrLabels(selectedScheme);;
     console.log("TVR :", tvrLabels); // Add this line
 
-    // Build the 3-column HTML (unchanged)
-    let html = `<div style="font-family:monospace;font-size:11px;text-align:left;">`;
-    html += `<div style="margin-bottom:8px;"><strong>TVR:</strong> ${raw} &nbsp; <small style="color:#666">(${bins.join(' ')})</small></div>`;
-    html += `<div style="display:flex;gap:10px;align-items:flex-start;">`;
+    // Build HTML Output using decoder card format
+    let html = '<div class="decoder-container tvr-layout">';
 
     const makeByteCard = (index) => {
         const byteHex = bytes[index];
         const byteBin = bins[index];
         const setBits = (byteBin.match(/1/g) || []).length;
-        let card = `<div style="border:1px solid #ddd;padding:8px;border-radius:6px;min-width:180px;background:#fff;text-align:left;">`;
-        card += `<div style="margin-bottom:6px; border-bottom:1px solid #eee;padding-bottom:4px;"><strong>Byte ${index + 1}</strong> &nbsp; <small style="color:#666">(${byteHex}) - ${setBits} bit(s) set</small></div>`;
-        card += `<div style="display:flex;flex-direction:column;gap:3px;">`;
+
+        let card = `
+        <div class="decoder-column">
+            <div class="decoder-card">
+                <div class="decoder-card-header">
+                    <strong>Byte ${index + 1}</strong>
+                    <small>(${byteHex}) - ${setBits} bit(s) set</small>
+                </div>
+    `;
         for (let k = 0; k < 8; k++) {
+
             const bitNumber = 8 - k;
             const bitVal = byteBin[k];
-            const checked = bitVal === "1" ? "checked" : "";
-            const desc = (tvrLabels[index] && tvrLabels[index][k]) ? tvrLabels[index][k] : "";
 
-            const styledDesc = bitVal === "1"
-                ? `<strong style="color:#000">${desc}</strong>`   // Bold and black for enabled
-                : `<span style="color:#999">${desc}</span>`;      // Grey for disabled
+            const desc =
+                (tvrLabels[index] && tvrLabels[index][k])
+                    ? tvrLabels[index][k]
+                    : 'RFU';
 
-            card += `<div style="display:flex;gap:8px;align-items:center;">`;
-            //card += `<div style="width:56px;color:#333;text-align:left">Bit ${bitNumber}</div>`;
-            card += `<div style="width:28px;flex:0 0 28px;"><input type="checkbox" disabled ${checked} /></div>`;
-            //card += `<div style="flex:1;color:#222;font-size:11px;text-align:left">${desc}</div>`;
-            card += `<div style="flex:1;font-size:11px;text-align:left">${styledDesc}</div>`;
-            card += `</div>`;
+            card += `
+        <div class="decoder-row ${bitVal === '1' ? 'active' : 'inactive'}">
+
+            <input
+                type="checkbox"
+                disabled
+                ${bitVal === '1' ? 'checked' : ''}
+            />
+
+            <div class="decoder-bit">
+                Bit ${bitNumber}:
+            </div>
+
+            <span>${desc}</span>
+
+        </div>
+    `;
         }
-        card += `</div></div>`;
+
+        card += `
+            </div>
+        </div>
+    `;
+
         return card;
     };
 
+    for (let i = 0; i < 5; i++) {
+        html += makeByteCard(i);
+    }
 
-    html += `<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;">${makeByteCard(0)}${makeByteCard(1)}</div>`;
-    html += `<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;">${makeByteCard(2)}${makeByteCard(3)}</div>`;
-    let byte5ColumnHtml = `<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;">`;
-
-    byte5ColumnHtml += makeByteCard(4);
-
-    // Only add RRP flags if PayPass
     if (selectedScheme === "paypass") {
         const rrpBits = bins[4].slice(5, 8);
 
         let rrpMeaning = "";
         switch (rrpBits) {
-            case "000": rrpMeaning = "RRP not supported"; break;
-            case "001": rrpMeaning = "RRP supported but not performed"; break;
-            case "010": rrpMeaning = "RRP performed successfully"; break;
-            case "011": rrpMeaning = "RRP failed"; break;
-            default: rrpMeaning = "Reserved for future or proprietary use"; break;
+            case "000":
+                rrpMeaning = "RRP not supported";
+                break;
+            case "001":
+                rrpMeaning = "RRP supported but not performed";
+                break;
+            case "010":
+                rrpMeaning = "RRP performed successfully";
+                break;
+            case "011":
+                rrpMeaning = "RRP failed";
+                break;
+            default:
+                rrpMeaning = "Reserved for future or proprietary use";
+                break;
         }
 
-        byte5ColumnHtml += `
-    <div style="margin-top:12px;padding:8px;background:#f8f8f8;border:1px solid #ddd;border-radius:6px;">
-      <strong>Relay Resistance Protocol flags (Byte 5 bits 3–1):</strong> ${rrpBits}<br>
-      <strong>Meaning:</strong> ${rrpMeaning}
-    </div>
-  `;
+        html += `
+        <div class="decoder-column">
+            <div class="decoder-card">
+                <div class="decoder-card-header">
+                    <strong>PayPass RRP</strong>
+                    <small>Byte 5 Bits 3-1</small>
+                </div>
+
+                <div class="decoder-row active">
+                    <span>
+                        <strong>Flags:</strong> ${rrpBits}
+                    </span>
+                </div>
+
+                <div class="decoder-row active">
+                    <span>
+                        <strong>Meaning:</strong> ${rrpMeaning}
+                    </span>
+                </div>
+            </div>
+        </div>
+    `;
     }
 
-    byte5ColumnHtml += `</div>`; // close column div
-
-    // Add to main html
-    html += byte5ColumnHtml;
-
-    html += `</div></div>`;
+    html += '</div>';
 
     // Place the result inside the TVR tab content (so switching tabs hides it)
     const modal = document.getElementById('modal-emv');
@@ -1476,9 +1513,9 @@ function cvml() {
 
     // --- 4. Build HTML Output with CSS Classes ---
     let html = `
-    <div class="cvm-card" style="border-left-color:#00AFDA; text-align: left; font-size: 12px;">
-        <div class="card-line" style="display: grid; grid-template-columns: 70px 1fr;"><span class="label">Amount X:</span> $${(amountX / 100).toFixed(2)} (Hex: ${bytes.slice(0, 4).join("")})</div>
-        <div class="card-line" style="display: grid; grid-template-columns: 70px 1fr;"><span class="label">Amount Y:</span> $${(amountY / 100).toFixed(2)} (Hex: ${bytes.slice(4, 8).join("")})</div>
+    <div class="cvm-card cvm-card-primary">
+        <div class="card-line" style="display: grid; grid-template-columns: 90px 1fr;"><span class="label">Amount X: </span> $${(amountX / 100).toFixed(2)} (Hex: ${bytes.slice(0, 4).join("")})</div>
+        <div class="card-line" style="display: grid; grid-template-columns: 90px 1fr;"><span class="label">Amount Y: </span> $${(amountY / 100).toFixed(2)} (Hex: ${bytes.slice(4, 8).join("")})</div>
         <span class="card-quote">Amounts are typically in the minor currency unit (e.g., cents), so the displayed value is divided by 100.</span>
     </div>
     <div class="columns" id="cvml-rules-columns">
@@ -1520,9 +1557,9 @@ function cvml() {
         // ----------------------------------
 
         const ruleHtml = `
-<div class="cvm-card ${bg}" style="border-left-color: #B3F1FF; text-align: left; font-size: 12px;">
+<div class="cvm-card cvm-card-secondary ${bg}">
  <strong>CVM Rule ${ruleNum}: (${methodByte}${condByte}) </strong>
- <hr style="margin: 4px 0; border-top: 1px solid #9b9b9bff;">
+ <hr style="margin: 4px 0; width: 150px; white-space: nowrap; border-top: 1px solid #9b9b9bff;">
 <div class="card-line"><span class="label">CVM Method:</span> ${cvmMeaning} (${cvmCode})</div>
 <div class="card-line"><span class="label">If unsuccessful:</span> ${failBehaviorLine}</div>
 <div class="card-line"><span class="label">Condition:</span> ${condMeaning} (${condByte})</div> 
@@ -1724,7 +1761,7 @@ function cvmr() {
 
     // --- 6. Build HTML Output (Revised to use card-line format) ---
     outputElement.innerHTML = `
-    <div class="cvm-card" style="border-left-color:#00AFDA; text-align: left; font-size: 12px; padding: 10px;">
+    <div class="cvm-card cvm-result-card" style="font-size: 12px; text-align: left; padding: 10px;">
         <div class="card-line" style="display: grid; grid-template-columns: 120px 1fr;">
             <span class="label">CVM Method:</span> 
             <span>${CVM} (${Byte1}) </span>
@@ -1783,28 +1820,31 @@ if (tsiInput) {
 }
 
 function tsi() {
-    // 1. Get the input value
     const inputElement = document.getElementById("tsi-input");
-    const raw = (inputElement ? inputElement.value : "").trim().replace(/\s+/g, '').toUpperCase();
+    const raw = (inputElement ? inputElement.value : "")
+        .trim()
+        .replace(/\s+/g, '')
+        .toUpperCase();
 
-    // Define the output element ID
     let outputElement = document.getElementById("tsi-output");
 
-    // --- Modal/Tab Handling and Output Setup ---
     const modal = document.getElementById('modal-emv');
 
     if (modal) {
         const modalContent = modal.querySelector('.modal-content') || modal;
         const tab = document.getElementById('tab4');
+
         if (tab) {
             outputElement = tab.querySelector('#tsi-output') || outputElement;
         }
+
         if (!outputElement && tab) {
             outputElement = document.createElement('div');
             outputElement.id = 'tsi-output';
             outputElement.style.marginTop = '15px';
             tab.appendChild(outputElement);
         }
+
         modalContent.style.boxSizing = 'border-box';
         modalContent.style.width = '85vw';
         modalContent.style.maxWidth = '85vw';
@@ -1815,82 +1855,84 @@ function tsi() {
 
     if (!outputElement) return;
 
-    // 2. Validation
+    // Validation
     if (raw.length !== 4 || !/^[0-9A-F]{4}$/.test(raw)) {
-        if (raw.length === 0) {
-            outputElement.innerHTML = "";
-        } else {
-            outputElement.innerHTML = "<p style='color:red;'>Invalid TSI format. Must be a 4-digit hex string (2 bytes).</p>";
-        }
-        // Keep modal visible, just clear/change content
+        outputElement.innerHTML =
+            raw.length === 0
+                ? ""
+                : "<p style='color:red;'>Invalid TSI format. Must be a 4-digit hex string (2 bytes).</p>";
         return;
     }
 
-    // 3. Data Processing
+    // Convert bytes
     const bytes = [];
     const bins = [];
+
     for (let i = 0; i < 4; i += 2) {
         const byteHex = raw.slice(i, i + 2);
-        const byteBin = parseInt(byteHex, 16).toString(2).padStart(8, '0');
+        const byteBin = parseInt(byteHex, 16)
+            .toString(2)
+            .padStart(8, '0');
+
         bytes.push(byteHex);
         bins.push(byteBin);
     }
 
-    // --- 4. Build HTML Output using the requested TVR card format ---
-    let html = `<div style="font-family:monospace;font-size:11px;text-align:left;">`;
-    //html += `<div style="margin-bottom:12px;"><strong>TSI:</strong> ${raw} &nbsp; <small style="color:#FFF">(${bins.join(' ')})</small></div>`;
-    // We only have 2 bytes, so we can display them side-by-side without wrapping
-    html += `<div style="display:flex;gap:15px;align-items:flex-start;">`;
-
     const makeByteCard = (index) => {
-        // We use the key names "Byte 1" and "Byte 2" to retrieve the label array
         const byteKey = `Byte ${index + 1}`;
         const byteLabels = TSI_BITS[byteKey];
 
         const byteHex = bytes[index];
         const byteBin = bins[index];
-        const isSetCount = (byteBin.match(/1/g) || []).length;
+        const setBits = (byteBin.match(/1/g) || []).length;
 
-        let card = `<div style="border:1px solid #ddd;padding:8px;border-radius:6px;min-width:180px;background:#fff;text-align:left;">`;
-        card += `<div style="margin-bottom:6px;border-bottom:1px solid #eee;padding-bottom:4px;">
-                    <strong>${byteKey}</strong> 
-                    <small style="color:#666">(${byteHex}) - ${isSetCount} bit(s) set</small>
-                 </div>`;
-        card += `<div style="display:flex;flex-direction:column;gap:3px;">`;
+        let card = `
+            <div class="decoder-column">
+                <div class="decoder-card">
+
+                    
+<div class="decoder-card-header">
+    <strong>${byteKey}</strong>
+    <small>(${byteHex}) - ${setBits} bit(s) set</small>
+</div>
+
+        `;
 
         for (let k = 0; k < 8; k++) {
-            const bitNumber = 8 - k;
             const bitVal = byteBin[k];
-            const checked = bitVal === "1" ? "checked" : "";
-            const color = bitVal === "1" ? 'color:#000; font-weight:bold;' : 'color:#555;'; // Highlight set bits
-            const desc = (byteLabels && byteLabels[k]) ? byteLabels[k] : "RFU / Undefined";
 
-            // Reworked line: Changed align-items: flex-start to align-items: center
-            card += `<div style="display:flex;gap:8px;align-items:center;">`;
-            card += `<div style="width:28px;flex:0 0 28px;">
-                        <input type="checkbox" disabled ${checked} style="cursor:default;" />
-                     </div>`;
-            card += `<div style="flex:1;${color}font-size:11px;text-align:left">${desc}</div>`;
-            card += `</div>`;
+            const desc =
+                (byteLabels && byteLabels[k])
+                    ? byteLabels[k]
+                    : "RFU / Undefined";
+
+            card += `
+                <div class="decoder-row ${bitVal === "1" ? "active" : "inactive"}">
+                    <input
+                        type="checkbox"
+                        disabled
+                        ${bitVal === "1" ? "checked" : ""}
+                    />
+                    <span>${desc}</span>
+                </div>
+            `;
         }
-        card += `</div></div>`;
+
+        card += `
+                </div>
+            </div>
+        `;
+
         return card;
     };
 
-    // Column 1: Byte 1
-    html += `<div style="flex:1;display:flex;flex-direction:column;gap:15px;">
-                ${makeByteCard(0)}
-             </div>`;
+    const html = `
+        <div class="decoder-container">
+            ${makeByteCard(0)}
+            ${makeByteCard(1)}
+        </div>
+    `;
 
-    // Column 2: Byte 2
-    html += `<div style="flex:1;display:flex;flex-direction:column;gap:15px;">
-                ${makeByteCard(1)}
-             </div>`;
-
-    html += `</div>`; // Close the flex container
-    html += `</div>`; // Close the main monospace div
-
-    // 5. Final Output
     outputElement.innerHTML = html;
 }
 
@@ -2078,9 +2120,57 @@ function aip() {
 
 
     // --- 5. Build HTML Output using the requested card format ---
-    let html = `<div style="font-family:monospace;font-size:11px;text-align:left;">`;
-    //html += `<div style="margin-bottom:12px;"><strong>AIP (Tag 82):</strong> ${raw} &nbsp; <small style="color:#666">Scheme: ${scheme.toUpperCase()}</small></div>`;
-    html += `<div style="display:flex;gap:15px;align-items:flex-start;">`;
+    /*     let html = `<div style="font-family:monospace;font-size:11px;text-align:left;">`;
+        //html += `<div style="margin-bottom:12px;"><strong>AIP (Tag 82):</strong> ${raw} &nbsp; <small style="color:#666">Scheme: ${scheme.toUpperCase()}</small></div>`;
+        html += `<div style="display:flex;gap:15px;align-items:flex-start;">`;
+    
+        const makeByteCard = (index) => {
+            const byteKey = `Byte ${index + 1}`;
+            const byteLabels = allLabels[index];
+    
+            const byteHex = bytes[index];
+            const byteBin = bins[index];
+            const isSetCount = (byteBin.match(/1/g) || []).length;
+    
+            let card = `<div style="border:1px solid #ddd;padding:8px;border-radius:6px;min-width:180px;background:#fff;text-align:left;">`;
+            card += `<div style="margin-bottom:6px;border-bottom:1px solid #eee;padding-bottom:4px;">
+                        <strong>${byteKey}</strong> 
+                        <small style="color:#666">(${byteHex}) - ${isSetCount} bit(s) set</small>
+                       </div>`;
+            card += `<div style="display:flex;flex-direction:column;gap:3px;">`;
+    
+            for (let k = 0; k < 8; k++) {
+                const bitVal = byteBin[k];
+                const checked = bitVal === "1" ? "checked" : "";
+                const color = bitVal === "1" ? 'color:#000; font-weight:bold;' : 'color:#555;'; // Highlight set bits
+                const desc = (byteLabels && byteLabels[k]) ? byteLabels[k] : "RFU / Undefined";
+    
+                card += `<div style="display:flex;gap:8px;align-items:center;">`;
+                card += `<div style="width:28px;flex:0 0 28px;">
+                            <input type="checkbox" disabled ${checked} style="cursor:default;" />
+                           </div>`;
+                card += `<div style="flex:1;${color}font-size:11px;text-align:left">${desc}</div>`;
+                card += `</div>`;
+            }
+            card += `</div></div>`;
+            return card;
+        };
+    
+        // Column 1: Byte 1
+        html += `<div style="flex:1;display:flex;flex-direction:column;gap:15px;">
+                    ${makeByteCard(0)}
+                  </div>`;
+    
+        // Column 2: Byte 2
+        html += `<div style="flex:1;display:flex;flex-direction:column;gap:15px;">
+                    ${makeByteCard(1)}
+                  </div>`;
+    
+        html += `</div>`; // Close the flex container
+        html += `</div>`; // Close the main monospace div */
+
+    // --- 5. Build HTML Output using decoder card format ---
+    let html = '<div class="decoder-container">';
 
     const makeByteCard = (index) => {
         const byteKey = `Byte ${index + 1}`;
@@ -2088,44 +2178,50 @@ function aip() {
 
         const byteHex = bytes[index];
         const byteBin = bins[index];
-        const isSetCount = (byteBin.match(/1/g) || []).length;
+        const setBits = (byteBin.match(/1/g) || []).length;
 
-        let card = `<div style="border:1px solid #ddd;padding:8px;border-radius:6px;min-width:180px;background:#fff;text-align:left;">`;
-        card += `<div style="margin-bottom:6px;border-bottom:1px solid #eee;padding-bottom:4px;">
-                    <strong>${byteKey}</strong> 
-                    <small style="color:#666">(${byteHex}) - ${isSetCount} bit(s) set</small>
-                   </div>`;
-        card += `<div style="display:flex;flex-direction:column;gap:3px;">`;
+        let card = `
+        <div class="decoder-column">
+            <div class="decoder-card">
+
+            <div class="decoder-card-header">
+                <strong>${byteKey}</strong>
+                <small>(${byteHex}) - ${setBits} bit(s) set</small>
+            </div>
+    `;
 
         for (let k = 0; k < 8; k++) {
             const bitVal = byteBin[k];
-            const checked = bitVal === "1" ? "checked" : "";
-            const color = bitVal === "1" ? 'color:#000; font-weight:bold;' : 'color:#555;'; // Highlight set bits
-            const desc = (byteLabels && byteLabels[k]) ? byteLabels[k] : "RFU / Undefined";
 
-            card += `<div style="display:flex;gap:8px;align-items:center;">`;
-            card += `<div style="width:28px;flex:0 0 28px;">
-                        <input type="checkbox" disabled ${checked} style="cursor:default;" />
-                       </div>`;
-            card += `<div style="flex:1;${color}font-size:11px;text-align:left">${desc}</div>`;
-            card += `</div>`;
+            const desc =
+                (byteLabels && byteLabels[k])
+                    ? byteLabels[k]
+                    : 'RFU / Undefined';
+
+            card += `
+            <div class="decoder-row ${bitVal === '1' ? 'active' : 'inactive'}">
+                <input
+                    type="checkbox"
+                    disabled
+                    ${bitVal === '1' ? 'checked' : ''}
+                />
+                <span>${desc}</span>
+            </div>
+        `;
         }
-        card += `</div></div>`;
+
+        card += `
+            </div>
+        </div>
+    `;
+
         return card;
     };
 
-    // Column 1: Byte 1
-    html += `<div style="flex:1;display:flex;flex-direction:column;gap:15px;">
-                ${makeByteCard(0)}
-              </div>`;
+    html += makeByteCard(0);
+    html += makeByteCard(1);
 
-    // Column 2: Byte 2
-    html += `<div style="flex:1;display:flex;flex-direction:column;gap:15px;">
-                ${makeByteCard(1)}
-              </div>`;
-
-    html += `</div>`; // Close the flex container
-    html += `</div>`; // Close the main monospace div
+    html += '</div>';
 
     // 6. Final Output and Modal Display
     outputElement.innerHTML = html;
@@ -2232,10 +2328,8 @@ function auc() {
         bins.push(byteBin);
     }
 
-    // --- 5. Build HTML Output using the requested card format ---
-    let html = `<div style="font-family:monospace;font-size:11px;text-align:left;">`;
-    //html += `<div style="margin-bottom:12px;"><strong>AUC (Tag 9F07):</strong> ${raw}</div>`;
-    html += `<div style="display:flex;gap:15px;align-items:flex-start;">`;
+    // --- 5. Build HTML Output using decoder card format ---
+    let html = '<div class="decoder-container">';
 
     const makeByteCard = (index) => {
         const byteKey = `Byte ${index + 1}`;
@@ -2243,44 +2337,49 @@ function auc() {
 
         const byteHex = bytes[index];
         const byteBin = bins[index];
-        const isSetCount = (byteBin.match(/1/g) || []).length;
+        const setBits = (byteBin.match(/1/g) || []).length;
 
-        let card = `<div style="border:1px solid #ddd;padding:8px;border-radius:6px;min-width:180px;background:#fff;text-align:left;">`;
-        card += `<div style="margin-bottom:6px;border-bottom:1px solid #eee;padding-bottom:4px;">
-                    <strong>${byteKey}</strong> 
-                    <small style="color:#666">(${byteHex}) - ${isSetCount} bit(s) set</small>
-                   </div>`;
-        card += `<div style="display:flex;flex-direction:column;gap:3px;">`;
+        let card = `
+        <div class="decoder-column">
+            <div class="decoder-card">
+                <div class="decoder-card-header">
+                    <strong>${byteKey}</strong>
+                    <small>(${byteHex}) - ${setBits} bit(s) set</small>
+                </div>
+    `;
 
         for (let k = 0; k < 8; k++) {
             const bitVal = byteBin[k];
-            const checked = bitVal === "1" ? "checked" : "";
-            const color = bitVal === "1" ? 'color:#000; font-weight:bold;' : 'color:#555;'; // Highlight set bits
-            const desc = (byteLabels && byteLabels[k]) ? byteLabels[k] : "RFU / Undefined";
 
-            card += `<div style="display:flex;gap:8px;align-items:center;">`;
-            card += `<div style="width:28px;flex:0 0 28px;">
-                        <input type="checkbox" disabled ${checked} style="cursor:default;" />
-                       </div>`;
-            card += `<div style="flex:1;${color}font-size:11px;text-align:left">${desc}</div>`;
-            card += `</div>`;
+            const desc =
+                (byteLabels && byteLabels[k])
+                    ? byteLabels[k]
+                    : 'RFU / Undefined';
+
+            card += `
+            <div class="decoder-row ${bitVal === '1' ? 'active' : 'inactive'}">
+                <input
+                    type="checkbox"
+                    disabled
+                    ${bitVal === '1' ? 'checked' : ''}
+                />
+                <span>${desc}</span>
+            </div>
+        `;
         }
-        card += `</div></div>`;
+
+        card += `
+            </div>
+        </div>
+    `;
+
         return card;
     };
 
-    // Column 1: Byte 1
-    html += `<div style="flex:1;display:flex;flex-direction:column;gap:15px;">
-                ${makeByteCard(0)}
-              </div>`;
+    html += makeByteCard(0);
+    html += makeByteCard(1);
 
-    // Column 2: Byte 2
-    html += `<div style="flex:1;display:flex;flex-direction:column;gap:15px;">
-                ${makeByteCard(1)}
-              </div>`;
-
-    html += `</div>`; // Close the flex container
-    html += `</div>`; // Close the main monospace div
+    html += '</div>';
 
     // 6. Final Output
     outputElement.innerHTML = html;
@@ -2392,16 +2491,8 @@ function tcc() {
         bins.push(byteBin);
     }
 
-    // --- 5. Build HTML Output using the requested card format ---
-    let html = `<div style="font-family:monospace;font-size:11px;text-align:left;">`;
-    //html += `<div style="margin-bottom:12px;"><strong>Terminal Capabilities (Tag 9F33):</strong> ${raw}</div>`;
-
-    // Main Flex Container: Use gap and wrap
-    html += `<div style="display:flex;gap:15px;align-items:flex-start;flex-wrap: wrap;">`;
-
-    // Define the card width style for three perfectly equal columns with 15px gaps
-    // flex: 0 0 calc(33.3333% - 10px) ensures 3 equal columns with 15px gap
-    const cardWidthStyle = `flex: 0 0 calc(33.3333% - 10px);`;
+    // --- 5. Build HTML Output using decoder card format ---
+    let html = '<div class="decoder-container">';
 
     const makeByteCard = (index) => {
         const byteKey = `Byte ${index + 1}`;
@@ -2409,40 +2500,50 @@ function tcc() {
 
         const byteHex = bytes[index];
         const byteBin = bins[index];
-        const isSetCount = (byteBin.match(/1/g) || []).length;
+        const setBits = (byteBin.match(/1/g) || []).length;
 
-        //let card = `<div style="border:1px solid #ddd;padding:8px;border-radius:6px;min-width:180px;background:#fff;text-align:left;">`;
-        let card = `<div style="border:1px solid #ddd;padding:8px;border-radius:6px;background:#fff;text-align:left;">`;
-        card += `<div style="margin-bottom:6px;border-bottom:1px solid #eee;padding-bottom:4px;">
-                    <strong>${byteKey}</strong> 
-                    <small style="color:#666">(${byteHex}) - ${isSetCount} bit(s) set</small>
-                   </div>`;
-        card += `<div style="display:flex;flex-direction:column;gap:3px;">`;
+        let card = `
+        <div class="decoder-column">
+            <div class="decoder-card">
+                <div class="decoder-card-header">
+                    <strong>${byteKey}</strong>
+                    <small>(${byteHex}) - ${setBits} bit(s) set</small>
+                </div>
+    `;
 
         for (let k = 0; k < 8; k++) {
             const bitVal = byteBin[k];
-            const checked = bitVal === "1" ? "checked" : "";
-            const color = bitVal === "1" ? 'color:#000; font-weight:bold;' : 'color:#555;'; // Highlight set bits
-            const desc = (byteLabels && byteLabels[k]) ? byteLabels[k] : "RFU / Undefined";
 
-            card += `<div style="display:flex;gap:8px;align-items:center;">`;
-            card += `<div style="width:28px;flex:0 0 28px;">
-                        <input type="checkbox" disabled ${checked} style="cursor:default;" />
-                       </div>`;
-            card += `<div style="flex:1;${color}font-size:11px;text-align:left">${desc}</div>`;
-            card += `</div>`;
+            const desc =
+                (byteLabels && byteLabels[k])
+                    ? byteLabels[k]
+                    : 'RFU / Undefined';
+
+            card += `
+            <div class="decoder-row ${bitVal === '1' ? 'active' : 'inactive'}">
+                <input
+                    type="checkbox"
+                    disabled
+                    ${bitVal === '1' ? 'checked' : ''}
+                />
+                <span>${desc}</span>
+            </div>
+        `;
         }
-        card += `</div></div>`;
+
+        card += `
+            </div>
+        </div>
+    `;
+
         return card;
     };
 
-    // Output all three bytes using the strict width wrapper
-    html += `<div style="${cardWidthStyle} display:flex; flex-direction:column; gap:15px;">${makeByteCard(0)}</div>`;
-    html += `<div style="${cardWidthStyle} display:flex; flex-direction:column; gap:15px;">${makeByteCard(1)}</div>`;
-    html += `<div style="${cardWidthStyle} display:flex; flex-direction:column; gap:15px;">${makeByteCard(2)}</div>`;
+    html += makeByteCard(0);
+    html += makeByteCard(1);
+    html += makeByteCard(2);
 
-    html += `</div>`; // Close the flex container
-    html += `</div>`; // Close the main monospace div
+    html += '</div>';
 
     // 6. Final Output
     outputElement.innerHTML = html;
@@ -2547,56 +2648,60 @@ function atcc() {
         bins.push(byteBin);
     }
 
-    // --- 5. Build HTML Output using the requested card format ---
-    let html = `<div style="font-family:monospace;font-size:11px;text-align:left;">`;
-    //html += `<div style="margin-bottom:12px;"><strong>Additional Terminal Capabilities (Tag 9F40):</strong> ${raw}</div>`;
+    // --- 5. Build HTML Output using decoder card format ---
+    let html = '<div class="decoder-container">';
 
-    // Main Flex Container: Use a strong flex-start alignment and gap
-    html += `<div style="display:flex;gap:15px;align-items:flex-start;flex-wrap: wrap; justify-content: flex-start;">`;
-    const cardWidthStyle = `flex: 0 0 calc(33.3333% - 10px);`;
-
-    // Define the card HTML generation function (ensure no min-width here)
     const makeByteCard = (index) => {
         const byteKey = `Byte ${index + 1}`;
         const byteLabels = ATCC_LABELS[byteKey];
 
         const byteHex = bytes[index];
         const byteBin = bins[index];
-        const isSetCount = (byteBin.match(/1/g) || []).length;
+        const setBits = (byteBin.match(/1/g) || []).length;
 
-        // Card start: Ensure the inner card HTML doesn't define width
-        let card = `<div style="border:1px solid #ddd;padding:8px;border-radius:6px;background:#fff;text-align:left;">`;
-        card += `<div style="margin-bottom:6px;border-bottom:1px solid #eee;padding-bottom:4px;">
-                    <strong>${byteKey}</strong> 
-                    <small style="color:#666">(${byteHex}) - ${isSetCount} bit(s) set</small>
-                   </div>`;
-        card += `<div style="display:flex;flex-direction:column;gap:3px;">`;
+        let card = `
+        <div class="decoder-column">
+            <div class="decoder-card">
+                <div class="decoder-card-header">
+                    <strong>${byteKey}</strong>
+                    <small>(${byteHex}) - ${setBits} bit(s) set</small>
+                </div>
+    `;
 
         for (let k = 0; k < 8; k++) {
             const bitVal = byteBin[k];
-            const checked = bitVal === "1" ? "checked" : "";
-            const color = bitVal === "1" ? 'color:#000; font-weight:bold;' : 'color:#555;';
-            const desc = (byteLabels && byteLabels[k]) ? byteLabels[k] : "RFU / Undefined";
 
-            card += `<div style="display:flex;gap:8px;align-items:center;">`;
-            card += `<div style="width:28px;flex:0 0 28px;">
-                        <input type="checkbox" disabled ${checked} style="cursor:default;" />
-                       </div>`;
-            card += `<div style="flex:1;${color}font-size:11px;text-align:left">${desc}</div>`;
-            card += `</div>`;
+            const desc =
+                (byteLabels && byteLabels[k])
+                    ? byteLabels[k]
+                    : 'RFU / Undefined';
+
+            card += `
+            <div class="decoder-row ${bitVal === '1' ? 'active' : 'inactive'}">
+                <input
+                    type="checkbox"
+                    disabled
+                    ${bitVal === '1' ? 'checked' : ''}
+                />
+                <span>${desc}</span>
+            </div>
+        `;
         }
-        card += `</div></div>`;
+
+        card += `
+            </div>
+        </div>
+    `;
+
         return card;
     };
 
-    // Output all five bytes in containers sized for three columns
+    // ATCC contains 5 bytes
     for (let i = 0; i < 5; i++) {
-        // We apply the strict width and flex properties to the wrapper for each card
-        html += `<div style="${cardWidthStyle} display:flex; flex-direction:column; gap:15px;">${makeByteCard(i)}</div>`;
+        html += makeByteCard(i);
     }
 
-    html += `</div>`; // Close the main flex container
-    html += `</div>`; // Close the monospace div
+    html += '</div>';
 
     // 6. Final Output
     outputElement.innerHTML = html;
@@ -2763,38 +2868,46 @@ function decodeDe55() {
     const parsedTags = tlv(raw);
     ///const parsedTags = parseTLV(raw);
 
-    // 5. Build HTML Output (Table Format is best for TLV)
-    let html = `<div style="font-family:monospace;font-size:11px;text-align:left;">`;
-    //html += `<div style="margin-bottom:12px;"><strong>ICC Data (DE55):</strong> ${raw}</div>`;
 
-    html += `<table style="width:50%; border-collapse: collapse; margin-top: 10px;">`;
-    html += `<thead><tr style="background-color: #f2f2f2;">
-               <th style="padding: 8px; border: 1px solid #ddd; text-align: center; width: 10%;">Tag</th>
-               <th style="padding: 8px; border: 1px solid #ddd; text-align: center; width: 40%;">Value</th>
-               <th style="padding: 8px; border: 1px solid #ddd; text-align: center; width: 10%;">Length (Byte)</th>
-               <th style="padding: 8px; border: 1px solid #ddd; text-align: center; width: 40%;">Tag Name</th> 
-               </tr></thead>`;
-    html += `<tbody>`;
+
+    let html = `
+
+<div class="de55-container">
+    <table class="de55-table">
+       <thead>
+           <tr>
+                <th style="width:8%">Tag</th>
+                <th style="width:35%">Value</th>
+                <th style="width:8%">Length</th>
+                <th style="width:49%">Tag Name</th>
+            </tr>
+        </thead>
+        <tbody>
+`;
 
     parsedTags.forEach(item => {
 
         const tagKey = `_${item.tag}`;
-
-        const valueDisplay = item.value.length > 100 ? item.value.substring(0, 100) + '...' : item.value;
-        const color = item.tag.includes('Error') ? 'style="color:red; font-weight:bold;"' : '';
         const tagName = tagsList[tagKey] || 'Unknown Tag';
 
-        html += `<tr ${color}>
-                   <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; ">${item.tag}</td>
-                   <td style="padding: 8px; border: 1px solid #ddd; word-break: break-all;">${valueDisplay}</td>
-                   <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${item.length}</td>
-                   <td style="padding: 8px; border: 1px solid #ddd; ">${tagName}</td> 
-         </tr>`;
+        html += `
+        <tr class="${item.tag.includes('Error') ? 'de55-error' : ''}">
+            <td class="de55-tag">${item.tag}</td>
+            <td class="de55-value">${item.value}</td>
+            <td class="de55-length">${item.length}</td>
+            <td class="de55-name">${tagName}</td>
+        </tr>
+    `;
     });
 
-    html += `</tbody></table></div>`;
+    html += `
 
-    // 6. Final Output
+</tbody>
+</table>
+
+</div>
+`;
+
     outputElement.innerHTML = html;
 }
 
@@ -2882,58 +2995,57 @@ function ctq() {
         bins.push(bin);
     }
 
-    // Card layout builder
+    // --- Build HTML Output using decoder card format ---
     const makeByteCard = (index) => {
         const byteName = `Byte ${index + 1}`;
         const labels = CTQ_LABELS[byteName];
+
         const byteHex = bytes[index];
         const byteBin = bins[index];
         const setBits = (byteBin.match(/1/g) || []).length;
-        console.log(`CTQ ${byteName}:`, byteHex, byteBin, setBits);
-        let html = `
-      <div style="border:1px solid #ddd; padding:8px; border-radius:6px;
-                  min-width:180px; background:#fff; text-align:left;">
-        <div style="margin-bottom:6px; border-bottom:1px solid #eee; padding-bottom:4px;">
-          <strong>${byteName}</strong>
-          <small style="color:#666">(${byteHex}) - ${setBits} bit(s) set</small>
-        </div>
 
-        <div style="display:flex; flex-direction:column; gap:3px;">
+        let card = `
+        <div class="decoder-column">
+            <div class="decoder-card">
+                <div class="decoder-card-header">
+                    <strong>${byteName}</strong>
+                    <small>(${byteHex}) - ${setBits} bit(s) set</small>
+                </div>
     `;
 
         for (let b = 0; b < 8; b++) {
             const bitSet = byteBin[b] === "1";
             const desc = labels?.[b] || "RFU";
 
-            html += `
-        <div style="display:flex; gap:8px; align-items:center;">
-          <div style="width:28px; flex:0 0 28px;">
-            <input type="checkbox" disabled ${bitSet ? "checked" : ""} />
-          </div>
-          <div style="flex:1; font-size:11px; ${bitSet ? "font-weight:bold;color:#000;" : "color:#555;"}">
-            ${desc}
-          </div>
-        </div>
-      `;
+            card += `
+            <div class="decoder-row ${bitSet ? "active" : "inactive"}">
+                <input
+                    type="checkbox"
+                    disabled
+                    ${bitSet ? "checked" : ""}
+                />
+                <span>${desc}</span>
+            </div>
+        `;
         }
 
-        html += `</div></div>`;
-        return html;
+        card += `
+            </div>
+        </div>
+    `;
+
+        return card;
     };
 
     // Final UI layout
-    outputElement.innerHTML = `
-    <div style="font-family:monospace; font-size:11px; text-align:left;">
-      <div style="display:flex; gap:15px; align-items:flex-start;">
-        <div style="flex:1; display:flex; flex-direction:column; gap:15px;">
-          ${makeByteCard(0)}
-        </div>
-        <div style="flex:1; display:flex; flex-direction:column; gap:15px;">
-          ${makeByteCard(1)}
-        </div>
-      </div>
-    </div>
-  `;
+    let html = '<div class="decoder-container">';
+
+    html += makeByteCard(0);
+    html += makeByteCard(1);
+
+    html += '</div>';
+
+    outputElement.innerHTML = html;
 }
 
 // TTQ decode function
@@ -3034,63 +3146,58 @@ function ttq() {
         bins.push(bin);
     }
 
+    // --- Build HTML Output using decoder card format ---
     const makeByteCard = (index) => {
         const byteName = `Byte ${index + 1}`;
         const labels = TTQ_LABELS[byteName];
+
         const byteHex = bytes[index];
         const byteBin = bins[index];
         const setBits = (byteBin.match(/1/g) || []).length;
 
-        let html = `
-      <div style="border:1px solid #ddd; padding:8px; border-radius:6px;
-                  min-width:240px; background:#fff;">
-        <div style="margin-bottom:6px; border-bottom:1px solid #eee; padding-bottom:4px;">
-          <strong>${byteName}</strong>
-          <small style="color:#666"> (${byteHex}) - ${setBits} bit(s) set </small>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:3px;">
+        let card = `
+        <div class="decoder-column">
+            <div class="decoder-card">
+                <div class="decoder-card-header">
+                    <strong>${byteName}</strong>
+                    <small>(${byteHex}) - ${setBits} bit(s) set</small>
+                </div>
     `;
 
         for (let b = 0; b < 8; b++) {
             const bitSet = byteBin[b] === "1";
-            const desc = labels[b];
+            const desc = labels?.[b] || "RFU";
 
-            html += `
-        <div style="display:flex; gap:8px; align-items:center;">
-          <div style="width:28px;">
-            <input type="checkbox" disabled ${bitSet ? "checked" : ""} />
-          </div>
-          <div style="flex:1; font-size:11px; ${bitSet ? "font-weight:bold;color:#000;" : "color:#555;"}">
-            ${desc}
-          </div>
-        </div>
-      `;
+            card += `
+            <div class="decoder-row ${bitSet ? "active" : "inactive"}">
+                <input
+                    type="checkbox"
+                    disabled
+                    ${bitSet ? "checked" : ""}
+                />
+                <span>${desc}</span>
+            </div>
+        `;
         }
 
-        html += `</div></div>`;
-        return html;
+        card += `
+            </div>
+        </div>
+    `;
+
+        return card;
     };
 
-    // NEW TWO-COLUMN LAYOUT
-    outputElement.innerHTML = `
-    <div style="font-family:monospace; font-size:11px; text-align:left;">
-      <div style="display:flex; gap:20px; align-items:flex-start;">
-        
-        <!-- COLUMN 1 -->
-        <div style="flex:1; display:flex; flex-direction:column; gap:15px;">
-          ${makeByteCard(0)}  <!-- Byte 1 -->
-          ${makeByteCard(1)}  <!-- Byte 2 -->
-        </div>
+    // Build output
+    let html = '<div class="decoder-container">';
 
-        <!-- COLUMN 2 -->
-        <div style="flex:1; display:flex; flex-direction:column; gap:15px;">
-          ${makeByteCard(2)}  <!-- Byte 3 -->
-          ${makeByteCard(3)}  <!-- Byte 4 -->
-        </div>
+    for (let i = 0; i < 4; i++) {
+        html += makeByteCard(i);
+    }
 
-      </div>
-    </div>
-  `;
+    html += '</div>';
+
+    outputElement.innerHTML = html;
 }
 
 // DE22 Parser code
@@ -4495,11 +4602,11 @@ function parseTLV(hex) {
             }
             tooltipHtml += `</div></div>`;
 
-            valueDisplay = `<span class="cvm-tooltip" style="cursor:pointer;position:relative;" 
-      onmouseover="showCVMTooltip(this, event)" 
-      onmouseout="hideCVMTooltip(this)">
+            valueDisplay = `<span class="tooltip-border" style="cursor:pointer;position:relative;" 
+      onmouseover="showTooltip(this, event)" 
+      onmouseout="hideTooltip(this)">
       ${value}
-      <span class="cvm-tooltip-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;">${tooltipHtml}</span>
+      <span class="tooltip-border-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;">${tooltipHtml}</span>
       </span>`;
         }
 
@@ -4517,10 +4624,10 @@ function parseTLV(hex) {
         ${details}
       </div>`;
 
-            valueDisplay = `<span class="cvm-tooltip" style="cursor:pointer;position:relative;"
-        onmouseover="showCVMTooltip(this, event)" onmouseout="hideCVMTooltip(this, event)">
+            valueDisplay = `<span class="tooltip-border" style="cursor:pointer;position:relative;"
+        onmouseover="showTooltip(this, event)" onmouseout="hideTooltip(this, event)">
         ${value}
-        <span class="cvm-tooltip-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;color:black;">${tooltipHtml}</span>
+        <span class="tooltip-border-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;color:black;">${tooltipHtml}</span>
       </span>`;
         }
 
@@ -4558,10 +4665,10 @@ function parseTLV(hex) {
   </div>`;
 
             // keep visible value unchanged; show parsed info in tooltip
-            valueDisplay = `<span class="cvm-tooltip" style="cursor:pointer;position:relative;"
-    onmouseover="showCVMTooltip(this, event)" onmouseout="hideCVMTooltip(this, event)">
+            valueDisplay = `<span class="tooltip-border" style="cursor:pointer;position:relative;"
+    onmouseover="showTooltip(this, event)" onmouseout="hideTooltip(this, event)">
     ${value}
-    <span class="cvm-tooltip-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;color:black;">${tooltipHtml}</span>
+    <span class="tooltip-border-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;color:black;">${tooltipHtml}</span>
   </span>`;
         }
 
@@ -4579,10 +4686,10 @@ function parseTLV(hex) {
         ${details}
       </div>`;
 
-            valueDisplay = `<span class="cvm-tooltip" style="cursor:pointer;position:relative;"
-        onmouseover="showCVMTooltip(this, event)" onmouseout="hideCVMTooltip(this, event)">
+            valueDisplay = `<span class="tooltip-border" style="cursor:pointer;position:relative;"
+        onmouseover="showTooltip(this, event)" onmouseout="hideTooltip(this, event)">
         ${value}
-        <span class="cvm-tooltip-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;color:black;">${tooltipHtml}</span>
+        <span class="tooltip-border-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;color:black;">${tooltipHtml}</span>
       </span>`;
         }
 
@@ -4602,11 +4709,11 @@ function parseTLV(hex) {
           <div><strong style="display:inline-block;width:140px;">Result of CVM</strong> ${b3}</div>
         </div>
       `;
-            valueDisplay = `<span class="cvm-tooltip" style="cursor:pointer;position:relative;" 
-      onmouseover="showCVMTooltip(this, event)" 
-      onmouseout="hideCVMTooltip(this)">
+            valueDisplay = `<span class="tooltip-border" style="cursor:pointer;position:relative;" 
+      onmouseover="showTooltip(this, event)" 
+      onmouseout="hideTooltip(this)">
       ${value}
-      <span class="cvm-tooltip-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;">${tooltipHtml}</span>
+      <span class="tooltip-border-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;">${tooltipHtml}</span>
       </span>`;
         }
 
@@ -4632,11 +4739,11 @@ function parseTLV(hex) {
         ${detailsHtml}
       </div>`;
 
-            valueDisplay = `<span class="cvm-tooltip" style="cursor:pointer;position:relative;"
-        onmouseover="showCVMTooltip(this, event)"
-        onmouseout="hideCVMTooltip(this)">
+            valueDisplay = `<span class="tooltip-border" style="cursor:pointer;position:relative;"
+        onmouseover="showTooltip(this, event)"
+        onmouseout="hideTooltip(this)">
         ${value}
-        <span class="cvm-tooltip-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;color:black;">${tooltipHtml}</span>
+        <span class="tooltip-border-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;color:black;">${tooltipHtml}</span>
       </span>`;
         }
 
@@ -4668,11 +4775,11 @@ function parseTLV(hex) {
         (${byte}) ${description}
       </div>`;
 
-            valueDisplay = `<span class="cvm-tooltip" style="cursor:pointer;position:relative;"
-        onmouseover="showCVMTooltip(this, event)"
-        onmouseout="hideCVMTooltip(this)">
+            valueDisplay = `<span class="tooltip-border" style="cursor:pointer;position:relative;"
+        onmouseover="showTooltip(this, event)"
+        onmouseout="hideTooltip(this)">
         ${value}
-        <span class="cvm-tooltip-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;color:black;">${tooltipHtml}</span>
+        <span class="tooltip-border-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;color:black;">${tooltipHtml}</span>
       </span>`;
         }
 
@@ -4762,11 +4869,11 @@ function parseTLV(hex) {
 
             tooltipHtml += `</div></div>`; // end columns and tooltip container
 
-            valueDisplay = `<span class="cvm-tooltip" style="cursor:pointer;position:relative;"
-        onmouseover="showCVMTooltip(this, event)"
-        onmouseout="hideCVMTooltip(this)">
+            valueDisplay = `<span class="tooltip-border" style="cursor:pointer;position:relative;"
+        onmouseover="showTooltip(this, event)"
+        onmouseout="hideTooltip(this)">
           ${value}
-          <span class="cvm-tooltip-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:10px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:normal;max-width:600px;color:black;">${tooltipHtml}</span>
+          <span class="tooltip-border-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:10px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:normal;max-width:600px;color:black;">${tooltipHtml}</span>
       </span>`;
         }
 
@@ -4910,11 +5017,11 @@ function parseTLV(hex) {
 
             tooltipHtml += `</div></div>`; // end flex container and outer
 
-            valueDisplay = `<span class="cvm-tooltip" style="cursor:pointer;position:relative;"
-        onmouseover="showCVMTooltip(this, event)"
-        onmouseout="hideCVMTooltip(this)">
+            valueDisplay = `<span class="tooltip-border" style="cursor:pointer;position:relative;"
+        onmouseover="showTooltip(this, event)"
+        onmouseout="hideTooltip(this)">
         ${value}
-        <span class="cvm-tooltip-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:10px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:normal;max-width:760px;color:black;">${tooltipHtml}</span>
+        <span class="tooltip-border-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:10px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:normal;max-width:760px;color:black;">${tooltipHtml}</span>
       </span>`;
         }
 
@@ -4971,11 +5078,11 @@ function parseTLV(hex) {
             }
             tooltipHtml += `</div></div>`;
 
-            valueDisplay = `<span class="cvm-tooltip" style="cursor:pointer;position:relative;" 
-      onmouseover="showCVMTooltip(this, event)" 
-      onmouseout="hideCVMTooltip(this)">
+            valueDisplay = `<span class="tooltip-border" style="cursor:pointer;position:relative;" 
+      onmouseover="showTooltip(this, event)" 
+      onmouseout="hideTooltip(this)">
       ${value}
-      <span class="cvm-tooltip-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;">${tooltipHtml}</span>
+      <span class="tooltip-border-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;">${tooltipHtml}</span>
       </span>`;
         }
 
@@ -5032,11 +5139,11 @@ function parseTLV(hex) {
             }
             tooltipHtml += `</div>`;
 
-            valueDisplay = `<span class="cvm-tooltip" style="cursor:pointer;position:relative;" 
-      onmouseover="showCVMTooltip(this, event)" 
-      onmouseout="hideCVMTooltip(this)">
+            valueDisplay = `<span class="tooltip-border" style="cursor:pointer;position:relative;" 
+      onmouseover="showTooltip(this, event)" 
+      onmouseout="hideTooltip(this)">
       ${value}
-      <span class="cvm-tooltip-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;">${tooltipHtml}</span>
+      <span class="tooltip-border-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;">${tooltipHtml}</span>
       </span>`;
         }
 
@@ -5104,11 +5211,11 @@ function parseTLV(hex) {
             }
             tooltipHtml += `</div>`;
 
-            valueDisplay = `<span class="cvm-tooltip" style="cursor:pointer;position:relative;" 
-        onmouseover="showCVMTooltip(this, event)" 
-        onmouseout="hideCVMTooltip(this)">
+            valueDisplay = `<span class="tooltip-border" style="cursor:pointer;position:relative;" 
+        onmouseover="showTooltip(this, event)" 
+        onmouseout="hideTooltip(this)">
         ${value}
-        <span class="cvm-tooltip-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;">${tooltipHtml}</span>
+        <span class="tooltip-border-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;">${tooltipHtml}</span>
       </span>`;
         }
 
@@ -5216,11 +5323,11 @@ function parseTLV(hex) {
             tooltipHtml += `</div></div>`;
 
 
-            valueDisplay = `<span class="cvm-tooltip" style="cursor:pointer;position:relative;" 
-  onmouseover="showCVMTooltip(this, event)" 
-  onmouseout="hideCVMTooltip(this)">
+            valueDisplay = `<span class="tooltip-border" style="cursor:pointer;position:relative;" 
+  onmouseover="showTooltip(this, event)" 
+  onmouseout="hideTooltip(this)">
   ${value}
-  <span class="cvm-tooltip-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;">${tooltipHtml}</span>
+  <span class="tooltip-border-box" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #ccc;padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;">${tooltipHtml}</span>
   </span>`;
         }
         table += `<tr><td>${tagDisplay}</td><td>${lengthDisplay}</td><td>${valueDisplay}</td></tr>`;
@@ -6396,8 +6503,8 @@ function validateAndSaveJSON() {
 }
 
 // Add these helper functions at the end of your script.js
-function showCVMTooltip(el, evt) {
-    const box = el.querySelector('.cvm-tooltip-box');
+function showTooltip(el, evt) {
+    const box = el.querySelector('.tooltip-border-box');
     if (box) {
         box.style.display = 'block';
         // Position the tooltip near the mouse
@@ -6406,8 +6513,8 @@ function showCVMTooltip(el, evt) {
     }
 }
 
-function hideCVMTooltip(el) {
-    const box = el.querySelector('.cvm-tooltip-box');
+function hideTooltip(el) {
+    const box = el.querySelector('.tooltip-border-box');
     if (box) box.style.display = 'none';
 }
 
@@ -6534,5 +6641,5 @@ function openCBAReceiptParser() {
 // `<script type="module">` in `index.html`.
 window.openReceiptViewer = openReceiptViewer;
 window.openCBAReceiptParser = openCBAReceiptParser;
-window.showCVMTooltip = showCVMTooltip;
-window.hideCVMTooltip = hideCVMTooltip;
+window.showTooltip = showTooltip;
+window.hideTooltip = hideTooltip;

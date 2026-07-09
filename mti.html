@@ -33,16 +33,12 @@
                         --table-border-strong: rgba(76, 58, 99, 0.28);
 
 
-
-
                         /* --table-row-odd: rgba(219, 214, 224, 1);  
 --table-row-even: rgba(76, 58, 99, 0.18);
  */
 
                         --table-row-odd: rgba(227, 222, 232, 1);
                         --table-row-even: rgba(241, 238, 244, 1);
-
-
 
 
 
@@ -112,6 +108,7 @@ body.sweet-mode {
                         --table-row-odd: #f8fafc;
 
                         --table-text: var(--text-bright);
+                        --table-header-text: #1e293b;
 
 
                 }
@@ -482,7 +479,7 @@ body.sweet-mode {
                         max-width: 100%;
                         margin-bottom: 80px;
                         overflow-x: auto;
-                        /* border: 1px solid var(--table-border); */
+                         border: 1px solid var(--table-border); 
                         background: var(--table-bg);
                         margin: 24px 0 80px;
                         border-radius: 14px;
@@ -512,15 +509,13 @@ body.sweet-mode {
                         border: 1px solid var(--table-border);
                         border-bottom: 2px solid var(--table-border-strong);
 
-
-
                 }
 
 
 
-                #json-output th,
-                #requestTable th,
-                #responseTable th {
+                body:not(.sweet-mode) #json-output th,
+                body:not(.sweet-mode) #requestTable th,
+                body:not(.sweet-mode) #responseTable th {
                         background: var(--table-head-bg);
                         /* color: var(--table-text);
                         font-weight: 700; */
@@ -528,6 +523,29 @@ body.sweet-mode {
                         color: var(--table-header-text);
                         font-weight: 700;
                 }
+
+                body.sweet-mode #json-output th,
+                body.sweet-mode #requestTable th,
+                body.sweet-mode #responseTable th {
+                        background: var(--table-head-bg);
+                        /* color: var(--table-text);
+                        font-weight: 700; */
+                        padding: 8px;
+                        color: var(--table-header-text);
+                        font-weight: 700;
+                }
+
+                
+/*                 #json-output th,
+                #requestTable th,
+                #responseTable th {
+                        background: var(--table-head-bg);
+                        /* color: var(--table-text);
+                        font-weight: 700; 
+                        padding: 8px;
+                        color: var(--table-text);
+                        font-weight: 700;
+                } */
 
 
                 #json-output td,
@@ -758,6 +776,11 @@ body.sweet-mode {
                         60% {
                                 transform: translateY(-3px);
                         }
+                }
+
+                .tooltip-border {
+                        cursor: pointer;
+                        border-bottom: 1px dotted #333;
                 }
         </style>
 </head>

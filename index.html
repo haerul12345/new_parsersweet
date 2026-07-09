@@ -167,6 +167,7 @@
     - Create json.html, mti.html, receipt_parser.html, base64_receipt_viewer.html as separate pages
     - Rework UI to be more colorful and fun
     - Add theme switcher to toggle between dark and light mode
+    - Rework Side Tabs and the features for each tab
     - Some minor bug fixes and improvements
     
 -->
@@ -202,6 +203,58 @@
             --flavor-grape: #9b5de5;
             --flavor-lemon: #ffa502;
             --flavor-peach: #ff6b81;
+
+
+            /* New UI variables */
+            /*             --tab-bg: var(--flavor-blueberry);
+            --tab-active-bg: var(--flavor-grape); */
+
+
+            --tab-bg: #735d8c;
+            --tab-active-bg: #9b5de5;
+
+            --tab-text: var(--text-bright);
+
+            --modal-bg: var(--card-bg);
+            --modal-text: var(--text-bright);
+
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --input-border: var(--border-color);
+
+
+            --button-bg: var(--tab-active-bg);
+            --button-text: var(--text-bright);
+
+            --table-header-bg: rgba(255, 255, 255, 0.08);
+            --table-row-bg: transparent;
+
+            --card-surface: #4a395b;
+            --card-quote-bg: rgba(255, 255, 255, 0.05);
+
+            --highlight-bg: #176c81;
+
+
+            /* Bitter */
+            --result-label: #cbb8db;
+            --result-text: #f5effa;
+            --result-bg: rgba(255, 255, 255, 0.04);
+
+            --card-alt-bg: #2e2338;
+
+
+            --table-row-bg: #cfc9d4;
+            --table-row-alt-bg: #c8c2cd;
+
+
+            --de55-header-bg: #58406f;
+            --de55-header-text: #ffffff;
+
+            --de55-row-odd: #d4d0d8;
+            --de55-row-even: #ccc7d3;
+
+            --de55-row-text: #2d1e2f;
+            --de55-border: #b9b1c3;
+
         }
 
         /* Sweet Theme override classes triggered by JavaScript */
@@ -217,6 +270,63 @@
             background-image:
                 radial-gradient(at 20% 20%, rgba(255, 118, 117, 0.15) 0px, transparent 50%),
                 radial-gradient(at 80% 80%, rgba(116, 185, 255, 0.15) 0px, transparent 50%);
+
+
+
+            /* 
+            --tab-bg: #d8c4f0;
+            --tab-active-bg: #9b5de5; */
+
+            --tab-bg: #c6b0e8;
+            --tab-active-bg: #9b5de5;
+
+
+            --tab-text: #ffffff;
+
+            --modal-bg: #ffffff;
+            --modal-text: #2d1e2f;
+
+            --input-bg: #fff5f7;
+            --input-border: rgba(155, 93, 229, 0.15);
+
+
+            --button-bg: #9b5de5;
+            --button-text: #ffffff;
+
+            --table-header-bg: #f8f5fc;
+            --table-row-bg: #ffffff;
+
+            --card-surface: #ffffff;
+            --card-quote-bg: #f7f2fb;
+
+            --highlight-bg: #9b5de5;
+
+
+            /* Sweet */
+            --result-label: #63436a;
+            --result-text: #2d1e2f;
+            --result-bg: #fff5f7;
+
+            --card-alt-bg: #f0f0f0;
+
+
+            --table-row-bg: #ece7ef;
+            --table-row-alt-bg: #e5dfe9;
+
+
+
+            --de55-header-bg: #d7e5ea;
+            --de55-header-text: #2d1e2f;
+
+            --de55-row-odd: #ececec;
+            --de55-row-even: #e7e7e7;
+
+            --de55-row-text: #2d1e2f;
+            --de55-border: #d1d1d1;
+
+
+
+
         }
 
         * {
@@ -238,7 +348,7 @@
             align-items: center;
             padding: 40px 20px;
             color: var(--text-bright);
-            transition: background 0.5s ease, color 0.3s ease;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         /* --- Top Utility Bar --- */
@@ -281,6 +391,27 @@
         body.sweet-mode .flavor-toggle {
             background: linear-gradient(135deg, #F9A8D4, #C084FC);
             color: white;
+        }
+
+        /* Disable hover effect */
+        .flavor-card.no-hover {
+            cursor: default;
+        }
+
+        .flavor-card.no-hover:hover {
+            transform: none;
+            background: rgba(255, 255, 255, 0.01);
+            box-shadow: none;
+        }
+
+        /* Disable colored left border */
+        .flavor-card.no-hover:hover::before {
+            background: transparent !important;
+        }
+
+        /* Keep title color unchanged */
+        .flavor-card.no-hover:hover h3 {
+            color: var(--text-bright) !important;
         }
 
         /* --- Main Box Window --- */
@@ -404,6 +535,7 @@
 
         .menu-grid {
             display: grid;
+            /* 3 column */
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
         }
@@ -527,6 +659,969 @@
             }
         }
 
+        .tab-container {
+            font-family: Arial, sans-serif;
+            background: transparent;
+        }
+
+        .tabs {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            border-bottom: 2px solid #ccc;
+            margin-bottom: 10px;
+
+
+            background: var(--tab-bg);
+            color: var(--tab-text);
+
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-bottom: none;
+
+            background: var(--tab-active-bg);
+            color: var(--tab-text);
+            border-color: var(--tab-active-bg);
+
+            margin-right: 5px;
+
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+
+        }
+
+        .tab.active {
+            background: #fff;
+            font-weight: bold;
+            border-top: 2px solid #0078D7;
+            border-left: 2px solid #0078D7;
+            border-right: 2px solid #0078D7;
+        }
+
+        .tab-content {
+            border: none;
+            padding: 15px;
+            background: transparent;
+        }
+
+        .tabs .tab {
+            color: var(--tab-text);
+            background: var(--tab-bg);
+        }
+
+        .tabs .tab.active {
+            background: var(--tab-active-bg);
+            color: var(--tab-text);
+        }
+
+        .side-tabs-container {
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            /* space between tabs */
+            z-index: 1001;
+        }
+
+
+        .side-tab {
+            position: static;
+            margin: 0;
+            top: 50%;
+            right: 0;
+            font-family: 'Segoe UI', sans-serif;
+            width: 40px;
+            height: 125px;
+            transform: translateX(80%) translateY(-50%);
+            background-color: #004F6B;
+            background: var(--tab-active-bg);
+            color: var(--tab-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            border-radius: 8px 0 0 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+
+        .side-tab:hover {
+            transform: translateX(0%) translateY(-50%);
+            background: var(--tab-active-bg);
+        }
+
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            background: var(--modal-bg);
+            color: var(--modal-text);
+            padding: 28px 24px 24px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+
+
+        .modal-content h2 {
+            margin: 0 0 24px;
+            padding-right: 50px;
+            /* avoid overlap with close button */
+            text-align: center;
+        }
+
+
+        /* Add this to your <style> section */
+        #modal-emv .modal-content {
+            box-sizing: border-box;
+            width: 85vw;
+            /* use 90% of the current viewport width */
+            max-width: 85vw;
+            min-width: 360px;
+            /* avoid being too narrow on large monitors */
+            padding: 14px;
+            margin: 0 auto;
+            height: 90vw;
+            /* grow with content */
+            max-height: 90vh;
+            /* keep inside viewport height */
+            overflow: auto;
+            /* allow scrolling when content exceeds max-height */
+            background-color: #fff;
+            background: var(--modal-bg);
+            border-radius: 10px;
+        }
+
+        /* Add this to your <style> section */
+        #modal-bitmap .modal-content {
+            overflow: auto;
+            /* min-width: 350px;
+      min-height: 250px;
+      max-width: 95vw;
+      max-height: 90vh; */
+        }
+
+
+        /*         .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ccc;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 5px;
+        } */
+
+        .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+
+            width: 32px;
+            height: 32px;
+            padding: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--tab-active-bg);
+            color: var(--tab-text);
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+
+            cursor: pointer;
+
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1;
+
+            transition: all 0.2s ease;
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .close-btn:hover {
+            transform: scale(1.08);
+            filter: brightness(1.1);
+        }
+
+        .close-btn:active {
+            transform: scale(0.95);
+        }
+
+        .close-btn:focus-visible {
+            outline: 2px solid var(--text-bright);
+            outline-offset: 2px;
+        }
+
+
+        #hexInput {
+            font-family: monospace;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            resize: vertical;
+            /* Allows user to resize vertically */
+            width: 100%;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            /* Ensures wrapping */
+
+
+            background: var(--input-bg);
+            color: var(--text-bright);
+            border: 1px solid var(--input-border);
+
+
+            margin-top: 10px;
+            margin-bottom: 24px;
+            min-height: 80px;
+
+
+        }
+
+        .bitmap-input-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        #bitmapInput {
+            flex: 1 1 auto;
+            min-width: 0;
+            margin: 0;
+            height: 40px;
+            resize: none;
+
+            background: var(--input-bg);
+            color: var(--text-bright);
+            border: 1px solid var(--input-border);
+
+        }
+
+        .decode-btn {
+            margin: 0;
+            height: 40px;
+            padding: 0 24px;
+            font-size: 16px;
+            border-radius: 20px;
+            background: var(--tab-active-bg);
+            color: var(--tab-text);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 15px;
+            box-sizing: border-box;
+
+            background: var(--input-bg);
+            color: var(--text-bright);
+            border: 1px solid var(--input-border);
+
+        }
+
+        button.convert-btn {
+
+            display: block;
+            margin: 0 auto 24px;
+            padding: 12px 36px;
+
+            font-size: 16px;
+            cursor: pointer;
+
+
+            background: var(--button-bg);
+            color: var(--button-text);
+
+
+            border: none;
+            border-radius: 20px;
+        }
+
+
+        .decode-btn:hover,
+        button.convert-btn:hover {
+            opacity: .9;
+        }
+
+
+        /*         #asciiResult {
+            margin-top: 15px;
+            text-align: left;
+            color: #333;
+            word-break: break-word;
+            font-family: monospace;
+        }
+ */
+
+
+        #asciiResult {
+            margin-top: 20px;
+            text-align: left;
+            background: var(--result-bg);
+
+            color: var(--result-text);
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+
+            word-break: break-word;
+        }
+
+
+        /*         blockquote {
+            margin: 10px 0;
+            padding-left: 15px;
+            border-left: 3px solid #ccc;
+            color: #555;
+            font-style: italic;
+        } */
+
+        blockquote {
+            margin: 10px 0;
+            padding: 15px;
+
+            background: var(--result-bg);
+            color: var(--result-text);
+
+            border-left: 4px solid var(--tab-active-bg);
+            border-radius: 6px;
+
+            font-family: "Courier New", monospace;
+            font-style: italic;
+        }
+
+
+        /* Highlight enabled bits in the bitmap table */
+        #primaryTable td.active,
+        #secondaryTable td.active {
+
+            background: var(--highlight-bg) !important;
+            color: white !important;
+
+            /* font-weight: bold; */
+            font-weight: 700;
+        }
+
+        /* Fixed table layout */
+        #primaryTable,
+        #secondaryTable {
+            table-layout: fixed;
+            color: var(--text-bright);
+
+
+            /*            border-collapse: collapse; */
+            width: 100%;
+
+        }
+
+        /* Base cell styling */
+        #primaryTable th,
+        #primaryTable td,
+        #secondaryTable th,
+        #secondaryTable td {
+            text-align: center;
+            min-width: 50px;
+            max-width: 80px;
+            width: 70px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+
+        #primaryTable th,
+        #secondaryTable th {
+            background: var(--table-header-bg);
+
+            font-weight: 700;
+            letter-spacing: 0.3px;
+
+            border: 1px solid rgba(255, 255, 255, 0.15);
+
+        }
+
+
+        #primaryTable td,
+        #secondaryTable td {
+            background: var(--table-row-bg);
+            border-color: var(--input-border);
+
+            font-weight: 500;
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            padding: 6px 4px;
+
+        }
+
+
+        #primaryTable th:first-child,
+        #primaryTable td:first-child,
+        #secondaryTable th:first-child,
+        #secondaryTable td:first-child {
+            min-width: 50px;
+            max-width: 70px;
+            width: 70px;
+            font-weight: 600;
+        }
+
+        /* SECOND-TO-LAST column */
+        #primaryTable th:nth-last-child(2),
+        #primaryTable td:nth-last-child(2),
+        #secondaryTable th:nth-last-child(2),
+        #secondaryTable td:nth-last-child(2) {
+            min-width: 50px;
+            max-width: 80px;
+            width: 80px;
+            /* change as you need */
+        }
+
+        /* LAST column */
+        #primaryTable th:last-child,
+        #primaryTable td:last-child,
+        #secondaryTable th:last-child,
+        #secondaryTable td:last-child {
+            min-width: 50px;
+            max-width: 50px;
+            width: 50px;
+            /* change as you need */
+        }
+
+        /* Center headings inside the Bitmap Decoder modal */
+        #modal-bitmap h2,
+        #modal-bitmap h3 {
+            text-align: center;
+        }
+
+
+        /* Center table text only inside the Bitmap Decoder modal */
+        #modal-bitmap table,
+        #modal-bitmap th,
+        #modal-bitmap td {
+            text-align: center !important;
+        }
+
+
+        .tabs-container {
+            width: auto;
+            margin: 0 auto;
+        }
+
+        /* ---------- TAB BUTTONS ---------- */
+
+        /*         .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab-buttons button {
+            flex: 0.45;
+            padding: 5px;
+            background: #00AFDA;
+            border: none;
+            border-right: 1px solid #ddd;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.2s;
+            overflow-x: auto;
+        }
+
+        .tab-buttons button:last-child {
+            border-right: none;
+        }
+
+        .tab-buttons button.active {
+            background: #004F6B;          
+        }
+
+        .tab-buttons button:hover {
+            background: #004F6B;
+        } */
+
+        /* TAB CONTAINER */
+        .tab-buttons {
+            display: flex;
+            width: 100%;
+
+            margin-bottom: 15px;
+
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* TAB BUTTON */
+        .tab-buttons button {
+            flex: 1;
+
+            padding: 10px 12px;
+
+            border: none;
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+
+            background: var(--tab-bg);
+            color: #ffffff;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: all 0.2s ease;
+        }
+
+        .tab-buttons button:last-child {
+            border-right: none;
+        }
+
+        /* ACTIVE TAB */
+        .tab-buttons button.active {
+            background: var(--tab-active-bg);
+
+            color: #ffffff;
+
+            font-weight: 700;
+
+            box-shadow:
+                inset 0 -3px 0 rgba(255, 255, 255, 0.25);
+        }
+
+        /* HOVER */
+        .tab-buttons button:hover:not(.active) {
+            filter: brightness(1.08);
+        }
+
+
+        .tool-label {
+            color: var(--text-bright);
+            font-size: 12px;
+        }
+
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: flex-start;
+            margin-top: 12px;
+        }
+
+
+        input[type="radio"] {
+            accent-color: var(--tab-active-bg);
+        }
+
+
+        #modal-emv input[type="radio"] {
+            accent-color: var(--tab-active-bg);
+        }
+
+
+        /* ---------- CONTENT AREA ---------- */
+        .tab-content {
+            display: none;
+            padding: 20px;
+            animation: fade 0.3s ease;
+            height: auto;
+            width: auto;
+        }
+
+
+        .tab-content h4 {
+            color: var(--text-bright);
+            margin-bottom: 18px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-text h4 {
+            font-size: 12px;
+            letter-spacing: 1px;
+            color: #777;
+            margin-bottom: 6px;
+        }
+
+        .tab-text h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        /* 2. Input/Output Containers */
+        .input-section {
+            background: var(--card-surface);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-section label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #cvml-input {
+            width: 90%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        /* 3. CVM Rule Card Styling */
+        .cvm-card {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 6px solid #4677ff;
+            /* Blue border for rules */
+            /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); */
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, .15),
+                inset 0 1px 0 rgba(255, 255, 255, .03);
+
+            font-family: "Courier New", monospace;
+
+            background: var(--card-surface);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-bright);
+            border-left: 6px solid var(--tab-active-bg);
+
+
+        }
+
+
+        /* First card (summary card) */
+        .cvm-card-primary {
+            border-left: 5px solid var(--tab-active-bg);
+            text-align: left;
+        }
+
+        /* CVM rule cards */
+        .cvm-card-secondary {
+            border-left: 5px solid var(--tab-bg);
+            text-align: left;
+        }
+
+
+        .cvm-result-card {
+            border-left: 5px solid var(--tab-active-bg);
+        }
+
+
+
+
+        .decoder-container {
+            display: grid;
+            gap: 15px;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(350px, 1fr));
+
+            align-items: start;
+        }
+
+        .decoder-column {
+            min-width: 0;
+        }
+
+
+        .decoder-card {
+            background: var(--card-surface);
+
+            border: 1px solid var(--input-border);
+            border-left: 5px solid var(--tab-active-bg);
+
+            border-radius: 8px;
+            padding: 8px;
+
+            color: var(--text-bright);
+            text-align: left;
+
+            font-family: monospace;
+            font-size: 11px;
+        }
+
+        .decoder-card-header {
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+
+            border-bottom: 1px solid var(--input-border);
+
+            font-weight: 700;
+            font-size: 11px;
+        }
+
+        .decoder-card-header small {
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: normal;
+        }
+
+        /*         .decoder-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 3px;
+        } */
+
+
+        .decoder-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 3px;
+
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+
+        .decoder-row input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: default;
+            accent-color: var(--tab-active-bg);
+        }
+
+        /*         .decoder-row.active {
+            font-weight: 600;
+        } */
+
+
+        .decoder-row.active {
+            background: rgba(155, 93, 229, 0.12);
+            font-weight: 700;
+        }
+
+        .decoder-row.inactive {
+            opacity: 0.75;
+        }
+
+        .decoder-row.active span {
+            color: var(--text-bright);
+        }
+
+        .decoder-row.inactive span {
+            color: var(--text-muted);
+        }
+
+        .decoder-row span {
+            flex: 1;
+            font-size: 11px;
+            text-align: left;
+        }
+
+
+        .decoder-card-header strong {
+            margin-right: 6px;
+        }
+
+        .decoder-card-header small {
+            display: inline;
+        }
+
+
+        .decoder-container.tvr-layout {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .decoder-container.tvr-layout .decoder-column {
+            min-width: 0;
+        }
+
+        .decoder-bit {
+            flex: 0 0 42px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .decoder-row.active .decoder-bit {
+            color: var(--text-bright);
+            font-weight: 700;
+        }
+
+        .decoder-row.inactive .decoder-bit {
+            color: var(--text-muted);
+        }
+
+
+
+
+        .de55-table {
+            width: 50%;
+            border-collapse: collapse;
+            font-family: monospace;
+            font-size: 11px;
+        }
+
+        .de55-table thead tr {
+            background: var(--de55-header-bg);
+        }
+
+        .de55-table th {
+            color: var(--de55-header-text);
+            padding: 10px 8px;
+            text-align: center;
+            font-weight: 700;
+
+            border: 1px solid var(--de55-border);
+        }
+
+        .de55-table tbody tr:nth-child(odd) td {
+            background: var(--de55-row-odd);
+        }
+
+        .de55-table tbody tr:nth-child(even) td {
+            background: var(--de55-row-even);
+        }
+
+        .de55-table td {
+            color: var(--de55-row-text);
+
+            padding: 8px 10px;
+
+            border: 1px solid var(--de55-border);
+        }
+
+        .de55-table tbody tr:hover td {
+            filter: brightness(0.97);
+        }
+
+        .de55-tag {
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .de55-value {
+            text-align: left;
+            word-break: break-all;
+        }
+
+        .de55-length {
+            text-align: center;
+        }
+
+        .de55-name {
+            text-align: left;
+        }
+
+
+        .bg-grey {
+            /* background: #f0f0f0 !important; */
+            background: var(--card-alt-bg) !important;
+        }
+
+        /* 4. Layout for Rules and Details */
+        .columns {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .column {
+            flex: 1;
+            min-width: 300px;
+            /* Ensures columns don't collapse too much */
+        }
+
+        .card-line {
+            display: grid;
+            /* 1. Adjust the fixed width of the label column */
+            grid-template-columns: 140px 1fr;
+            /* Reduced from 210px to 140px for a shorter gap */
+
+            /* 2. Adjust the gap between the columns */
+            column-gap: 5px;
+            /* Reduced from 10px to 5px for a tighter fit */
+            gap: 18px;
+            margin-bottom: 4px;
+            word-wrap: break-word;
+            font-size: 0.95em;
+        }
+
+        .card-line span.label {
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+
+
+        .card-line .label {
+            width: 120px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+
+        .card-quote {
+            display: block;
+            margin-top: 10px;
+            margin-left: 0;
+            padding: 8px;
+
+            background: var(--card-quote-bg);
+            color: var(--text-bright);
+
+            /* Light purple-grey background for quote */
+            border-radius: 4px;
+            font-style: italic;
+            font-family: Arial, sans-serif;
+            /* Use standard font for quote */
+            font-size: 0.9em;
+        }
+
 
         /* under construction */
         .sweet-notice {
@@ -596,6 +1691,38 @@
                 transform: translateY(-3px);
             }
         }
+
+
+        .shake-warning {
+            color: #ff6b81;
+            display: inline-block;
+            animation: shakeWarn 4s infinite;
+        }
+
+        @keyframes shakeWarn {
+
+            0%,
+            90%,
+            100% {
+                transform: translateX(0);
+            }
+
+            92% {
+                transform: translateX(-2px);
+            }
+
+            94% {
+                transform: translateX(2px);
+            }
+
+            96% {
+                transform: translateX(-2px);
+            }
+
+            98% {
+                transform: translateX(2px);
+            }
+        }
     </style>
 </head>
 
@@ -650,33 +1777,240 @@
                 <p>Unwrap encoded receipt imagery strings.</p>
             </a>
 
-            <div class="flavor-card card-lemon">
+            <div class="flavor-card card-lemon no-hover">
                 <h3>DE22 for EFTEX <span>🍋</span></h3>
                 <p>Parse complex point of service data elements.</p>
             </div>
 
-            <div class="flavor-card card-peach">
+            <div class="flavor-card card-peach no-hover">
                 <h3>Paymark Host <span>🍑</span></h3>
                 <p>Decode host terminal log structures smoothly.</p>
             </div>
         </div>
 
 
-         <div class="sweet-notice">
-        <div class="notice-icon">🍭</div>
-
-        <div class="notice-content">
-            <h3>ParserSweet is still baking</h3>
-
-            <p>
-                We're mixing ingredients, fixing recipes, and adding new flavors.
-                Some features may be half-baked for now, but something delicious is
-                coming soon.
-            </p>
-
-            <span class="notice-badge">Work in Progress</span>
+        <!-- Side Tab on the right -->
+        <div class="side-tabs-container">
+            <div class="side-tab" data-modal="modal-hex">HEX to ASCII</div>
+            <div class="side-tab" data-modal="modal-bitmap">Bitmap Decoder</div>
+            <div class="side-tab" data-modal="modal-emv">EMV Tools</div>
+            <!-- Add more tabs here -->
         </div>
-    </div>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="modal-hex">
+            <div class="modal-content">
+                <button class="close-btn" type="button">&times;</button>
+                <h2>HEX to ASCII Converter</h2>
+                <textarea id="hexInput" placeholder="Enter hex string (e.g. 48656c6c6f)" rows="2"
+                    style="width: 100%; resize: vertical;"></textarea>
+                <button class="convert-btn" id="convertBtn">Convert</button>
+                <div id="asciiResult"></div>
+            </div>
+        </div>
+
+
+        <div class="modal-overlay" id="modal-bitmap">
+            <div class="modal-content">
+                <button class="close-btn" type="button">&times;</button>
+                <h2>Bitmap Decoder</h2>
+                <div class="bitmap-input-row">
+                    <textarea id="bitmapInput" maxlength="32" placeholder="Enter bitmap (e.g. 323A468128E21A81)"
+                        rows="1"></textarea>
+                    <button class="decode-btn" id="decodeBtn">Decode</button>
+                </div>
+
+                <h3 id="primaryTitle" style="display:none;">Primary Bitmap</h3>
+                <table id="primaryTable"></table>
+                <h3 id="secondaryTitle" style="display:none;">Secondary Bitmap</h3>
+                <table id="secondaryTable" style="display:none;"></table>
+                <div id="explanation" style="display:none;"></div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="modal-emv">
+            <div class="modal-content">
+                <button class="close-btn" type="button">&times;</button>
+                <h2>EMV Tools</h2>
+
+                <div class="tabs-container">
+                    <!-- TAB BUTTONS -->
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="tab1">TVR</button>
+                        <button class="tab-btn" data-tab="tab2">CVM List</button>
+                        <button class="tab-btn" data-tab="tab3">CVM Results</button>
+                        <button class="tab-btn" data-tab="tab4">TSI</button>
+                        <button class="tab-btn" data-tab="tab5">AIP</button>
+                        <button class="tab-btn" data-tab="tab6">AUC</button>
+                        <button class="tab-btn" data-tab="tab10">CTQ</button>
+                        <button class="tab-btn" data-tab="tab11">TTQ</button>
+                        <button class="tab-btn" data-tab="tab7">TCC</button>
+                        <button class="tab-btn" data-tab="tab8">ATCC</button>
+                        <button class="tab-btn" data-tab="tab9">DE55</button>
+                    </div>
+
+                    <!-- TAB CONTENT -->
+                    <div id="tab1" class="tab-content active">
+                        <h4>Terminal Verification Result (Tag 95) </h4>
+                        <div class="input-row">
+                            <label for="tvr-input" class="tool-label" font-size:12px;">Enter TVR:</label>
+                            <input id="tvr-input" maxlength="14">
+                        </div>
+                        <!-- Radio Buttons for Scheme -->
+                        <div style="margin-top: 12px; display: flex; gap: 20px; align-items: center;">
+
+                            <label class="tool-label" font-size:12px;">
+                                <input type="radio" name="scheme" value="default" checked>
+                                Default
+                            </label>
+
+                            <label class="tool-label" font-size:12px;">
+                                <input class="tool-label" type="radio" name="scheme" value="paypass">
+                                PayPass
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="tab2" class="tab-content">
+
+                        <h4>Cardholder Verification Method List (Tag 8E) </h4>
+                        <div class="input-row">
+                            <label for="cvml-input" class="tool-label" font-size:12px;">Enter CVM List:</label>
+                            <input id="cvml-input" style="min-width: 40%; max-width: 60%; padding: 4px;">
+                        </div>
+
+                    </div>
+
+                    <div id="tab3" class="tab-content">
+
+                        <h4>Cardholder Verification Method Results (Tag 9F34) </h4>
+                        <div class="input-row">
+                            <label for="cvmr-input" class="tool-label" font-size:12px;">Enter CVM Results:</label>
+                            <input id="cvmr-input" maxlength="6">
+                        </div>
+                    </div>
+
+                    <div id="tab4" class="tab-content">
+
+                        <h4>Transaction Status Information (Tag 9B) </h4>
+                        <div class="input-row">
+                            <label for="tsi-input" class="tool-label" font-size:12px;">Enter TSI:</label>
+                            <input id="tsi-input" maxlength="4">
+                        </div>
+                    </div>
+
+                    <div id="tab5" class="tab-content">
+
+                        <h4>Application Interchange Profile (Tag 82) </h4>
+                        <div class="input-row">
+                            <label for="aip-input" class="tool-label" font-size:12px;">Enter AIP:</label>
+                            <input id="aip-input" maxlength="4">
+                        </div>
+
+                        <div style="margin-top: 12px; display: flex; gap: 20px; align-items: center;">
+
+                            <label class="tool-label" font-size:12px;">
+                                <input type="radio" name="aip-scheme" value="default" checked>
+                                Default
+                            </label>
+
+                            <label class="tool-label" font-size:12px;">
+                                <input type="radio" name="aip-scheme" value="paypass">
+                                PayPass
+                            </label>
+
+                            <label class="tool-label" font-size:12px;">
+                                <input type="radio" name="aip-scheme" value="expresspay">
+                                ExpressPay
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="tab6" class="tab-content">
+
+                        <h4>Application Usage Control (Tag 9F07) </h4>
+                        <div class="input-row">
+                            <label for="auc-input" class="tool-label" font-size:12px;">Enter AUC:</label>
+                            <input id="auc-input" maxlength="4">
+                        </div>
+                    </div>
+
+                    <div id="tab7" class="tab-content">
+
+                        <h4>Terminal Capabilities (Tag 9F33) </h4>
+                        <div class="input-row">
+                            <label for="tcc-input" class="tool-label" font-size:12px;">Enter Terminal
+                                Capabilities:</label>
+                            <input id="tcc-input" maxlength="6">
+                        </div>
+                    </div>
+
+                    <div id="tab8" class="tab-content">
+
+                        <h4>Additional Terminal Capabilities (Tag 9F40) </h4>
+                        <div class="input-row">
+                            <label for="atcc-input" class="tool-label" font-size:12px;">Enter Additional Terminal
+                                Capabilities:</label>
+                            <input id="atcc-input" maxlength="10">
+                        </div>
+                    </div>
+
+                    <div id="tab9" class="tab-content">
+
+                        <h4>ICC Data (DE55) </h4>
+                        <div class="input-row">
+                            <textarea id="de55-input" placeholder="Enter hex string (e.g. 48656c6c6f)"
+                                style="width: 50%; height: 40%; resize: vertical;"></textarea>
+                        </div>
+                    </div>
+
+                    <div id="tab10" class="tab-content">
+
+                        <h4>Card Transaction Qualifiers (Tag 9F6C) </h4>
+                        <div class="input-row">
+                            <label for="ctq-input" class="tool-label" font-size:12px;">Enter CTQ:</label>
+                            <input id="ctq-input" maxlength="4">
+                        </div>
+                    </div>
+
+                    <div id="tab11" class="tab-content">
+
+                        <h4>Terminal Transaction Qualifiers (Tag 9F66) </h4>
+                        <div class="input-row">
+                            <label for="ttq-input" class="tool-label" font-size:12px;">Enter TTQ:</label>
+                            <input id="ttq-input" maxlength="8">
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+            </div>
+        </div>
+
+
+
+
+
+
+
+        <div class="sweet-notice">
+            <div class="notice-icon">🍭</div>
+
+            <div class="notice-content">
+                <h3 class="shake-warning">ParserSweet is still baking</h3>
+
+                <p>
+                    We're mixing ingredients, fixing recipes, and adding new flavors.
+                    Some features may be half-baked for now, but something delicious is
+                    coming soon.
+                </p>
+
+                <span class="notice-badge">Work in Progress</span>
+            </div>
+        </div>
 
 
     </div>
@@ -690,7 +2024,7 @@
     </footer>
 
 
-   
+
 
     <!-- Script -->
     <script type="module" src="script.js"></script>
