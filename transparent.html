@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ParserSweet</title>
+
+        <style>
+                body {
+                        margin: 0;
+                        min-height: 100vh;
+                        background: linear-gradient(135deg, #2563eb, #7c3aed);
+                        font-family: Arial, sans-serif;
+                }
+
+                .header {
+                        text-align: center;
+                        padding: 20px;
+                }
+
+                .logo {
+                        width: 70% !important;
+                        height: auto;
+                        animation:
+                                pulse 3s infinite ease-in-out,
+                                hueRotate 5s linear infinite,
+                                sway 5s ease-in-out infinite;
+
+                }
+
+
+                @keyframes sway {
+
+                        0%,
+                        100% {
+                                transform: rotate(-2deg);
+                        }
+
+                        50% {
+                                transform: rotate(2deg);
+                        }
+                }
+
+                @keyframes pulse {
+
+                        0%,
+                        100% {
+                                filter: drop-shadow(0 0 5px #8b5cf6);
+                        }
+
+                        50% {
+                                filter: drop-shadow(0 0 20px #06b6d4);
+                        }
+                }
+
+
+                @keyframes hueRotate {
+                        from {
+                                filter: hue-rotate(0deg);
+                        }
+
+                        to {
+                                filter: hue-rotate(360deg);
+                        }
+                }
+        </style>
+</head>
+
+<body>
+
+        <div class="header">
+                <img src="assets/parsersweet-logo3.png" altbody class="logo">
