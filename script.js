@@ -5777,17 +5777,41 @@ function createTableFromObject(obj, isNested = false, isBreakdown = false) {
 
         if (key === "055" && value !== null) {
 
-            if (!isBreakdown) {
-                const tlvTable = parseTLV(value.slice(6));
-                const combinedValue = `<div><strong>Raw:</strong> ${value}</div><div style="margin-top:8px; overflow:auto;">${tlvTable}</div>`;
-                table += `<tr><td>${key}</td><td>${combinedValue}</td></tr>`;
-                console.warn(`Error in custom_field`, value);
-            } else {
-                const tlvTable = parseTLV(value);
-                const combinedValue = `<div><strong>Raw:</strong> ${value}</div><div style="margin-top:8px; overflow:auto;">${tlvTable}</div>`;
-                table += `<tr><td>${key}</td><td>${combinedValue}</td></tr>`;
-                console.warn(`Error in breakdown`, value);
-            }
+            /*             if (!isBreakdown) {
+                            const tlvTable = parseTLV(value.slice(6));
+                            const combinedValue = `<div><strong>Raw:</strong> ${value}</div><div style="margin-top:8px; overflow:auto;">${tlvTable}</div>`;
+                            table += `<tr><td>${key}</td><td>${combinedValue}</td></tr>`;
+                            console.warn(`Error in custom_field`, value);
+                        } else {
+                            const tlvTable = parseTLV(value.slice(6));
+                            const combinedValue = `<div><strong>Raw:</strong> ${value}</div><div style="margin-top:8px; overflow:auto;">${tlvTable}</div>`;
+                            table += `<tr><td>${key}</td><td>${combinedValue}</td></tr>`;
+                            console.warn(`Error in breakdown`, value);
+                        } */
+
+
+            const rawLength = value.slice(0, 6); // first 3 bytes
+            const tlvData = value.slice(6);
+            const tlvTable = parseTLV(tlvData);
+
+            const lengthHex = value.slice(0, 6);
+            const lengthBytes = parseInt(lengthHex.match(/../g).map(h => String.fromCharCode(parseInt(h, 16))).join(''), 10);
+
+            const combinedValue = `
+    <div><strong>Raw:</strong> ${value}</div>
+    <div><strong>Length (${lengthHex}):</strong> ${lengthBytes} Bytes</div>
+    <div><strong>TLV Data:</strong> ${tlvData}</div>
+    <div style="margin-top:8px; overflow:auto;">${tlvTable}</div>
+`;
+
+            table += `<tr><td>${key}</td><td>${combinedValue}</td></tr>`;
+
+            console.warn(
+                `Error in ${isBreakdown ? "breakdown" : "custom_field"}`,
+                value
+            );
+
+
         }
         else if (key === "002" && typeof value === "string" && value.length > 2) {
             const length = value.slice(0, 2);
