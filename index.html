@@ -169,8 +169,7 @@
     - Add theme switcher to toggle between dark and light mode
     - Rework Side Tabs and the features for each tab
     - Some minor bug fixes and improvements
-    - Rework DE055 for MTI parser
-    
+    - Rework DE055 for MTI parser    
 -->
 
 <html lang="en">
@@ -189,16 +188,17 @@
     <style>
         /* --- Themes Configurations --- */
         :root {
-            /* Default: Bitter Cocoa / Dark Mode */
-            --font-family: 'Space Grotesk', sans-serif;
-            --bg-dark: #1a111e;
-            --card-bg: #251a2b;
-            --text-bright: #f5effa;
-            --text-muted: #a393b0;
-            --dropzone-bg: rgba(0, 0, 0, 0.15);
-            --card-hover-bg: rgba(255, 255, 255, 0.05);
+            --bg-start: #fff5fa;
+            --bg-end: #eef4ff;
+            --card-bg: #ffffff;
+            --primary: #ff4d8d;
+            --secondary: #a855f7;
+            --accent: #22c55e;
+            --text-bright: #31243f;
+            --text: #222;
             --border-color: rgba(255, 255, 255, 0.05);
-            --title-gradient: linear-gradient(to right, #fff, #a393b0);
+
+            --font-family: 'Space Grotesk', sans-serif;
 
             /* Candy Accents */
             --flavor-strawberry: #ff4757;
@@ -207,130 +207,52 @@
             --flavor-grape: #9b5de5;
             --flavor-lemon: #ffa502;
             --flavor-peach: #ff6b81;
-
-
-            /* New UI variables */
-            /*             --tab-bg: var(--flavor-blueberry);
-            --tab-active-bg: var(--flavor-grape); */
-
-
-            --tab-bg: #735d8c;
-            --tab-active-bg: #9b5de5;
-
-            --tab-text: var(--text-bright);
-
-            --modal-bg: var(--card-bg);
-            --modal-text: var(--text-bright);
-
-            --input-bg: rgba(255, 255, 255, 0.05);
-            --input-border: var(--border-color);
-
-
-            --button-bg: var(--tab-active-bg);
-            --button-text: var(--text-bright);
-
-            --table-header-bg: rgba(255, 255, 255, 0.08);
-            --table-row-bg: transparent;
-
-            --card-surface: #4a395b;
-            --card-quote-bg: rgba(255, 255, 255, 0.05);
-
-            --highlight-bg: #176c81;
-
-
-            /* Bitter */
-            --result-label: #cbb8db;
-            --result-text: #f5effa;
-            --result-bg: rgba(255, 255, 255, 0.04);
-
-            --card-alt-bg: #2e2338;
-
-
-            --table-row-bg: #cfc9d4;
-            --table-row-alt-bg: #c8c2cd;
-
-
-            --de55-header-bg: #58406f;
-            --de55-header-text: #ffffff;
-
-            --de55-row-odd: #d4d0d8;
-            --de55-row-even: #ccc7d3;
-
-            --de55-row-text: #2d1e2f;
-            --de55-border: #b9b1c3;
-
         }
 
-        /* Sweet Theme override classes triggered by JavaScript */
-        body.sweet-mode {
-            --bg-dark: #fbf0f3;
-            --card-bg: #ffffff;
-            --text-bright: #2d1e2f;
-            --text-muted: #7c6a85;
-            --dropzone-bg: #fff5f7;
-            --card-hover-bg: #fffbfe;
-            --border-color: rgba(155, 93, 229, 0.1);
-            --title-gradient: linear-gradient(to right, #2d1e2f, #63436a);
-            background-image:
-                radial-gradient(at 20% 20%, rgba(255, 118, 117, 0.15) 0px, transparent 50%),
-                radial-gradient(at 80% 80%, rgba(116, 185, 255, 0.15) 0px, transparent 50%);
+        body {
+            background:
+                linear-gradient(135deg,
+                    var(--bg-start),
+                    var(--bg-end));
+        }
+
+        body.bitter {
+            --card-border: rgba(255, 255, 255, 0.692);
+        }
 
 
+        .main-card,
+        .parser-card {
+            background: var(--card-bg);
+            color: var(--text-bright);
+        }
 
-            /* 
-            --tab-bg: #d8c4f0;
-            --tab-active-bg: #9b5de5; */
+        .section-title {
+            color: var(--secondary);
+        }
 
-            --tab-bg: #c6b0e8;
-            --tab-active-bg: #9b5de5;
+        .button-primary {
+            background:
+                linear-gradient(135deg,
+                    var(--primary),
+                    var(--secondary));
+        }
 
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 40px 20px;
 
-            --tab-text: #ffffff;
+            background:
+                linear-gradient(135deg,
+                    var(--bg-start),
+                    var(--bg-end));
 
-            --modal-bg: #ffffff;
-            --modal-text: #2d1e2f;
-
-            --input-bg: #fff5f7;
-            --input-border: rgba(155, 93, 229, 0.15);
-
-
-            --button-bg: #9b5de5;
-            --button-text: #ffffff;
-
-            --table-header-bg: #f8f5fc;
-            --table-row-bg: #ffffff;
-
-            --card-surface: #ffffff;
-            --card-quote-bg: #f7f2fb;
-
-            --highlight-bg: #9b5de5;
-
-
-            /* Sweet */
-            --result-label: #63436a;
-            --result-text: #2d1e2f;
-            --result-bg: #fff5f7;
-
-            --card-alt-bg: #f0f0f0;
-
-
-            --table-row-bg: #ece7ef;
-            --table-row-alt-bg: #e5dfe9;
-
-
-
-            --de55-header-bg: #d7e5ea;
-            --de55-header-text: #2d1e2f;
-
-            --de55-row-odd: #ececec;
-            --de55-row-even: #e7e7e7;
-
-            --de55-row-text: #2d1e2f;
-            --de55-border: #d1d1d1;
-
-
-
-
+            transition: background 0.3s ease, color 0.3s ease;
+            font-family: var(--font-family);
         }
 
         * {
@@ -339,33 +261,315 @@
             padding: 0;
         }
 
-        body {
-            font-family: var(--font-family);
-            background-color: var(--bg-dark);
-            background-image:
-                radial-gradient(at 20% 20%, rgba(155, 93, 229, 0.15) 0px, transparent 50%),
-                radial-gradient(at 80% 80%, rgba(255, 71, 87, 0.1) 0px, transparent 50%);
-            min-height: 100vh;
+
+        .toolbar {
+            max-width: 1000px;
+            margin: auto;
+            margin-bottom: 20px;
+
             display: flex;
-            flex-direction: column;
+            gap: 10px;
+            flex-wrap: wrap;
             justify-content: center;
-            align-items: center;
-            padding: 40px 20px;
-            color: var(--text-bright);
-            transition: background 0.3s ease, color 0.3s ease;
         }
 
+        select,
+        button {
+            border: none;
+            border-radius: 12px;
+            padding: 12px 18px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button {
+            color: white;
+
+            background:
+                linear-gradient(90deg,
+                    var(--primary),
+                    var(--secondary));
+        }
+
+        .candy-box {
+            max-width: 900px;
+            margin: auto;
+            color: var(--text);
+            background: var(--card);
+
+            border-radius: 30px;
+            padding: 50px;
+
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, .08);
+
+            transition: .35s;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 64px;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .logo span {
+            background:
+                linear-gradient(90deg,
+                    var(--primary),
+                    var(--secondary),
+                    var(--accent));
+
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-top: 15px;
+            color: var(--text);
+            opacity: .75;
+        }
+
+        .section {
+            margin-top: 40px;
+        }
+
+        .section-title {
+            color: var(--secondary);
+            letter-spacing: 4px;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 15px;
+        }
+
+        .flavor-card {
+            padding: 20px;
+            border-radius: 18px;
+            /*                         border: 1px solid rgba(var(--bg-start), 0.15);
+
+
+                        box-shadow:
+                                0 0 0 1px var(--bg-start),
+                                0 8px 20px rgba(0, 0, 0, 0.06); */
+
+
+            border: 1px solid color-mix(in srgb, var(--text) 20%, transparent);
+
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.08);
+
+
+            color: var(--text);
+            text-align: left;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: .2s;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: block;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .flavor-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .flavor-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .flavor-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .flavor-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: transparent;
+            transition: background 0.3s;
+        }
+
+        .flavor-card:hover {
+            transform: scale(1.02) translateY(-3px);
+            background: var(--card-hover-bg);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-strawberry:hover::before {
+            background: var(--flavor-strawberry);
+        }
+
+        .card-strawberry:hover h3 {
+            color: var(--flavor-strawberry);
+        }
+
+        .card-blueberry:hover::before {
+            background: var(--flavor-blueberry);
+        }
+
+        .card-blueberry:hover h3 {
+            color: var(--flavor-blueberry);
+        }
+
+        .card-mint:hover::before {
+            background: var(--flavor-mint);
+        }
+
+        .card-mint:hover h3 {
+            color: var(--flavor-mint);
+        }
+
+        .card-grape:hover::before {
+            background: var(--flavor-grape);
+        }
+
+        .card-grape:hover h3 {
+            color: var(--flavor-grape);
+        }
+
+        .card-lemon:hover::before {
+            background: var(--flavor-lemon);
+        }
+
+        .card-lemon:hover h3 {
+            color: var(--flavor-lemon);
+        }
+
+        .card-peach:hover::before {
+            background: var(--flavor-peach);
+        }
+
+        .card-peach:hover h3 {
+            color: var(--flavor-peach);
+        }
+
+
+        .notice {
+            margin-top: 30px;
+            padding: 25px;
+
+            border-radius: 20px;
+
+            background:
+                linear-gradient(135deg,
+                    color-mix(in srgb, var(--primary) 15%, transparent),
+                    color-mix(in srgb, var(--secondary) 15%, transparent));
+        }
+
+        .notice h2 {
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .notice p {
+            color: var(--text);
+            opacity: .8;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-top: 15px;
+
+            padding: 8px 16px;
+
+            border-radius: 100px;
+
+            color: white;
+
+            background:
+                linear-gradient(90deg,
+                    var(--primary),
+                    var(--secondary));
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text);
+            opacity: .7;
+        }
+
+
+
+
+        /*                 body {
+                        font-family: var(--font-family);
+                        background-color: var(--bg-dark);
+                        background-image:
+                                radial-gradient(at 20% 20%, rgba(155, 93, 229, 0.15) 0px, transparent 50%),
+                                radial-gradient(at 80% 80%, rgba(255, 71, 87, 0.1) 0px, transparent 50%);
+                        min-height: 100vh;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        padding: 40px 20px;
+                        color: var(--text-bright);
+                        transition: background 0.3s ease, color 0.3s ease;
+                }
+ */
         /* --- Top Utility Bar --- */
+
+        #page-content {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+
         .utility-bar {
             width: 100%;
             max-width: 900px;
             display: flex;
             justify-content: flex-end;
             margin-bottom: 15px;
+            gap: 12px;
+            /* or 16px */
+        }
+
+        .theme-selector {
+            background: var(--card-bg);
+            border: 1px solid var(--card-bg);
+            border-radius: 15px;
+            padding: 8px 18px;
+
+            height: 40px;
+            box-sizing: border-box;
+
+            color: var(--text-bright);
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: 1px solid color-mix(in srgb, var(--text) 20%, transparent);
+
+        }
+
+        .theme-selector:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .theme-selector:focus {
+            outline: none;
         }
 
         .flavor-toggle {
-            background: var(--card-bg);
+            background: linear-gradient(135deg,
+                    var(--primary),
+                    var(--secondary));
             border: 1px solid var(--border-color);
             padding: 8px 18px;
             border-radius: 20px;
@@ -373,12 +577,14 @@
             font-family: inherit;
             font-size: 0.85rem;
             font-weight: 500;
+            height: 40px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            white-space: nowrap;
         }
 
         .flavor-toggle:hover {
@@ -387,15 +593,15 @@
             border-color: var(--flavor-grape);
         }
 
-        body:not(.sweet-mode) .flavor-toggle {
-            background: linear-gradient(135deg, #6D4C8A, #251A2B);
-            color: white;
-        }
+        /*                 body:not(.sweet-mode) .flavor-toggle {
+                        background: linear-gradient(135deg, #6D4C8A, #251A2B);
+                        color: white;
+                }
 
-        body.sweet-mode .flavor-toggle {
-            background: linear-gradient(135deg, #F9A8D4, #C084FC);
-            color: white;
-        }
+                body.sweet-mode .flavor-toggle {
+                        background: linear-gradient(135deg, #F9A8D4, #C084FC);
+                        color: white;
+                } */
 
         /* Disable hover effect */
         .flavor-card.no-hover {
@@ -415,20 +621,20 @@
 
         /* Keep title color unchanged */
         .flavor-card.no-hover:hover h3 {
-            color: var(--text-bright) !important;
+            color: var(--text) !important;
         }
 
         /* --- Main Box Window --- */
-        .candy-box {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 32px;
-            padding: 50px;
-            max-width: 900px;
-            width: 100%;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
-            transition: background 0.5s ease, border-color 0.5s ease;
-        }
+        /*                 .candy-box {
+                        background: var(--card-bg);
+                        border: 1px solid var(--border-color);
+                        border-radius: 32px;
+                        padding: 50px;
+                        max-width: 900px;
+                        width: 100%;
+                        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+                        transition: background 0.5s ease, border-color 0.5s ease;
+                } */
 
         /* --- Brand Header --- */
         .brand-header {
@@ -441,7 +647,7 @@
             font-weight: 700;
             letter-spacing: -1px;
             margin-bottom: 10px;
-            background: var(--title-gradient);
+            background: var(--text);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             transition: background 0.5s ease;
@@ -583,7 +789,7 @@
             content: '';
             flex: 1;
             height: 1px;
-            background: var(--border-color);
+            background: color-mix(in srgb, var(--text) 20%, transparent);
         }
 
         .menu-grid {
@@ -593,102 +799,6 @@
             gap: 20px;
         }
 
-        /* --- Jelly Gummy Buttons --- */
-        .flavor-card {
-            background: rgba(255, 255, 255, 0.01);
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            border-radius: 18px;
-            text-align: left;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: block;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .flavor-card h3 {
-            font-size: 1.1rem;
-            font-weight: 500;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: var(--text-bright);
-        }
-
-        .flavor-card p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .flavor-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: transparent;
-            transition: background 0.3s;
-        }
-
-        /* Interactive Dynamic Highlight triggers on hover */
-        .flavor-card:hover {
-            transform: scale(1.02) translateY(-3px);
-            background: var(--card-hover-bg);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-        }
-
-        .card-strawberry:hover::before {
-            background: var(--flavor-strawberry);
-        }
-
-        .card-strawberry:hover h3 {
-            color: var(--flavor-strawberry);
-        }
-
-        .card-blueberry:hover::before {
-            background: var(--flavor-blueberry);
-        }
-
-        .card-blueberry:hover h3 {
-            color: var(--flavor-blueberry);
-        }
-
-        .card-mint:hover::before {
-            background: var(--flavor-mint);
-        }
-
-        .card-mint:hover h3 {
-            color: var(--flavor-mint);
-        }
-
-        .card-grape:hover::before {
-            background: var(--flavor-grape);
-        }
-
-        .card-grape:hover h3 {
-            color: var(--flavor-grape);
-        }
-
-        .card-lemon:hover::before {
-            background: var(--flavor-lemon);
-        }
-
-        .card-lemon:hover h3 {
-            color: var(--flavor-lemon);
-        }
-
-        .card-peach:hover::before {
-            background: var(--flavor-peach);
-        }
-
-        .card-peach:hover h3 {
-            color: var(--flavor-peach);
-        }
 
         /* --- Footer --- */
         footer {
@@ -780,7 +890,8 @@
             flex-direction: column;
             gap: 5px;
             /* space between tabs */
-            z-index: 1001;
+            /* z-index: 1001; */
+            z-index: 99999;
         }
 
 
@@ -790,26 +901,54 @@
             top: 50%;
             right: 0;
             font-family: 'Segoe UI', sans-serif;
-            width: 40px;
+            width: 50px;
             height: 125px;
-            transform: translateX(80%) translateY(-50%);
-            background-color: #004F6B;
+            /*          transform: translateX(80%) translateY(-50%);
+                        background-color: #004F6B;
+                        background: var(--tab-active-bg);
+                        color: var(--tab-text); */
+
+            transform: translateX(50%);
+            transition: transform 0.3s ease;
+
             background: var(--tab-active-bg);
             color: var(--tab-text);
+
+
             display: flex;
             align-items: center;
             justify-content: center;
             writing-mode: vertical-rl;
             text-orientation: mixed;
-            border-radius: 8px 0 0 8px;
+
+            background: linear-gradient(180deg,
+                    var(--primary),
+                    var(--secondary));
+
+            color: white;
+
+            font-weight: 600;
+            font-size: 12px;
+
+            border-radius: 12px 0 0 12px;
+
+            box-shadow:
+                0 6px 16px rgba(0, 0, 0, .15);
+
             cursor: pointer;
-            transition: transform 0.3s ease;
+
+            transform: translateX(65%);
+            transition: all .3s ease;
+
             z-index: 1001;
         }
 
         .side-tab:hover {
-            transform: translateX(0%) translateY(-50%);
-            background: var(--tab-active-bg);
+            /* transform: translateX(0%) translateY(-50%); */
+            transform: translateX(0);
+            background: linear-gradient(180deg,
+                    var(--primary),
+                    var(--secondary));
         }
 
 
@@ -820,18 +959,36 @@
         }
 
 
+        /*                 .modal-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100vw;
+                        height: 100vh;
+                        background-color: rgba(0, 0, 0, 0.5);
+                        display: none;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 1000;
+                } */
+
+
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.5);
+            inset: 0;
+
+            background: rgba(0, 0, 0, .25);
+
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+
+            z-index: 100000;
         }
+
 
         .modal-overlay.show {
             display: flex;
@@ -839,8 +996,13 @@
 
         .modal-content {
             background-color: #fff;
-            background: var(--modal-bg);
-            color: var(--modal-text);
+            /* background: var(--modal-bg); */
+            /* background: linear-gradient(180deg,
+                                        var(--bg-start),
+                                        var(--bg-end)); */
+            background: var(--card);
+
+            color: var(--text);
             padding: 28px 24px 24px;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -876,31 +1038,19 @@
             overflow: auto;
             /* allow scrolling when content exceeds max-height */
             background-color: #fff;
-            background: var(--modal-bg);
+            background: var(--card);
             border-radius: 10px;
         }
 
         /* Add this to your <style> section */
         #modal-bitmap .modal-content {
             overflow: auto;
+            background: var(--card);
             /* min-width: 350px;
       min-height: 250px;
       max-width: 95vw;
       max-height: 90vh; */
         }
-
-
-        /*         .close-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #ccc;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            font-size: 14px;
-            border-radius: 5px;
-        } */
 
         .close-btn {
             position: absolute;
@@ -963,15 +1113,14 @@
             /* Ensures wrapping */
 
 
-            background: var(--input-bg);
-            color: var(--text-bright);
-            border: 1px solid var(--input-border);
+            background: white;
+            color: black;
+            border: 1px solid black;
 
 
             margin-top: 10px;
             margin-bottom: 24px;
             min-height: 80px;
-
 
         }
 
@@ -989,9 +1138,9 @@
             height: 40px;
             resize: none;
 
-            background: var(--input-bg);
-            color: var(--text-bright);
-            border: 1px solid var(--input-border);
+            background: white;
+            color: black;
+            border: 1px solid var(--text);
 
         }
 
@@ -1001,8 +1150,12 @@
             padding: 0 24px;
             font-size: 16px;
             border-radius: 20px;
-            background: var(--tab-active-bg);
-            color: var(--tab-text);
+            /*                         background: var(--tab-active-bg);
+                        color: var(--tab-text); */
+            background: linear-gradient(180deg,
+                    var(--primary),
+                    var(--secondary));
+            color: var(--text);
         }
 
         input[type="text"] {
@@ -1012,8 +1165,8 @@
             margin-top: 15px;
             box-sizing: border-box;
 
-            background: var(--input-bg);
-            color: var(--text-bright);
+            background: var(--card-bg);
+            color: var(--text);
             border: 1px solid var(--input-border);
 
         }
@@ -1028,8 +1181,8 @@
             cursor: pointer;
 
 
-            background: var(--button-bg);
-            color: var(--button-text);
+            background: var(--primary);
+            color: var(--text);
 
 
             border: none;
@@ -1057,8 +1210,7 @@
             margin-top: 20px;
             text-align: left;
             background: var(--result-bg);
-
-            color: var(--result-text);
+            color: var(--text);
             font-family: "Courier New", monospace;
             font-size: 14px;
 
@@ -1078,10 +1230,12 @@
             margin: 10px 0;
             padding: 15px;
 
-            background: var(--result-bg);
-            color: var(--result-text);
+            background: white;
+            color: black;
 
-            border-left: 4px solid var(--tab-active-bg);
+            /*  border-left: 4px solid var(--tab-active-bg); */
+
+            border-left: 4px solid var(--primary);
             border-radius: 6px;
 
             font-family: "Courier New", monospace;
@@ -1093,9 +1247,8 @@
         #primaryTable td.active,
         #secondaryTable td.active {
 
-            background: var(--highlight-bg) !important;
-            color: white !important;
-
+            background: white !important;
+            color: var(--primary) !important;
             /* font-weight: bold; */
             font-weight: 700;
         }
@@ -1104,9 +1257,9 @@
         #primaryTable,
         #secondaryTable {
             table-layout: fixed;
-            color: var(--text-bright);
-
-
+            color: black;
+            border-collapse: collapse;
+            border: 1px solid var(--text);
             /*            border-collapse: collapse; */
             width: 100%;
 
@@ -1121,32 +1274,33 @@
             min-width: 50px;
             max-width: 80px;
             width: 70px;
+            border: 1px solid black;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+
         }
 
 
         #primaryTable th,
         #secondaryTable th {
-            background: var(--table-header-bg);
+            background: var(--primary);
 
             font-weight: 700;
             letter-spacing: 0.3px;
-
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid black;
 
         }
 
 
         #primaryTable td,
         #secondaryTable td {
-            background: var(--table-row-bg);
-            border-color: var(--input-border);
+            background: white;
+            /* border-color: var(--input-border); */
 
             font-weight: 500;
 
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid black;
 
             padding: 6px 4px;
 
@@ -1161,6 +1315,7 @@
             max-width: 70px;
             width: 70px;
             font-weight: 600;
+            border: 1px solid black;
         }
 
         /* SECOND-TO-LAST column */
@@ -1171,6 +1326,7 @@
             min-width: 50px;
             max-width: 80px;
             width: 80px;
+            border: 1px solid black;
             /* change as you need */
         }
 
@@ -1182,6 +1338,7 @@
             min-width: 50px;
             max-width: 50px;
             width: 50px;
+            border: 1px solid black;
             /* change as you need */
         }
 
@@ -1205,44 +1362,13 @@
             margin: 0 auto;
         }
 
-        /* ---------- TAB BUTTONS ---------- */
-
-        /*         .tab-buttons {
-            display: flex;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .tab-buttons button {
-            flex: 0.45;
-            padding: 5px;
-            background: #00AFDA;
-            border: none;
-            border-right: 1px solid #ddd;
-            cursor: pointer;
-            font-size: 12px;
-            transition: 0.2s;
-            overflow-x: auto;
-        }
-
-        .tab-buttons button:last-child {
-            border-right: none;
-        }
-
-        .tab-buttons button.active {
-            background: #004F6B;          
-        }
-
-        .tab-buttons button:hover {
-            background: #004F6B;
-        } */
-
         /* TAB CONTAINER */
         .tab-buttons {
             display: flex;
             width: 100%;
 
             margin-bottom: 15px;
-
+            gap: 1px;
             border-radius: 12px;
             overflow: hidden;
         }
@@ -1256,8 +1382,9 @@
             border: none;
             border-right: 1px solid rgba(255, 255, 255, 0.15);
 
-            background: var(--tab-bg);
-            color: #ffffff;
+
+            background: color-mix(in srgb, var(--primary) 50%, white);
+            color: black;
 
             font-size: 13px;
             font-weight: 600;
@@ -1273,9 +1400,8 @@
 
         /* ACTIVE TAB */
         .tab-buttons button.active {
-            background: var(--tab-active-bg);
-
-            color: #ffffff;
+            background: var(--primary);
+            color: black;
 
             font-weight: 700;
 
@@ -1290,7 +1416,7 @@
 
 
         .tool-label {
-            color: var(--text-bright);
+            color: var(--text);
             font-size: 12px;
         }
 
@@ -1325,7 +1451,7 @@
 
 
         .tab-content h4 {
-            color: var(--text-bright);
+            color: var(--text);
             margin-bottom: 18px;
             font-size: 28px;
             font-weight: 600;
@@ -1376,7 +1502,6 @@
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 15px;
-            border-left: 6px solid #4677ff;
             /* Blue border for rules */
             /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); */
 
@@ -1386,10 +1511,10 @@
 
             font-family: "Courier New", monospace;
 
-            background: var(--card-surface);
+            background: white;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            color: var(--text-bright);
-            border-left: 6px solid var(--tab-active-bg);
+            color: black;
+            border-left: 6px solid var(--primary);
 
 
         }
@@ -1397,19 +1522,18 @@
 
         /* First card (summary card) */
         .cvm-card-primary {
-            border-left: 5px solid var(--tab-active-bg);
+            border-left: 5px solid var(--primary);
             text-align: left;
         }
 
         /* CVM rule cards */
         .cvm-card-secondary {
-            border-left: 5px solid var(--tab-bg);
+            border-left: 5px solid color-mix(in srgb, var(--primary) 50%, white);
             text-align: left;
         }
 
-
         .cvm-result-card {
-            border-left: 5px solid var(--tab-active-bg);
+            border-left: 5px solid var(--primary);
         }
 
 
@@ -1423,6 +1547,8 @@
                 repeat(auto-fit, minmax(350px, 1fr));
 
             align-items: start;
+
+
         }
 
         .decoder-column {
@@ -1431,7 +1557,7 @@
 
 
         .decoder-card {
-            background: var(--card-surface);
+            background: white;
 
             border: 1px solid var(--input-border);
             border-left: 5px solid var(--tab-active-bg);
@@ -1444,6 +1570,10 @@
 
             font-family: monospace;
             font-size: 11px;
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, .15),
+                inset 0 1px 0 rgba(255, 255, 255, .03);
         }
 
         .decoder-card-header {
@@ -1494,7 +1624,8 @@
 
 
         .decoder-row.active {
-            background: rgba(155, 93, 229, 0.12);
+            /* background: rgba(155, 93, 229, 0.12); */
+            background: color-mix(in srgb, var(--primary) 15%, white) !important;
             font-weight: 700;
         }
 
@@ -1560,7 +1691,9 @@
         }
 
         .de55-table thead tr {
-            background: var(--de55-header-bg);
+            /* background: var(--de55-header-bg); */
+            background: var(--primary);
+
         }
 
         .de55-table th {
@@ -1569,19 +1702,25 @@
             text-align: center;
             font-weight: 700;
 
-            border: 1px solid var(--de55-border);
+            border: 1px solid black;
+            color: black;
         }
 
         .de55-table tbody tr:nth-child(odd) td {
-            background: var(--de55-row-odd);
+            /* background: var(--de55-row-odd); */
+            background: white;
+            border: 1px solid black;
         }
 
         .de55-table tbody tr:nth-child(even) td {
-            background: var(--de55-row-even);
+            /*  background: var(--de55-row-even); */
+            background: color-mix(in srgb, var(--primary) 10%, white);
+            border: 1px solid black;
         }
 
         .de55-table td {
-            color: var(--de55-row-text);
+            /* color: var(--de55-row-text); */
+            color: black;
 
             padding: 8px 10px;
 
@@ -1610,10 +1749,26 @@
             text-align: left;
         }
 
+        #copyDe55TableBtn {
+            margin-top: 10px;
+            background: linear-gradient(135deg,
+                    var(--primary),
+                    var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 18px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        #copyDe55TableBtn:hover {
+            transform: scale(1.03);
+        }
+
 
         .bg-grey {
-            /* background: #f0f0f0 !important; */
-            background: var(--card-alt-bg) !important;
+            background: color-mix(in srgb, var(--primary) 7%, white) !important;
         }
 
         /* 4. Layout for Rules and Details */
@@ -1700,12 +1855,12 @@
 
         .notice-content h3 {
             margin-bottom: 8px;
-            color: var(--text-bright);
+            color: var(--text);
             font-size: 1.15rem;
         }
 
         .notice-content p {
-            color: var(--text-muted);
+            color: var(--text);
             line-height: 1.6;
             margin-bottom: 12px;
         }
@@ -1822,79 +1977,117 @@
                 filter: hue-rotate(360deg);
             }
         }
+
+        ft {
+            color: var(--text);
+            margin: 0 0 20px 0;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- Utility Switcher Row -->
-    <div class="utility-bar">
-        <button class="flavor-toggle" id="themeBtn">
-            <span id="themeIcon">🧁</span> <span id="themeText">Switch to Sweet Mode</span>
-        </button>
-    </div>
+    <div id="page-content">
+        <!-- Utility Switcher Row -->
+        <div class="utility-bar">
+            <select id="themeSelector" class="theme-selector">
+                <option value="candy">🍭 Candy Shop</option>
+                <option value="cottoncandy">🍬 Cotton Candy</option>
+                <option value="blueicecream">❄️ Blue Ice Cream</option>
+                <option value="matcha">🍵 Matcha</option>
+                <option value="mint">🌿 Mint</option>
+                <option value="blueberry">🫐 Blueberry</option>
+                <option value="mango">🥭 Mango</option>
+                <option value="grape">🍇 Grape</option>
+                <option value="strawberry">🍓 Strawberry</option>
+                <option value="citrus">🍋 Citrus</option>
+            </select>
+            <button class="flavor-toggle" id="themeBtn">
+                <span id="themeIcon">🧁</span> <span id="themeText">Switch to Sweet Mode</span>
+            </button>
+        </div>
 
-    <!-- Main Container -->
-    <div class="candy-box">
+        <!-- Main Container -->
+        <div class="candy-box">
 
-        <!-- Header -->
+            <!-- Header -->
 
-        <header class="brand-header">
-            <div class="brand-title-wrapper">
-                <h1 class="brand-title">
-                    Parser<span>Sweet</span>
-                </h1>
+            <header class="brand-header">
+                <div class="brand-title-wrapper">
+                    <h1 class="brand-title">
+                        Parser<span>Sweet</span>
+                    </h1>
 
-                <img src="assets/parsersweet-logo.png" altbody class="logo">
-            </div>
+                    <img src="assets/parsersweet-logo.png" altbody class="logo">
+                </div>
 
-            <p class="brand-tagline">
-                "Parsing made sweet and simple.<br>
-                Your data has stories to tell — let ParserSweet help you read them."
-            </p>
-        </header>
+                <p class="brand-tagline">
+                    "Parsing made sweet and simple.<br>
+                    Your data has stories to tell — let ParserSweet help you read them."
+                </p>
+            </header>
 
-        <!-- Dropzone Jar Layout Feature -->
-        <!-- <div class="candy-jar-drop">
+            <!-- Dropzone Jar Layout Feature -->
+            <!-- <div class="candy-jar-drop">
             <span class="jar-icon">🫙</span>
             <p>Drop your file into the <strong>Data Jar</strong> to automatically detect flavor</p>
         </div>
  -->
-        <!-- Divided Grid Layout -->
-        <div class="section-title">Pick Your Flavor</div>
+            <!-- Divided Grid Layout -->
+            <div class="section-title">Pick Your Flavor</div>
 
-        <div class="menu-grid">
-            <a class="flavor-card card-strawberry" href="json.html">
-                <h3>JSON Parser<span>🍓</span></h3>
-                <p>Format and clean nested objects seamlessly.</p>
-            </a>
+            <div class="menu-grid">
+                <a class="flavor-card card-strawberry" href="json.html">
+                    <h3>JSON Parser<span>🍓</span></h3>
+                    <p>Format and clean nested objects seamlessly.</p>
+                </a>
 
-            <a class="flavor-card card-blueberry" href="mti.html">
-                <h3>CBA Message Parser <span>🫐</span></h3>
-                <p>Parse ISO 8583 payment messages from PAY360</p>
-            </a>
+                <a class="flavor-card card-blueberry" href="nmti.html">
+                    <h3>CBA Message Parser <span>🫐</span></h3>
+                    <p>Parse ISO 8583 payment messages from PAY360</p>
+                </a>
 
-            <a class="flavor-card card-mint" href="receipt_parser.html">
-                <h3>Receipt Parser <span>🌿</span></h3>
-                <p>Extract clean transactional nodes instantly.</p>
-            </a>
+                <a class="flavor-card card-mint" href="receipt_parser.html">
+                    <h3>Receipt Parser <span>🌿</span></h3>
+                    <p>Extract clean transactional nodes instantly.</p>
+                </a>
 
-            <a class="flavor-card card-grape" href="base64_receipt_viewer.html">
-                <h3>Base64 Viewer <span>🍇</span></h3>
-                <p>Unwrap encoded receipt imagery strings.</p>
-            </a>
+                <a class="flavor-card card-grape" href="base64_receipt_viewer.html">
+                    <h3>Base64 Viewer <span>🍇</span></h3>
+                    <p>Unwrap encoded receipt imagery strings.</p>
+                </a>
 
-            <div class="flavor-card card-lemon no-hover">
-                <h3>DE22 for EFTEX <span>🍋</span></h3>
-                <p>Parse complex point of service data elements.</p>
+                <div class="flavor-card card-lemon no-hover">
+                    <h3>DE22 for EFTEX <span>🍋</span></h3>
+                    <p>Parse complex point of service data elements.</p>
+                </div>
+
+                <div class="flavor-card card-peach no-hover">
+                    <h3>Paymark Host <span>🍑</span></h3>
+                    <p>Decode host terminal log structures smoothly.</p>
+                </div>
             </div>
 
-            <div class="flavor-card card-peach no-hover">
-                <h3>Paymark Host <span>🍑</span></h3>
-                <p>Decode host terminal log structures smoothly.</p>
+
+            <div class="sweet-notice">
+                <div class="notice-icon">🍭</div>
+
+                <div class="notice-content">
+                    <h3 class="shake-warning">ParserSweet is still baking</h3>
+
+                    <p>
+                        We're mixing ingredients, fixing recipes, and adding new flavors.
+                        Some features may be half-baked for now, but something delicious is
+                        coming soon.
+                    </p>
+
+                    <span class="notice-badge">Work in Progress</span>
+                </div>
             </div>
+
         </div>
-
 
         <!-- Side Tab on the right -->
         <div class="side-tabs-container">
@@ -1960,7 +2153,8 @@
                     <div id="tab1" class="tab-content active">
                         <h4>Terminal Verification Result (Tag 95) </h4>
                         <div class="input-row">
-                            <label for="tvr-input" class="tool-label" font-size:12px;">Enter TVR:</label>
+                            <label for="tvr-input" class="tool-label" font-size:12px;">Enter
+                                TVR:</label>
                             <input id="tvr-input" maxlength="14">
                         </div>
                         <!-- Radio Buttons for Scheme -->
@@ -2001,7 +2195,8 @@
 
                         <h4>Transaction Status Information (Tag 9B) </h4>
                         <div class="input-row">
-                            <label for="tsi-input" class="tool-label" font-size:12px;">Enter TSI:</label>
+                            <label for="tsi-input" class="tool-label" font-size:12px;">Enter
+                                TSI:</label>
                             <input id="tsi-input" maxlength="4">
                         </div>
                     </div>
@@ -2010,7 +2205,8 @@
 
                         <h4>Application Interchange Profile (Tag 82) </h4>
                         <div class="input-row">
-                            <label for="aip-input" class="tool-label" font-size:12px;">Enter AIP:</label>
+                            <label for="aip-input" class="tool-label" font-size:12px;">Enter
+                                AIP:</label>
                             <input id="aip-input" maxlength="4">
                         </div>
 
@@ -2037,7 +2233,8 @@
 
                         <h4>Application Usage Control (Tag 9F07) </h4>
                         <div class="input-row">
-                            <label for="auc-input" class="tool-label" font-size:12px;">Enter AUC:</label>
+                            <label for="auc-input" class="tool-label" font-size:12px;">Enter
+                                AUC:</label>
                             <input id="auc-input" maxlength="4">
                         </div>
                     </div>
@@ -2046,7 +2243,8 @@
 
                         <h4>Terminal Capabilities (Tag 9F33) </h4>
                         <div class="input-row">
-                            <label for="tcc-input" class="tool-label" font-size:12px;">Enter Terminal
+                            <label for="tcc-input" class="tool-label" font-size:12px;">Enter
+                                Terminal
                                 Capabilities:</label>
                             <input id="tcc-input" maxlength="6">
                         </div>
@@ -2075,7 +2273,8 @@
 
                         <h4>Card Transaction Qualifiers (Tag 9F6C) </h4>
                         <div class="input-row">
-                            <label for="ctq-input" class="tool-label" font-size:12px;">Enter CTQ:</label>
+                            <label for="ctq-input" class="tool-label" font-size:12px;">Enter
+                                CTQ:</label>
                             <input id="ctq-input" maxlength="4">
                         </div>
                     </div>
@@ -2084,7 +2283,8 @@
 
                         <h4>Terminal Transaction Qualifiers (Tag 9F66) </h4>
                         <div class="input-row">
-                            <label for="ttq-input" class="tool-label" font-size:12px;">Enter TTQ:</label>
+                            <label for="ttq-input" class="tool-label" font-size:12px;">Enter
+                                TTQ:</label>
                             <input id="ttq-input" maxlength="8">
                         </div>
                     </div>
@@ -2103,21 +2303,6 @@
 
 
 
-        <div class="sweet-notice">
-            <div class="notice-icon">🍭</div>
-
-            <div class="notice-content">
-                <h3 class="shake-warning">ParserSweet is still baking</h3>
-
-                <p>
-                    We're mixing ingredients, fixing recipes, and adding new flavors.
-                    Some features may be half-baked for now, but something delicious is
-                    coming soon.
-                </p>
-
-                <span class="notice-badge">Work in Progress</span>
-            </div>
-        </div>
 
 
     </div>
@@ -2126,15 +2311,20 @@
 
 
     <!-- Footer -->
+    <!--         <footer>
+                ParserSweet v5.0 &copy; 2025–2026 hji
+        </footer> -->
     <footer>
-        &copy; 2025–2026 hji
+        <ft id="app-version"></ft>
     </footer>
 
 
 
-
     <!-- Script -->
-    <script type="module" src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+    <script src="script.js"></script>
+
 
 </body>
 

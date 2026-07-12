@@ -16,164 +16,101 @@
 
         <style>
                 :root {
-                        --font-family: 'Space Grotesk', sans-serif;
-                        --bg-dark: #1a111e;
-                        --card-bg: #251a2b;
-                        --text-bright: #f5effa;
-                        --text-muted: #a393b0;
-                        --border-color: rgba(255, 255, 255, 0.05);
-                        --title-gradient: linear-gradient(to right, #fff, #a393b0);
-
-                        /* --table-bg: rgba(255, 255, 255, 0.06); */
-                        --table-bg: #251a2b;
-                        /* --table-head-bg: rgba(0, 175, 218, 0.18); */
-                        --table-head-bg: #4C3A63;
-                        /*                         --table-border: rgba(255, 255, 255, 0.12);
-                        --table-border-strong: rgba(255, 255, 255, 0.18); */
-                        /* --table-row-even: rgba(255, 255, 255, 0.04);
-                        --table-row-odd: rgba(255, 255, 255, 0.02); */
-
-
-                        --table-border: rgba(76, 58, 99, 0.18);
-                        --table-border-strong: rgba(76, 58, 99, 0.28);
-
-
-                        /* --table-row-odd: rgba(219, 214, 224, 1);  
---table-row-even: rgba(76, 58, 99, 0.18);
- */
-
-                        --table-row-odd: rgba(227, 222, 232, 1);
-                        --table-row-even: rgba(241, 238, 244, 1);
-
-
-
-                        /* --table-text: var(--text-bright); */
-                        --table-text: #3B2F4A;
-                        --table-header-text: #FFFFFF;
-                        --table-row-text: #3B2F4A;
-                }
-
-                /*  body.sweet-mode {
-            --bg-dark: #fbf0f3;
-            --card-bg: #ffffff;
-            --text-bright: #2d1e2f;
-            --text-muted: #7c6a85;
-            --border-color: rgba(155, 93, 229, 0.1);
-            --title-gradient: linear-gradient(to right, #2d1e2f, #63436a);
-
-            --table-bg: rgba(255, 255, 255, 0.96);
-            --table-head-bg: rgba(236, 72, 153, 0.16);
-            --table-border: rgba(155, 93, 229, 0.22);
-            --table-border-strong: rgba(155, 93, 229, 0.28);
-            --table-row-even: rgba(244, 244, 244, 0.95);
-            --table-row-odd: rgba(233, 233, 233, 0.95);
-            --table-text: var(--text-bright);
-        }  */
-                /*  Soft sea glass
-body.sweet-mode {
-  --bg-dark: #E7EDF2;
-  --card-bg: #F4F8FB;
-  --text-bright: #354550;
-  --text-muted: #7A8895;
-  --border-color: rgba(107, 132, 154, 0.22);
-
-  --table-bg: rgba(246, 250, 253, 0.96);
-  --table-head-bg: #B8C9D8;
-  --table-border: rgba(107, 132, 154, 0.24);
-  --table-border-strong: rgba(107, 132, 154, 0.34);
-  --table-row-even: rgba(240, 244, 248, 0.95);
-  --table-row-odd: rgba(233, 239, 245, 0.95);
-  --table-text: #354550;
-
-  --button-bg: #7A98B0;
-  --button-hover: #647B92;
-} */
-
-                /* Professional Light Mode*/
-                body.sweet-mode {
-                        --bg-dark: #fbf0f3;
+                        --bg-start: #fff5fa;
+                        --bg-end: #eef4ff;
                         --card-bg: #ffffff;
+                        --primary: #ff4d8d;
+                        --secondary: #a855f7;
+                        --accent: #22c55e;
+                        --text-bright: #31243f;
+                        --text: #222;
+                        --border-color: rgba(255, 255, 255, 0.05);
 
-                        --text-bright: #1e293b;
-                        --text-muted: #64748b;
+                        --font-family: 'Space Grotesk', sans-serif;
 
-                        --border-color: rgba(15, 23, 42, 0.08);
+                        /* Candy Accents */
+                        --flavor-strawberry: #ff4757;
+                        --flavor-mint: #2ed573;
+                        --flavor-blueberry: #1e90ff;
+                        --flavor-grape: #9b5de5;
+                        --flavor-lemon: #ffa502;
+                        --flavor-peach: #ff6b81;
 
-                        --title-gradient: linear-gradient(to right,
-                                        #0f172a,
-                                        #0284c7);
-
-                        --table-bg: #ffffff;
-                        --table-head-bg: rgba(0, 175, 218, 0.10);
-
-                        --table-border: rgba(15, 23, 42, 0.08);
-                        --table-border-strong: rgba(15, 23, 42, 0.12);
-
-                        --table-row-even: #ffffff;
-                        --table-row-odd: #f8fafc;
-
-                        --table-text: var(--text-bright);
-                        --table-header-text: #1e293b;
-
-
+                        --content-width: 90%;
                 }
-
-                /* body.sweet-mode {
-    --bg-dark: #faf7ff;
-    --card-bg: #ffffff;
-
-    --text-bright: #2d1e2f;
-    --text-muted: #7c6a85;
-
-    --border-color: rgba(124, 58, 237, 0.10);
-
-    --title-gradient: linear-gradient(
-        to right,
-        #5b21b6,
-        #7c3aed,
-        #06b6d4
-    );
-
-    --table-bg: #ffffff;
-    --table-head-bg: rgba(124, 58, 237, 0.08);
-
-    --table-border: rgba(124, 58, 237, 0.15);
-    --table-border-strong: rgba(124, 58, 237, 0.22);
-
-    --table-row-even: #ffffff;
-    --table-row-odd: #faf7ff;
-
-    --table-text: var(--text-bright);
-} */
-
-
 
                 body {
-                        font-family: var(--font-family);
-                        margin: 0;
+                        min-height: 100vh;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: flex-start;
+                        align-items: center;
                         padding: 40px 20px;
-                        background: var(--bg-dark);
-                        color: var(--text-bright);
-                        transition: background 0.5s ease, color 0.3s ease;
+
+                        background:
+                                linear-gradient(135deg,
+                                        var(--bg-start),
+                                        var(--bg-end));
+
+                        transition: background 0.3s ease, color 0.3s ease;
+                        font-family: var(--font-family);
                 }
 
                 .utility-bar {
-                        width: 95%;
-                        max-width: 100%;
-                        /* match index.html */
+                        width: var(--content-width);
                         display: flex;
-                        justify-content: flex-end;
-                        /* margin: 0 auto 15px; */
-                        margin: 0 auto 0;
-                        position: relative;
-                        z-index: 3;
-                        margin-top: -6px;
-                        margin-bottom: 16px;
-                        /* lift slightly to sit above the container */
+                        align-items: center;
+                        margin: 0 auto 15px;
+                }
+
+                .utility-right {
+                        margin-left: auto;
+                        /* pushes this group to the right */
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                }
+
+                .utility-bar,
+                .container {
+                        width: var(--content-width);
+                        margin-left: auto;
+                        margin-right: auto;
+                }
+
+                .theme-selector {
+                        background: var(--card-bg);
+                        border: 1px solid var(--card-bg);
+                        border-radius: 15px;
+                        padding: 8px 18px;
+
+                        height: 40px;
+                        box-sizing: border-box;
+
+                        color: var(--text-bright);
+                        font-family: inherit;
+                        font-size: 0.85rem;
+                        font-weight: 600;
+                        cursor: pointer;
+                        border: 1px solid color-mix(in srgb, var(--text) 20%, transparent);
+                }
+
+                .theme-selector:disabled {
+                        opacity: 0.5;
+                        cursor: not-allowed;
+                }
+
+                .theme-selector:focus {
+                        outline: none;
                 }
 
                 .flavor-toggle {
-                        background: var(--card-bg);
+                        /* background: var(--card-bg); */
+
+                        background: linear-gradient(135deg,
+                                        var(--primary),
+                                        var(--secondary));
+
                         border: 1px solid var(--border-color);
                         padding: 8px 18px;
                         border-radius: 20px;
@@ -181,12 +118,19 @@ body.sweet-mode {
                         font-family: inherit;
                         font-size: 0.85rem;
                         font-weight: 500;
+                        height: 40px;
                         cursor: pointer;
                         display: flex;
                         align-items: center;
                         gap: 8px;
                         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-                        transition: all 0.24s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                        white-space: nowrap;
+                }
+
+
+                body:not(.sweet-mode) .flavor-toggle {
+                        filter: brightness(0.85);
                 }
 
                 .flavor-toggle:hover {
@@ -202,38 +146,18 @@ body.sweet-mode {
                         box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
                 }
 
-                /* stronger contrast for the toggle in sweet mode */
-                body.sweet-mode .flavor-toggle {
-                        background: linear-gradient(135deg, #F9A8D4, #C084FC);
-                        border-color: rgba(155, 93, 229, 0.32);
-                        box-shadow: 0 10px 30px rgba(155, 93, 229, 0.08);
-                        color: #2d1e2f;
-                        /* dark text for readability */
-                        transform: translateY(-2px);
-                        padding: 10px 20px;
-                }
-
-                /* improved contrast for bitter (dark) mode */
-                body:not(.sweet-mode) .flavor-toggle {
-                        background: linear-gradient(135deg, #6D4C8A, #251A2B);
-                        border-color: rgba(255, 255, 255, 0.06);
-                        color: var(--text-bright);
-                        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
-                        padding: 9px 18px;
-                }
-
                 .page-wrapper {
                         width: 100%;
                         max-width: 100%;
                         margin: 0 auto;
+                        color: var(--text);
                 }
 
                 .container {
                         max-width: 90%;
                         width: 100%;
                         margin: 0 auto;
-                        background: var(--card-bg);
-                        padding: 30px;
+                        background: var(--card);
                         border-radius: 32px;
                         border: 1px solid var(--border-color);
                         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
@@ -243,6 +167,11 @@ body.sweet-mode {
                         border-left: 1px solid var(--border-color);
                         position: relative;
                         z-index: 1;
+
+                        box-sizing: border-box;
+                        padding: 30px;
+
+                        color: var(--text);
                 }
 
                 .flex-container {
@@ -268,9 +197,7 @@ body.sweet-mode {
 
                 h1 {
                         margin-bottom: 12px;
-                        background: var(--title-gradient);
-                        -webkit-background-clip: text;
-                        -webkit-text-fill-color: transparent;
+                        color: var(--text);
                 }
 
                 p {
@@ -285,35 +212,23 @@ body.sweet-mode {
                         font-size: 1em;
                         cursor: pointer;
                         transition: transform 0.18s ease, background 0.22s ease, border-color 0.18s ease;
-                        background: var(--card-bg);
+                        background: var(--primary);
                         color: var(--text-bright);
                 }
 
                 body:not(.sweet-mode) .btn,
                 body:not(.sweet-mode) #copy-button {
 
-                        background: #4C3A63;
+                        background: var(--primary);
                         color: white;
                         border-color: rgba(255, 255, 255, 0.12);
                 }
 
                 body.sweet-mode .btn,
                 body.sweet-mode #copy-button {
-                        /*             background: #EC4899;
-            color: white;
-            border-color: rgba(192, 132, 252, 0.6); */
-
-
-                        background: #7aaec2;
+                        background: var(--primary);
                         color: white;
                         border: 1px solid #6da3b8;
-
-
-                }
-
-                .btn:hover {
-                        transform: scale(1.05);
-                        filter: brightness(0.80);
                 }
 
                 #copy-button {
@@ -335,6 +250,7 @@ body.sweet-mode {
                         background: var(--card-hover-bg);
                         border-color: rgba(155, 93, 229, 0.35);
                         color: var(--text-bright);
+                        filter: brightness(0.80);
                 }
 
                 .info-alert {
@@ -458,24 +374,6 @@ body.sweet-mode {
                         margin-bottom: 30px;
                 }
 
-                /* 
-        #json-output table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--table-bg);
-            border: 1px solid var(--table-border);
-            border-radius: 14px;
-            overflow: hidden;
-        }
-
-        #json-output th,
-        #json-output td {
-            border: 1px solid var(--table-border);
-            padding: 12px 14px;
-            text-align: left;
-            color: var(--table-text);
-        } */
-
                 /* Apply json table styles to MTI outputs */
                 #json-output,
                 #requestTable,
@@ -511,65 +409,42 @@ body.sweet-mode {
                         word-break: break-word;
                         overflow-wrap: anywhere;
                         padding: 8px;
-                        border: 1px solid var(--table-border);
-                        border-bottom: 2px solid var(--table-border-strong);
+                        border: 1px solid black;
+                        border-bottom: 2px solid black;
 
                 }
 
 
 
-                body:not(.sweet-mode) #json-output th,
-                body:not(.sweet-mode) #requestTable th,
-                body:not(.sweet-mode) #responseTable th {
-                        background: var(--table-head-bg);
-                        /* color: var(--table-text);
-                        font-weight: 700; */
-                        padding: 8px;
-                        color: var(--table-header-text);
-                        font-weight: 700;
-                }
-
-                body.sweet-mode #json-output th,
-                body.sweet-mode #requestTable th,
-                body.sweet-mode #responseTable th {
-                        background: var(--table-head-bg);
-                        /* color: var(--table-text);
-                        font-weight: 700; */
-                        padding: 8px;
-                        color: var(--table-header-text);
-                        font-weight: 700;
-                }
-
-
-                /*                 #json-output th,
+                #json-output th,
                 #requestTable th,
                 #responseTable th {
-                        background: var(--table-head-bg);
+                        background: var(--sweet-primary);
                         /* color: var(--table-text);
-                        font-weight: 700; 
+                        font-weight: 700; */
                         padding: 8px;
-                        color: var(--table-text);
+                        color: white;
                         font-weight: 700;
-                } */
-
+                }
 
                 #json-output td,
                 #requestTable td,
                 #responseTable td {
-                        color: var(--table-row-text);
+                        color: #333;
                 }
-
 
                 #json-output tr:nth-child(even),
                 #requestTable tr:nth-child(even),
                 #responseTable tr:nth-child(even) {
-                        background: var(--table-row-even);
+                        background: color-mix(in srgb,
+                                        var(--sweet-primary) 15%,
+                                        white);
                 }
 
                 #json-output tr:nth-child(odd),
                 #requestTable tr:nth-child(odd),
                 #responseTable tr:nth-child(odd) {
-                        background: var(--table-row-odd);
+                        background: white;
                 }
 
                 #json-output th.key-column,
@@ -593,7 +468,9 @@ body.sweet-mode {
                 .tab-buttons button {
                         flex: 0.45;
                         padding: 5px;
-                        background: #00AFDA;
+                        background: var(--primary);
+                        color: white;
+                       
                         border: none;
                         border-right: 1px solid #ddd;
                         cursor: pointer;
@@ -607,12 +484,12 @@ body.sweet-mode {
                 }
 
                 .tab-buttons button.active {
-                        background: #004F6B;
+                        background: var(--primary);
                         /* makes it appear lifted */
                 }
 
                 .tab-buttons button:hover {
-                        background: #004F6B;
+                       background: var(--primary);
                 }
 
                 /* ---------- CONTENT AREA ---------- */
@@ -696,13 +573,13 @@ body.sweet-mode {
 
                 /* Inactive (bitter / sweet follow .btn colors) */
                 body:not(.sweet-mode) .tabs .tab {
-                        background: #4C3A63;
+                        background: var(--primary);
                         color: #fff;
                         border-color: rgba(255, 255, 255, 0.12);
                 }
 
                 body.sweet-mode .tabs .tab {
-                        background: #7aaec2;
+                       background: var(--primary);
                         color: #fff;
                         border: 1px solid #6da3b8;
                 }
@@ -738,12 +615,12 @@ body.sweet-mode {
 
                 .notice-content h3 {
                         margin-bottom: 8px;
-                        color: var(--text-bright);
+                        color: var(--text);
                         font-size: 1.15rem;
                 }
 
                 .notice-content p {
-                        color: var(--text-muted);
+                        color: var(--text);
                         line-height: 1.6;
                         margin-bottom: 12px;
                 }
@@ -787,6 +664,41 @@ body.sweet-mode {
                         cursor: pointer;
                         border-bottom: 1px dotted #333;
                 }
+
+                .back-button {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+
+                        background: none;
+                        border: none;
+                        padding: 0;
+
+                        font: inherit;
+                        font-size: 0.9rem;
+                        font-weight: 600;
+
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                }
+
+                body.sweet-mode .back-button {
+                        color: var(--text-bright);
+                }
+
+                body:not(.sweet-mode) .back-button {
+                        color: var(--text);
+                }
+
+                .back-button:hover {
+                        opacity: 0.75;
+                        transform: translateX(-3px);
+                }
+
+                .back-arrow {
+                        font-size: 1.3rem;
+                        line-height: 1;
+                }
         </style>
 </head>
 
@@ -798,11 +710,39 @@ body.sweet-mode {
 
         <div class="page-wrapper">
                 <div class="utility-bar">
-                        <button class="flavor-toggle" id="themeBtn">
-                                <span id="themeIcon">🧁</span> <span id="themeText">Switch to Sweet Mode</span>
-                        </button>
-                </div>
+                        <button class="back-button" onclick="history.back()">
+                                <!-- <span class="back-arrow">←</span> -->
 
+                                <svg class="back-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M19 12H5" />
+                                        <path d="M12 19L5 12L12 5" />
+                                </svg>
+
+                                <span>Back</span>
+                        </button>
+
+                        <div class="utility-right">
+                                <select id="themeSelector" class="theme-selector">
+                                        <option value="candy">🍭 Candy Shop</option>
+                                        <option value="cottoncandy">🍬 Cotton Candy</option>
+                                        <option value="blueicecream">❄️ Blue Ice Cream</option>
+                                        <option value="matcha">🍵 Matcha</option>
+                                        <option value="mint">🌿 Mint</option>
+                                        <option value="blueberry">🫐 Blueberry</option>
+                                        <option value="mango">🥭 Mango</option>
+                                        <option value="grape">🍇 Grape</option>
+                                        <option value="strawberry">🍓 Strawberry</option>
+                                        <option value="citrus">🍋 Citrus</option>
+                                </select>
+
+                                <button class="flavor-toggle" id="themeBtn">
+                                        <span id="themeIcon">🧁</span> <span id="themeText">Switch to Sweet Mode</span>
+                                </button>
+
+                        </div>
+                </div>
                 <div class="container">
                         <h1>CBA Message Parser</h1>
                         <p>This tool only supports CBA ISO8583 message from datadog.</p>
@@ -821,7 +761,8 @@ body.sweet-mode {
                                         <textarea id="mti-data-input"
                                                 placeholder='Paste your JSON data here...'></textarea>
                                         <div style="display: flex; align-items: left; margin-top: 10px;">
-                                                <button class="btn" id="paste-mti-btn" style="width: 250px;">📋 Paste
+                                                <button class="btn" id="paste-mti-btn" style="width: 250px;">📋
+                                                        Paste
                                                         from
                                                         clipboard</button>
                                                 <button class="btn" id="append-mti-btn" style=" margin-left: 20px;">
@@ -833,8 +774,10 @@ body.sweet-mode {
 
                                                 <div id="tabWrapper" style="display: none;">
                                                         <ul class="tabs">
-                                                                <li class="tab active" data-tab="request">Request</li>
-                                                                <li class="tab" data-tab="response">Response</li>
+                                                                <li class="tab active" data-tab="request">
+                                                                        Request</li>
+                                                                <li class="tab" data-tab="response">Response
+                                                                </li>
                                                         </ul>
                                                         <div class="tab-content" id="request" style="display: block;">
                                                                 <div id="requestTable"
@@ -863,8 +806,10 @@ body.sweet-mode {
                                         <h3>ParserSweet is still baking</h3>
 
                                         <p>
-                                                We're mixing ingredients, fixing recipes, and adding new flavors.
-                                                Some features may be half-baked for now, but something delicious is
+                                                We're mixing ingredients, fixing recipes, and adding new
+                                                flavors.
+                                                Some features may be half-baked for now, but something delicious
+                                                is
                                                 coming soon.
                                         </p>
 
