@@ -28,7 +28,7 @@
 
 <!-- 
     base64_receipt_viewer v1.2.html
-    Version: 1.2
+    Version: 2.0
     Last Updated: July 08, 2026
     Changes:
     - Rework UI
@@ -492,7 +492,7 @@
                 }
 
                 footer {
-                        color: #FFF;
+                        color: var(--text);
                         text-align: center;
                         border-top: 1px solid#ddd;
                         padding-top: 1rem;
@@ -796,14 +796,14 @@
 
 
         <footer>
-                <ft id="app-version"></ft>
+                <ft id="app-version-receipt"></ft>
         </footer>
         <!-- Script -->
         <script type="module" src="script.js"></script>
 
         <script>
 
-                document.getElementById("app-version").textContent = `Version 1.2 © 2026 hji`;
+                document.getElementById("app-version-receipt").textContent = `Version 2.0 © 2026 hji`;
 
                 const MAX_IMAGES = 20;
 

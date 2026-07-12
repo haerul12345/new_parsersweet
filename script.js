@@ -713,16 +713,25 @@ document.addEventListener("DOMContentLoaded", function () {
     const convertBtn = document.getElementById('convertBtn');
     const hexInput = document.getElementById('hexInput');
     const asciiResult = document.getElementById('asciiResult');
+    const sideTabsContainer = document.querySelector('.side-tabs-container');
 
     // Generic side-tab/modal handler
     document.body.addEventListener('click', function (e) {
         // Open modal on tab click
         const tab = e.target.closest('.side-tab[data-modal]');
         if (tab) {
+
+
+            // Don't open if there is already a modal open
+            if (document.querySelector('.modal-overlay.show')) {
+                return;
+            }
+
             const modalId = tab.getAttribute('data-modal');
             const modal = document.getElementById(modalId);
             if (modal) {
                 modal.classList.add('show');
+
                 const input = modal.querySelector('textarea, input[type="text"]');
                 if (input) input.focus();
             }
@@ -742,7 +751,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // Close modal on close button
         if (e.target.classList.contains('close-btn')) {
             const modal = e.target.closest('.modal-overlay');
-            if (modal) modal.classList.remove('show');
+            if (modal) {
+                modal.classList.remove('show');
+                // Re-enable side tabs
+                sideTabsContainer.classList.remove('disabled');
+            }
         }
     });
 
