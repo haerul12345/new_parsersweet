@@ -465,6 +465,7 @@
                         background: white;
                         border-color: var(--panel-border);
                         border-radius: var(--radius-md);
+                        font-family: "Courier New", "Consolas", "Monaco", monospace;
                 }
 
                 /*         .receipt .receipt-paper {
@@ -953,8 +954,9 @@
                 }
 
                 #removeReceiptModal .btn-close {
-                        filter: invert(1);
-                        opacity: 0.8;
+                        /* filter: invert(1);  */
+                        opacity: 0.9;
+
                 }
 
                 #removeReceiptModal .btn-close:hover {
@@ -979,16 +981,50 @@
                         border-color: color-mix(in srgb, var(--secondary) 80%, white);
                 }
 
-                /* Yes button follows site accent color */
-                #confirmRemoveBtn {
-                        background: var(--secondary) !important;
-                        border-color: var(--secondary) !important;
-                        color: #fff !important;
+                .close-btn {
+                        position: absolute;
+                        top: 12px;
+                        right: 12px;
+
+                        width: 32px;
+                        height: 32px;
+                        padding: 0;
+
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        background: var(--tab-active-bg);
+                        color: var(--tab-text);
+
+                        border: 1px solid rgba(255, 255, 255, 0.08);
+                        border-radius: 999px;
+
+                        cursor: pointer;
+
+                        font-size: 16px;
+                        font-weight: 600;
+                        line-height: 1;
+
+                        transition: all 0.2s ease;
+
+                        box-shadow:
+                                0 2px 8px rgba(0, 0, 0, 0.25),
+                                inset 0 1px 0 rgba(255, 255, 255, 0.15);
                 }
 
-                #confirmRemoveBtn:hover {
-                        background: color-mix(in srgb, var(--secondary) 80%, black) !important;
-                        border-color: color-mix(in srgb, var(--secondary) 80%, black) !important;
+                .close-btn:hover {
+                        transform: scale(1.08);
+                        filter: brightness(1.1);
+                }
+
+                .close-btn:active {
+                        transform: scale(0.95);
+                }
+
+                .close-btn:focus-visible {
+                        outline: 2px solid var(--text-bright);
+                        outline-offset: 2px;
                 }
         </style>
 </head>
@@ -1257,8 +1293,10 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                                 <div class="modal-header">
                                         <h5 class="modal-title w-100 text-center mb-0">Remove
                                                 Receipt</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal">
-                                        </button>
+                                        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                        </button> -->
+
+                                        <button class="close-btn" type="button" data-bs-dismiss="modal">&times;</button>
                                 </div>
 
                                 <div class="modal-body">
@@ -1269,12 +1307,13 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                                 </div>
 
                                 <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        <button type="button" class="btn btn-outline-danger-soft"
+                                                data-bs-dismiss="modal">
                                                 No
                                         </button>
 
-                                        <button type="button" class="btn text-white" id="confirmRemoveBtn"
-                                                style="background-color:#0d6efd; border-color:#0d6efd;">
+                                        <button type="button" class="btn btn-outline-primary-soft"
+                                                id="confirmRemoveBtn">
                                                 Yes
                                         </button>
 
@@ -1410,6 +1449,9 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                                         const ok = document.execCommand("paste");
                                         const text = helper.value || "";
                                         document.body.removeChild(helper);
+
+
+
                                         return ok && text ? text : null;
                                 } catch {
                                         return null;
