@@ -946,6 +946,15 @@
             transition: all .3s ease;
 
             z-index: 1001;
+
+            /* Prevent double click trigger text selection */
+
+            user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+
+            -webkit-touch-callout: none;
+
         }
 
         .side-tab:hover {
