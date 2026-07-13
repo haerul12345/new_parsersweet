@@ -3026,10 +3026,10 @@ const de55Input = document.getElementById("de55-input");
 
 // Check if the input element exists
 if (de55Input) {
-    de55Input.addEventListener("input", () => {
+    de55Input.addEventListener("input", (e) => {
 
-        this.style.height = 'auto';
-        this.style.height = this.scrollHeight + 'px';
+        e.target.style.height = 'auto';
+        e.target.style.height = e.target.scrollHeight + 'px';
         // Optional cleanup: Ensure input is kept as valid hex characters and made uppercase.
         // This is especially important for textareas where users might paste data.
         de55Input.value = de55Input.value.replace(/[^0-9a-fA-F]/g, '').toUpperCase();
