@@ -398,7 +398,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-
 });
 
 let jsonInputwasPreviouslyFilled = false;
@@ -6213,6 +6212,58 @@ function parseField60Nested(nestedHex) {
   `;
 }
  */
+
+function loadHtml2Canvas() {
+    return new Promise((resolve, reject) => {
+
+        // Already loaded
+        if (window.html2canvas) {
+            resolve();
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Failed to load html2canvas'));
+
+        document.head.appendChild(script);
+    });
+}
+
+window.copyTableAsImage = async function(tableId) {
+    await loadHtml2Canvas();
+    const element = document.getElementById(tableId);
+
+
+const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        onclone: (doc) => {
+            doc.querySelectorAll('*').forEach(el => {
+                const style = getComputedStyle(el);
+
+                if (style.color.includes('color(')) {
+                    el.style.color = '#000000';
+                }
+
+                if (style.backgroundColor.includes('color(')) {
+                    el.style.backgroundColor = '#ffffff';
+                }
+            });
+        }
+    });
+
+
+    canvas.toBlob(async (blob) => {
+        await navigator.clipboard.write([
+            new ClipboardItem({ "image/png": blob })
+        ]);
+    });
+};
+
+
 function createTableFromObject(obj, isNested = false, isBreakdown = false) {
 
     // Use 75% for top-level, 100% for nested tables
@@ -6265,12 +6316,50 @@ function createTableFromObject(obj, isNested = false, isBreakdown = false) {
             const lengthHex = value.slice(0, 6);
             const lengthBytes = parseInt(lengthHex.match(/../g).map(h => String.fromCharCode(parseInt(h, 16))).join(''), 10);
 
+            const tableId = `tlvTable_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+
+            /*             const combinedValue = `
+                <div><strong>Raw:</strong> ${value}</div>
+                <div><strong>Length (${lengthHex}):</strong> ${lengthBytes} Bytes</div>
+                <div><strong>TLV Data:</strong> ${tlvData}</div>
+                <div style="margin-top:8px; overflow:auto;">${tlvTable}</div>
+            `; */
+
+
             const combinedValue = `
-    <div><strong>Raw:</strong> ${value}</div>
-    <div><strong>Length (${lengthHex}):</strong> ${lengthBytes} Bytes</div>
-    <div><strong>TLV Data:</strong> ${tlvData}</div>
-    <div style="margin-top:8px; overflow:auto;">${tlvTable}</div>
+<div>
+    <strong>Raw:</strong> ${value}
+
+</div>
+
+<div><strong>Length (${lengthHex}):</strong> ${lengthBytes} Bytes</div>
+<div><strong>TLV Data:</strong> ${tlvData}</div>
+
+<div style="position:relative;">
+    <button
+        type="button"
+        title="Copy DE55 table as image"
+        onclick="copyTableAsImage('${tableId}')"
+        style="
+            position:absolute;
+            right:0;
+            top:0;
+            z-index:10;
+            border:1px solid #ccc;
+            background:#fff;
+            cursor:pointer;
+            padding:4px 8px;
+            border-radius:4px;
+        ">
+        📋
+    </button>
+
+    <div id="${tableId}" style="padding-top:35px;">
+        ${tlvTable}
+    </div>
+</div>
 `;
+
 
             table += `<tr><td>${key}</td><td>${combinedValue}</td></tr>`;
 
