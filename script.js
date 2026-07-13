@@ -1416,7 +1416,36 @@ function formatTableRows(data, indentLevel = 0) {
                         // Parse TLV
                         const tlvTable = parseTLV(rawValue);
                         // Combine raw value and TLV table in one cell
-                        const combinedValue = `<div><strong>Raw:</strong> ${rawValue}</div><div style="margin-top:8px; overflow:auto;">${tlvTable}</div>`;
+                        //const combinedValue = `<div><strong>Raw:</strong> ${rawValue}</div><div style="margin-top:8px; overflow:auto;">${tlvTable}</div>`;
+                        const tableId = `tlvTable_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+
+const combinedValue = `
+<div><strong>Raw:</strong> ${rawValue}</div>
+
+<div style="text-align:right; margin:4px 0;">
+    <button
+        type="button"
+        title="Copy table as image"
+        onclick="copyTableAsImage('${tableId}')"
+        style="
+            border:1px solid #ccc;
+            background:#fff;
+            cursor:pointer;
+            padding:2px 8px;
+            border-radius:4px;
+        ">
+        📋
+    </button>
+</div>
+
+<div
+    id="${tableId}"
+    style="overflow:auto;background:white;padding:5px;">
+    ${tlvTable}
+</div>
+`;
+
+
                         rows += `<tr><td>${indent}${key}</td><td>${combinedValue}</td></tr>`;
                     }
 
