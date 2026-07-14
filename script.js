@@ -537,6 +537,8 @@ function showAlert(message, type = 'info', callback = null) {
     alertCallback = callback;
 }
 
+
+
 // Info Alert function
 /* function showInfoAlert(message) {
         const alertBox = document.getElementById('infoAlert');
@@ -7255,4 +7257,5 @@ window.openReceiptViewer = openReceiptViewer;
 window.openCBAReceiptParser = openCBAReceiptParser;
 window.showTooltip = showTooltip;
 window.hideTooltip = hideTooltip;
+window.showAlert = showAlert;
 

@@ -1006,7 +1006,9 @@
 
                                 } catch (err) {
                                         console.error(err);
-                                        alert("Clipboard does not allow image copy in this browser.");
+                                        // alert("Clipboard does not allow image copy in this browser.");
+                                        showAlert(`Clipboard does not allow image copy in this browser.`, "warning");
+
                                 }
                         };
 
@@ -1094,7 +1096,9 @@
                                 const text = await navigator.clipboard.readText();
                                 document.getElementById("logInput").value = text;
                         } catch (err) {
-                                alert("Clipboard access denied.\nUse HTTPS or enable permission.");
+                                // alert("Clipboard access denied.\nUse HTTPS or enable permission.");
+                                showAlert(`Clipboard access denied.\nUse HTTPS or enable permission.`, "warning");
+
                         }
                 });
 
@@ -1148,7 +1152,9 @@
                                 const base64 = extractCustomerReceiptData(input);
 
                                 if (!base64) {
-                                        alert("No valid receipt data found.\nSupports:\n- printData\n- customer_receipt_data");
+                                        // alert("No valid receipt data found.\nSupports:\n- printData\n- customer_receipt_data");
+                                        showAlert(`No valid receipt data found.\nSupports:\n- printData\n- customer_receipt_data`, "warning");
+
                                         return;
                                 }
 
@@ -1211,7 +1217,8 @@
 
                                         } catch (err) {
                                                 console.error(err);
-                                                alert("Clipboard does not allow image copy in this browser.");
+                                                // alert("Clipboard does not allow image copy in this browser.");
+                                                showAlert(`Clipboard does not allow image copy in this browser.`, "error");
                                         }
                                 };
 
@@ -1233,7 +1240,9 @@
 
                         if (total > LIMIT) {
                                 setTimeout(() => {
-                                        alert(`Found ${total} receipts.\nShowing first ${LIMIT}.`);
+                                        // alert(`Found ${total} receipts.\nShowing first ${LIMIT}.`);
+                                        showAlert(`Found ${total} receipts.\nShowing first ${LIMIT}.`, "warning");
+
                                 }, 5);
                         }
 
@@ -1249,7 +1258,8 @@
                                 btn.style.background = "#d4e2ff";
                                 setTimeout(() => btn.style.background = "#ffffff", 500);
                         } catch (err) {
-                                alert("Clipboard access denied.");
+                                // alert("Clipboard access denied.");
+                                showAlert(`Clipboard access denied.`, "error");
                         }
                 });
 
