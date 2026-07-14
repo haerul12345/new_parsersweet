@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Folder Comparison — Version-aware (Side-by-Side)</title>
+        <style>
+                :root {
+                        --bg: #0f172a;
+                        --panel: #111827;
+                        --text: #e5e7eb;
+                        --muted: #9ca3af;
+                        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+                }
+
+                body {
+                        margin: 0;
+                        padding: 24px;
+                        background: var(--bg);
+                        color: var(--text);
+                        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+                }
+
+                h1 {
+                        margin: 0 0 12px;
+                        font-size: 20px;
+                }
+
+                .card {
+                        background: var(--panel);
+                        border-radius: 12px;
+                        padding: 16px;
+                        box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
+                }
+
+                .controls {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 15px;
+                }
+
+                .folder-pickers {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px;
+                        align-items: flex-start;
+                }
+
+                .folder-row {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                }
+
+                .action-bar {
+                        display: flex;
+                        align-items: center;
+                        border-top: 1px solid #1f2937;
+                        padding-top: 15px;
+                }
+
+                .action-center {
+                        flex: 1;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        gap: 20px;
+                        flex-wrap: wrap;
+                }
+
+                .action-right {
+                        margin-left: auto;
+                }
+
+                .action-left {
+                        margin-right: auto;
+                }
+
+                .btn {
+                        background: #1f2937;
+                        color: var(--text);
+                        border: 1px solid #374151;
+                        padding: 8px 12px;
+                        border-radius: 8px;
+                        cursor: pointer;
+                }
+
+                .btn:disabled {
+                        opacity: .5;
+                        cursor: not-allowed;
+                }
+
+                .note {
+                        color: var(--muted);
+                        font-size: 12px;
+                }
+
+                .options {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 10px;
+                        align-items: center;
+                        margin-left: auto;
+                }
+
+                .summary {
+                        display: flex;
+                        gap: 12px;
+                        flex-wrap: wrap;
+                        margin: 12px 0;
+                }
+
+                .badge {
+                        border-radius: 999px;
+                        padding: 6px 10px;
+                        font-size: 12px;
+                        border: 1px solid #374151;
+                }
+
+                .ok {
+                        background: rgba(34, 197, 94, .15);
+                        border-color: rgba(34, 197, 94, .5);
+                }
+
+                .chg {
+                        background: rgba(245, 158, 11, .15);
+                        border-color: rgba(245, 158, 11, .5);
+                }
+
+                .onlyA {
+                        background: rgba(96, 165, 250, .15);
+                        border-color: rgba(96, 165, 250, .5);
+                }
+
+                .onlyB {
+                        background: rgba(168, 85, 247, .15);
+                        border-color: rgba(168, 85, 247, .5);
+                }
+
+                .version {
+                        background: rgba(59, 130, 246, .15);
+                        border-color: rgba(59, 130, 246, .5);
+                }
+
+                .build {
+                        background: rgba(139, 92, 246, .15);
+                        border-color: rgba(139, 92, 246, .5);
+                }
+
+                table {
+                        width: 100%;
+                        border-collapse: collapse;
+                }
+
+                th,
+                td {
+                        border-bottom: 1px solid #1f2937;
+                        padding: 8px;
+                        font-size: 14px;
+                        vertical-align: top;
+                }
+
+                th {
+                        text-align: left;
+                        color: var(--muted);
+                }
+
+                tr:hover {
+                        background: #0b1220;
+                }
+
+                .path {
+                        word-break: break-all;
+                }
+
+                .size {
+                        color: var(--muted);
+                        font-size: 12px;
+                }
+
+                .status {
+                        font-size: 12px;
+                        padding: 2px 8px;
+                        border-radius: 20px;
+                        display: inline-block;
+                        border: 1px solid #374151;
+                }
+
+                .status.ok {
+                        background: rgba(34, 197, 94, .15);
+                        border-color: rgba(34, 197, 94, .5);
+                }
+
+                .status.changed {
+                        background: rgba(245, 158, 11, .15);
+                        border-color: rgba(245, 158, 11, .5);
+                }
+
+                .status.onlyA {
+                        background: rgba(96, 165, 250, .15);
+                        border-color: rgba(96, 165, 250, .5);
+                }
+
+                .status.onlyB {
+                        background: rgba(168, 85, 247, .15);
+                        border-color: rgba(168, 85, 247, .5);
+                }
+
+                .status.version {
+                        background: rgba(59, 130, 246, .15);
+                        border-color: rgba(59, 130, 246, .5);
+                }
+
+                .status.build {
+                        background: rgba(139, 92, 246, .15);
+                        border-color: rgba(139, 92, 246, .5);
+                }
+        </style>
+</head>
+
+<body>
+        <h1>Folder Comparison — Version-aware (Side-by-Side)</h1>
+        <div class="card">
+                <div class="controls">
+
+                        <div class="folder-pickers">
+
+                                <div class="folder-row">
+                                        <button id="pickA" class="btn">
+                                                📂 Pick First Folder
+                                        </button>
+
+                                        <span id="labelA" class="note">
+                                                No folder picked
+                                        </span>
+                                </div>
+
+                                <div class="folder-row">
+                                        <button id="pickB" class="btn">
+                                                📂 Pick Second Folder
+                                        </button>
+
+                                        <span id="labelB" class="note">
+                                                No folder picked
+                                        </span>
+                                </div>
+
+                        </div>
+
+                        <div class="action-bar">
+
+                                <div class="action-left">
+                                        <button id="compareBtn" class="btn" disabled>
+                                                🔍 Compare
+                                        </button>
+
+                                        <button id="exportBtn" class="btn" disabled>
+                                                ⬇️ Export JSON
+                                        </button>
+
+                                        <label>
+                                                <input type="checkbox" id="onlyChanged">
+                                                Show only changed/different version
+                                        </label>
+
+                                        <label>
+                                                <input type="checkbox" id="caseInsensitive">
+                                                Case-insensitive file names
+                                        </label>
+                                </div>
+                        </div>
+
+
+                </div>
+
+                <div class="summary" id="summary"></div>
+
+                <table id="results">
+                        <thead>
+                                <tr>
+                                        <th>Folder A</th>
+                                        <th>Folder B</th>
+                                        <th>Status</th>
+                                        <th>Details</th>
+                                </tr>
+                        </thead>
+                        <tbody id="resultsBody"></tbody>
+                </table>
+        </div>
+
+        <script>
+                (() => {
+                        // UI refs
+                        const pickA = document.getElementById('pickA');
+                        const pickB = document.getElementById('pickB');
+                        const labelA = document.getElementById('labelA');
+                        const labelB = document.getElementById('labelB');
+                        const compareBtn = document.getElementById('compareBtn');
+                        const exportBtn = document.getElementById('exportBtn');
+                        const onlyChangedEl = document.getElementById('onlyChanged');
+                        const caseInsensitiveEl = document.getElementById('caseInsensitive');
+                        const summaryEl = document.getElementById('summary');
+                        const resultsBody = document.getElementById('resultsBody');
+
+                        // State
+                        let dirA = null, dirB = null;
+                        let reportCache = null;
+
+                        // Helpers
+                        const esc = s => (s ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+                        const fmtSize = bytes => {
+                                if (bytes == null) return '—';
+                                const units = ['B', 'KB', 'MB', 'GB']; let u = 0; let n = bytes;
+                                while (n >= 1024 && u < units.length - 1) { n /= 1024; u++; }
+                                return n.toFixed(n < 10 && u ? 2 : 0) + ' ' + units[u];
+                        };
+                        const sha256 = async (buffer) => {
+                                const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+                                const bytes = new Uint8Array(hashBuffer);
+                                return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+                        };
+
+                        // Parse filename → { base, semver, build, numver, ext, raw }
+                        function parseName(name) {
+                                const clean = name.trim();
+                                const extIdx = clean.lastIndexOf('.');
+                                const ext = extIdx >= 0 ? clean.slice(extIdx + 1).toLowerCase() : '';
+                                const core = extIdx >= 0 ? clean.slice(0, extIdx) : clean;
+
+                                // SemVer like 1.2.3 or 1.2.3-alpha.1
+                                const semverRegex = /\d+\.\d+\.\d+(?:[-._][A-Za-z0-9]+(?:\.\d+)*)?/g;
+                                const matches = [...core.matchAll(semverRegex)];
+
+                                let semver = null, base = core, build = null, numver = null;
+
+                                if (matches.length > 0) {
+                                        const last = matches[matches.length - 1];
+                                        semver = last[0].toLowerCase();
+                                        const start = last.index;
+                                        base = core.slice(0, start).replace(/[-_]+$/, '').toLowerCase();
+                                        // Build token right after semver (e.g., -0117)
+                                        const remainder = core.slice(start + semver.length);
+                                        const mBuild = remainder.match(/^[-_]?(\d{2,})\b/);
+                                        if (mBuild) build = mBuild[1];
+                                } else {
+                                        // No SemVer → detect a numeric version near the end (e.g., 3076, 3089)
+                                        const tokens = core.split(/[-_.]/).filter(Boolean);
+                                        for (let i = tokens.length - 1; i >= 0; i--) {
+                                                const t = tokens[i];
+                                                if (/^\d{3,}$/.test(t) && !/^0+$/.test(t)) {
+                                                        numver = t;
+                                                        // Remove this numeric token once from core to form base
+                                                        const regex = new RegExp('([-_\\.])' + t + '([-_\\.])?');
+                                                        const baseCandidate = core.replace(regex, '$1').replace(/[-_]+$/, '');
+                                                        base = baseCandidate.toLowerCase();
+                                                        break;
+                                                }
+                                        }
+                                        if (!numver) {
+                                                base = base.toLowerCase();
+                                        }
+                                }
+                                return { base, semver, build, numver, ext, raw: name };
+                        }
+
+                        // Pairing: by artifact base + extension (ignores version/build)
+                        const pairingKey = info => info.base + ':::' + info.ext;
+
+                        // FS helpers
+                        async function walkDirectory(rootHandle) {
+                                const files = []; // { rel, handle }
+                                async function recurse(dirHandle, prefix) {
+                                        for await (const [name, handle] of dirHandle.entries()) {
+                                                if (handle.kind === 'file') {
+                                                        const rel = (prefix ? prefix + '/' : '') + name;
+                                                        files.push({ rel, handle });
+                                                } else if (handle.kind === 'directory') {
+                                                        await recurse(handle, (prefix ? prefix + '/' : '') + name);
+                                                }
+                                        }
+                                }
+                                await recurse(rootHandle, '');
+                                return files;
+                        }
+
+                        // Pickers
+                        pickA.addEventListener('click', async () => {
+                                try {
+                                        dirA = await window.showDirectoryPicker({ mode: 'read' });
+                                        labelA.textContent = 'Folder A: ' + (dirA.name || '(folder)');
+                                        compareBtn.disabled = !(dirA && dirB);
+                                } catch (e) { console.warn(e); }
+                        });
+                        pickB.addEventListener('click', async () => {
+                                try {
+                                        dirB = await window.showDirectoryPicker({ mode: 'read' });
+                                        labelB.textContent = 'Folder B: ' + (dirB.name || '(folder)');
+                                        compareBtn.disabled = !(dirA && dirB);
+                                } catch (e) { console.warn(e); }
+                        });
+
+                        // Compare
+                        compareBtn.addEventListener('click', async () => {
+                                if (!dirA || !dirB) return;
+                                exportBtn.disabled = true;
+                                resultsBody.innerHTML = '';
+                                summaryEl.textContent = '⏳ Comparing…';
+
+                                const ci = caseInsensitiveEl.checked;
+
+                                // Read folder A
+                                const listA = await walkDirectory(dirA);
+                                const mapA = new Map(); // key -> item
+                                for (const { rel, handle } of listA) {
+                                        const name = rel.split('/').pop();
+                                        const normName = ci ? name.toLowerCase() : name;
+                                        const info = parseName(normName);
+                                        const key = pairingKey(info);
+                                        const file = await handle.getFile();
+                                        // If duplicate keys exist, keep the first encountered; adjust if needed
+                                        if (!mapA.has(key)) {
+                                                mapA.set(key, { rel, name: name, info, handle, size: file.size });
+                                        }
+                                }
+
+                                // Read folder B
+                                const listB = await walkDirectory(dirB);
+                                const mapB = new Map();
+                                for (const { rel, handle } of listB) {
+                                        const name = rel.split('/').pop();
+                                        const normName = ci ? name.toLowerCase() : name;
+                                        const info = parseName(normName);
+                                        const key = pairingKey(info);
+                                        const file = await handle.getFile();
+                                        if (!mapB.has(key)) {
+                                                mapB.set(key, { rel, name: name, info, handle, size: file.size });
+                                        }
+                                }
+
+                                // Merge keys
+                                const allKeys = new Set([...mapA.keys(), ...mapB.keys()]);
+
+                                const report = { rows: [], counts: { identical: 0, changed: 0, version: 0, build: 0, onlyA: 0, onlyB: 0 } };
+
+                                for (const key of [...allKeys].sort()) {
+                                        const a = mapA.get(key) || null;
+                                        const b = mapB.get(key) || null;
+
+                                        if (a && !b) {
+                                                report.rows.push({ left: a.name, right: '', status: 'onlyA', sizeA: a.size, sizeB: null, detail: null });
+                                                report.counts.onlyA++;
+                                                continue;
+                                        }
+                                        if (!a && b) {
+                                                report.rows.push({ left: '', right: b.name, status: 'onlyB', sizeA: null, sizeB: b.size, detail: null });
+                                                report.counts.onlyB++;
+                                                continue;
+                                        }
+
+                                        // Both exist — classify by version/build
+                                        const ai = a.info, bi = b.info;
+                                        const verA = ai.semver || ai.numver || null;
+                                        const verB = bi.semver || bi.numver || null;
+
+                                        if (ai.semver && bi.semver) {
+                                                const semverEqual = ai.semver === bi.semver;
+                                                const buildEqual = (ai.build || '') === (bi.build || '');
+                                                if (semverEqual && buildEqual) {
+                                                        // Same version/build → hash compare for exact content
+                                                        const [fileA, fileB] = await Promise.all([a.handle.getFile(), b.handle.getFile()]);
+                                                        const [bufA, bufB] = await Promise.all([fileA.arrayBuffer(), fileB.arrayBuffer()]);
+                                                        const [ha, hb] = await Promise.all([sha256(bufA), sha256(bufB)]);
+                                                        const identical = ha === hb;
+                                                        report.rows.push({
+                                                                left: a.name, right: b.name,
+                                                                status: identical ? 'identical' : 'changed',
+                                                                sizeA: a.size, sizeB: b.size,
+                                                                detail: identical ? null : { reason: 'same version, different content' }
+                                                        });
+                                                        identical ? report.counts.identical++ : report.counts.changed++;
+                                                } else if (semverEqual && !buildEqual) {
+                                                        report.rows.push({
+                                                                left: a.name, right: b.name,
+                                                                status: 'build',
+                                                                sizeA: a.size, sizeB: b.size,
+                                                                detail: { semver: ai.semver, buildA: ai.build || '(none)', buildB: bi.build || '(none)' }
+                                                        });
+                                                        report.counts.build++;
+                                                } else {
+                                                        report.rows.push({
+                                                                left: a.name, right: b.name,
+                                                                status: 'version',
+                                                                sizeA: a.size, sizeB: b.size,
+                                                                detail: { semverA: ai.semver, semverB: bi.semver, buildA: ai.build || '(none)', buildB: bi.build || '(none)' }
+                                                        });
+                                                        report.counts.version++;
+                                                }
+
+                                        } else if (verA && verB) {
+                                                // Numeric version path (no SemVer), e.g., 3076 vs 3089
+                                                if (verA === verB) {
+                                                        // Same numeric version → optional hash compare
+                                                        const [fileA, fileB] = await Promise.all([a.handle.getFile(), b.handle.getFile()]);
+                                                        const [bufA, bufB] = await Promise.all([fileA.arrayBuffer(), fileB.arrayBuffer()]);
+                                                        const [ha, hb] = await Promise.all([sha256(bufA), sha256(bufB)]);
+                                                        const identical = ha === hb;
+                                                        report.rows.push({
+                                                                left: a.name, right: b.name,
+                                                                status: identical ? 'identical' : 'changed',
+                                                                sizeA: a.size, sizeB: b.size,
+                                                                detail: identical ? null : { reason: 'same numeric version, different content' }
+                                                        });
+                                                        identical ? report.counts.identical++ : report.counts.changed++;
+                                                } else {
+                                                        report.rows.push({
+                                                                left: a.name, right: b.name,
+                                                                status: 'version',
+                                                                sizeA: a.size, sizeB: b.size,
+                                                                detail: { numverA: verA, numverB: verB }
+                                                        });
+                                                        report.counts.version++;
+                                                }
+
+                                        } else {
+                                                // No clear version tokens — fallback: if same name then hash; else mark changed
+                                                if (ai.raw === bi.raw) {
+                                                        const [fileA, fileB] = await Promise.all([a.handle.getFile(), b.handle.getFile()]);
+                                                        const [bufA, bufB] = await Promise.all([fileA.arrayBuffer(), fileB.arrayBuffer()]);
+                                                        const [ha, hb] = await Promise.all([sha256(bufA), sha256(bufB)]);
+                                                        const identical = ha === hb;
+                                                        report.rows.push({
+                                                                left: a.name, right: b.name,
+                                                                status: identical ? 'identical' : 'changed',
+                                                                sizeA: a.size, sizeB: b.size,
+                                                                detail: identical ? null : { reason: 'same name, different content' }
+                                                        });
+                                                        identical ? report.counts.identical++ : report.counts.changed++;
+                                                } else {
+                                                        report.rows.push({
+                                                                left: a.name, right: b.name,
+                                                                status: 'changed',
+                                                                sizeA: a.size, sizeB: b.size,
+                                                                detail: { reason: 'no version tokens; names differ' }
+                                                        });
+                                                        report.counts.changed++;
+                                                }
+                                        }
+                                }
+
+                                reportCache = report;
+                                renderSummary(report);
+                                renderSideBySide(report, onlyChangedEl.checked);
+                                exportBtn.disabled = false;
+                        });
+
+                        function renderSummary(report) {
+                                const c = report.counts;
+                                summaryEl.innerHTML =
+                                        '<span class="badge ok">Identical: ' + c.identical + '</span>' +
+                                        '<span class="badge chg">Changed: ' + c.changed + '</span>' +
+                                        '<span class="badge version">Different version: ' + c.version + '</span>' +
+                                        '<span class="badge build">Different build: ' + c.build + '</span>' +
+                                        '<span class="badge onlyA">Only in A: ' + c.onlyA + '</span>' +
+                                        '<span class="badge onlyB">Only in B: ' + c.onlyB + '</span>';
+                        }
+
+                        function renderSideBySide(report, onlyChanged = false) {
+                                resultsBody.innerHTML = '';
+                                for (const row of report.rows) {
+                                        if (onlyChanged && !['changed', 'version', 'build'].includes(row.status)) continue;
+
+                                        const tr = document.createElement('tr');
+
+                                        // Folder A
+                                        const tdA = document.createElement('td');
+                                        tdA.className = 'path';
+                                        tdA.innerHTML = (row.left ? esc(row.left) : '') + (row.sizeA != null ? ' <span class="size">(' + fmtSize(row.sizeA) + ')</span>' : '');
+                                        tr.appendChild(tdA);
+
+                                        // Folder B
+                                        const tdB = document.createElement('td');
+                                        tdB.className = 'path';
+                                        tdB.innerHTML = (row.right ? esc(row.right) : '') + (row.sizeB != null ? ' <span class="size">(' + fmtSize(row.sizeB) + ')</span>' : '');
+                                        tr.appendChild(tdB);
+
+                                        // Status
+                                        const tdStatus = document.createElement('td');
+                                        tdStatus.innerHTML =
+                                                row.status === 'identical' ? '<span class="status ok">same version (identical)</span>' :
+                                                        row.status === 'changed' ? '<span class="status changed">same version (different content)</span>' :
+                                                                row.status === 'version' ? '<span class="status version">different version</span>' :
+                                                                        row.status === 'build' ? '<span class="status build">different build</span>' :
+                                                                                row.status === 'onlyA' ? '<span class="status onlyA">only in A</span>' :
+                                                                                        row.status === 'onlyB' ? '<span class="status onlyB">only in B</span>' :
+                                                                                                '<span class="status changed">unknown</span>';
+                                        tr.appendChild(tdStatus);
+
+                                        // Details
+                                        const tdAction = document.createElement('td');
+                                        if (row.status === 'version' || row.status === 'build') {
+                                                const btn = document.createElement('button');
+                                                btn.className = 'btn';
+                                                btn.textContent = 'ℹ Details';
+                                                btn.addEventListener('click', () => {
+                                                        const d = row.detail || {};
+                                                        const lines = [];
+                                                        if (row.status === 'version') {
+                                                                if (d.semverA || d.semverB) {
+                                                                        lines.push('Version A: ' + (d.semverA || '(none)'));
+                                                                        lines.push('Version B: ' + (d.semverB || '(none)'));
+                                                                }
+                                                                if (d.numverA || d.numverB) {
+                                                                        lines.push('Numeric A: ' + (d.numverA || '(none)'));
+                                                                        lines.push('Numeric B: ' + (d.numverB || '(none)'));
+                                                                }
+                                                                if (d.buildA || d.buildB) {
+                                                                        lines.push('Build A: ' + (d.buildA || '(none)'));
+                                                                        lines.push('Build B: ' + (d.buildB || '(none)'));
+                                                                }
+                                                        } else {
+                                                                lines.push('Version: ' + (d.semver || '(unknown)'));
+                                                                lines.push('Build A: ' + (d.buildA || '(none)'));
+                                                                lines.push('Build B: ' + (d.buildB || '(none)'));
+                                                        }
+                                                        alert(lines.join('\n'));
+                                                });
+                                                tdAction.appendChild(btn);
+                                        } else if (row.status === 'changed') {
+                                                const btn = document.createElement('button');
+                                                btn.className = 'btn';
+                                                btn.textContent = '📄 Explain';
+                                                btn.addEventListener('click', () => {
+                                                        alert((row.detail && row.detail.reason) ? row.detail.reason : 'Different content.');
+                                                });
+                                                tdAction.appendChild(btn);
+                                        } else {
+                                                const dash = document.createElement('span');
+                                                dash.className = 'note';
+                                                dash.textContent = '—';
+                                                tdAction.appendChild(dash);
+                                        }
+                                        tr.appendChild(tdAction);
+
+                                        resultsBody.appendChild(tr);
+                                }
+                        }
+
+                        // Export JSON
+                        exportBtn.addEventListener('click', () => {
+                                if (!reportCache) return;
+                                const blob = new Blob([JSON.stringify(reportCache, null, 2)], { type: 'application/json' });
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                const ts = new Date().toISOString().replace(/[:.]/g, '-');
+                                a.href = url; a.download = 'folder_compare_' + ts + '.json'; a.click();
+                                URL.revokeObjectURL(url);
+                        });
+
+                        // React to filter toggle
+                        onlyChangedEl.addEventListener('change', () => {
+                                if (reportCache) renderSideBySide(reportCache, onlyChangedEl.checked);
+                        });
+
+                })();
+        </script>
+</body>
+
+</html>

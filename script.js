@@ -1,4 +1,4 @@
-const themes = {
+/* const themes = {
 
     candy: {
         sweet: {
@@ -379,7 +379,7 @@ const themes = {
 
 })();
 
-
+ */
 
 
 

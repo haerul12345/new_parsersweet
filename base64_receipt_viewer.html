@@ -655,10 +655,71 @@
                                 transform: translateY(-3px);
                         }
                 }
+
+
+                #customAlert {
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        z-index: 1001;
+                        display: none;
+                        color: var(--text);
+                        padding: 18px;
+                        border-radius: 12px;
+                        max-width: 90%;
+                        width: 20%;
+                        text-align: center;
+                        backdrop-filter: blur(6px);
+                        -webkit-backdrop-filter: blur(6px);
+                        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+                        border: 1px solid rgba(255, 255, 255, 0.06);
+                }
+
+                /* ensure message area centers and gives breathing room */
+                #customAlert #alertText {
+                        padding: 8px 10px;
+                        text-align: center;
+                }
+
+                /* add clear space above the button and stabilize its size */
+                #customAlert #customAlertOk {
+                        margin-top: 14px;
+                        min-width: 120px;
+                        padding: 10px 24px;
+                        border-radius: 24px;
+                }
+
+                /* Dark (bitter) mode */
+                body:not(.sweet-mode) #customAlert {
+                        /* background: rgba(37, 26, 43, 0.86); */
+                        background:
+                                linear-gradient(135deg,
+                                        var(--bg-start),
+                                        var(--bg-end));
+                        border-color: rgba(255, 255, 255, 0.06);
+                }
+
+                /* Sweet mode */
+                body.sweet-mode #customAlert {
+                        /* background: rgba(255, 255, 255, 0.92); */
+                        background:
+                                linear-gradient(135deg,
+                                        var(--bg-start),
+                                        var(--bg-end));
+                        color: var(--text);
+                        border-color: rgba(155, 93, 229, 0.08);
+                        box-shadow: 0 8px 24px rgba(155, 93, 229, 0.06);
+                }
         </style>
 </head>
 
 <body>
+        <div id="overlay" style="display:none;"></div>
+        <div id="customAlert" style="display:none;">
+                <div id="alertText"></div>
+                <button class="btn" id="customAlertOk">OK</button>
+        </div>
 
         <div class="page-wrapper">
                 <div class="utility-bar">
@@ -798,8 +859,8 @@
         <footer>
                 <ft id="app-version-receipt"></ft>
         </footer>
-        <!-- Script -->
-        <script type="module" src="script.js"></script>
+
+
 
         <script>
 
@@ -870,7 +931,8 @@
                         const logText = document.getElementById("logInput").value.trim();
 
                         if (!logText) {
-                                alert("Log input is empty.\nPlease paste logcat output first.");
+                                // alert("Log input is empty.\nPlease paste logcat output first.");
+                                showAlert(`Log input is empty.\nPlease paste logcat output first.`, "warning");
                                 return;
                         }
 
@@ -887,7 +949,8 @@
                         const base64 = extractCustomerReceiptData(logText);
 
                         if (!base64) {
-                                alert("No customer_receipt_data found in logs.");
+                                // alert("No customer_receipt_data found in logs.");
+                                showAlert(`No customer_receipt_data found in logs.`, "warning");
                                 return;
                         }
 
@@ -1041,7 +1104,8 @@
                         const input = document.getElementById("logInput").value.trim();
 
                         if (input === "") {
-                                alert("Log input is empty.\nPlease paste logcat output first.");
+                                // alert("Log input is empty.\nPlease paste logcat output first.");
+                                 showAlert(`Log input is empty.\nPlease paste logcat output first.`, "warning");
                                 return;
                         }
 
@@ -1205,7 +1269,9 @@
                 });
 
         </script>
-
+        <!-- Script -->
+        <script type="module" src="script.js"></script>
+        <script type="module" src="theme.js"></script>
 
 </body>
 

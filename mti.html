@@ -285,7 +285,7 @@
                         transform: translate(-50%, -50%);
                         z-index: 1001;
                         display: none;
-                        color: var(--text-bright);
+                        color: var(--text);
                         padding: 18px;
                         border-radius: 12px;
                         max-width: 90%;
@@ -313,14 +313,22 @@
 
                 /* Dark (bitter) mode */
                 body:not(.sweet-mode) #customAlert {
-                        background: rgba(37, 26, 43, 0.86);
+                        /* background: rgba(37, 26, 43, 0.86); */
+                        background:
+                                linear-gradient(135deg,
+                                        var(--bg-start),
+                                        var(--bg-end));
                         border-color: rgba(255, 255, 255, 0.06);
                 }
 
                 /* Sweet mode */
                 body.sweet-mode #customAlert {
-                        background: rgba(255, 255, 255, 0.92);
-                        color: var(--text-bright);
+                        /* background: rgba(255, 255, 255, 0.92); */
+                        background:
+                                linear-gradient(135deg,
+                                        var(--bg-start),
+                                        var(--bg-end));
+                        color: var(--text);
                         border-color: rgba(155, 93, 229, 0.08);
                         box-shadow: 0 8px 24px rgba(155, 93, 229, 0.06);
                 }
@@ -848,5 +856,7 @@
 
         <!-- Script -->
         <script type="module" src="script.js"></script>
+        <script type="module" src="theme.js"></script>
+
 
 </html>
