@@ -656,6 +656,19 @@
                         }
                 }
 
+                #overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.3);
+                        backdrop-filter: blur(5px);
+                        /* optional: blur the background */
+                        -webkit-backdrop-filter: blur(5px);
+                        z-index: 1000;
+                        display: none;
+                }
 
                 #customAlert {
                         position: fixed;
@@ -1109,7 +1122,7 @@
 
                         if (input === "") {
                                 // alert("Log input is empty.\nPlease paste logcat output first.");
-                                 showAlert(`Log input is empty.\nPlease paste logcat output first.`, "warning");
+                                showAlert(`Log input is empty.\nPlease paste logcat output first.`, "warning");
                                 return;
                         }
 
@@ -1241,7 +1254,7 @@
                         if (total > LIMIT) {
                                 setTimeout(() => {
                                         // alert(`Found ${total} receipts.\nShowing first ${LIMIT}.`);
-                                        showAlert(`Found ${total} receipts.\nShowing first ${LIMIT}.`, "warning");
+                                        showAlert(`Found ${total} receipts.\nShowing first ${LIMIT}.`, "success");
 
                                 }, 5);
                         }
