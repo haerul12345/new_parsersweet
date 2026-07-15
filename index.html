@@ -2003,6 +2003,30 @@
 
 <body>
 
+    <!-- Passcode Overlay -->
+    <div id="passcode-overlay" style="position:fixed;z-index:2000;top:0;left:0;width:100vw;height:100vh;            background:
+                linear-gradient(135deg,
+                    var(--bg-start),
+                    var(--bg-end));display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div
+            style="            background:
+                linear-gradient(135deg,
+                    var(--bg-start),
+                    var(--bg-end));padding:30px 40px;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.13);text-align:center;">
+            <h2 style="            background:
+                linear-gradient(135deg,
+                    var(--bg-start),
+                    var(--bg-end));;">Enter Passcode<br></h2>
+            <input type="password" id="passcode-input"
+                style="padding:10px;font-size:1.1em;border-radius:6px;border:1px solid #ccc;">
+            <button id="passcode-submit" style="margin-left:10px;padding:10px 18px;border-radius:6px;border:none;                       background: linear-gradient(180deg,
+                    var(--primary),
+                    var(--secondary));color:#fff;font-size:1em;">Submit</button>
+            <div id="passcode-error" style="color:red;margin-top:10px;min-height:22px;"></div>
+        </div>
+    </div>
+
+
     <div id="page-content">
         <!-- Utility Switcher Row -->
         <div class="utility-bar">
@@ -2340,6 +2364,155 @@
     <script type="module" src="script.js"></script>
     <script type="module" src="theme.js"></script>
 
+    <script>
+
+        /*
+        // Fractal-style transform
+        function fractalMix(seed) {
+          let x = seed % 97;
+          let y = seed % 53;
+          for (let i = 0; i < 50; i++) {
+            let xt = (x * x - y * y + 3) % 97;
+            y = (2 * x * y + 7) % 53;
+            x = xt;
+          }
+          return x + "-" + y;
+        }
+        // SHA-256 using browser crypto
+        async function sha256(str) {
+          const buf = await crypto.subtle.digest(
+            "SHA-256",
+            new TextEncoder().encode(str)
+          );
+          return Array.from(new Uint8Array(buf))
+            .map(b => b.toString(16).padStart(2, "0"))
+            .join("");
+        }
+        
+        const storedHash = "c69b66cb026b882fde26944610f6734ad90461762c05d33841e7533704d76776";
+        document.getElementById('passcode-submit').onclick = async function() {
+          const pass = document.getElementById('passcode-input').value;
+          let seed = 0;
+          for (let i = 0; i < pass.length; i++) {
+            seed += pass.charCodeAt(i) * (i + 1);
+          }
+          const mixed = fractalMix(seed);
+          const finalHash = await sha256(mixed);
+          if (finalHash === storedHash) {
+            document.getElementById('passcode-overlay').style.display = 'none';
+            // Optionally, focus the first input of your app
+            setTimeout(() => {
+              const firstInput = document.querySelector('input,textarea');
+              if (firstInput) firstInput.focus();
+            }, 100);
+          } else {
+            document.getElementById('passcode-error').innerText = "Wrong passcode";
+            document.getElementById('passcode-input').value = "";
+            document.getElementById('passcode-input').focus();
+          }
+        };
+        // Allow Enter key to submit
+        document.getElementById('passcode-input').addEventListener('keydown', function(e) {
+          if (e.key === "Enter") document.getElementById('passcode-submit').click();
+        });
+        // Hide main UI until passcode is entered
+        document.addEventListener("DOMContentLoaded", function() {
+          document.getElementById('passcode-overlay').style.display = 'flex';
+        });
+        */
+
+        // Helpers
+        function toHex(buf) {
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        function hexToBuffer(hex) {
+            const bytes = new Uint8Array(hex.length / 2);
+            for (let i = 0; i < bytes.length; i++) bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+            return bytes.buffer;
+        }
+        function constantTimeEqual(a, b) {
+            if (a.length !== b.length) return false;
+            let res = 0;
+            for (let i = 0; i < a.length; i++) res |= a.charCodeAt(i) ^ b.charCodeAt(i);
+            return res === 0;
+        }
+
+        // PBKDF2 derive: returns hex key
+        async function pbkdf2Hex(password, saltHex, iterations = 200000, keyLen = 32) {
+            const enc = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                enc.encode(password),
+                { name: 'PBKDF2' },
+                false,
+                ['deriveBits']
+            );
+            const salt = hexToBuffer(saltHex);
+            const bits = await crypto.subtle.deriveBits(
+                { name: 'PBKDF2', hash: 'SHA-256', salt, iterations },
+                keyMaterial,
+                keyLen * 8
+            );
+            return toHex(bits);
+        }
+
+        const stored = {
+            iterations: 200000,
+            salt: "e0490b70b8f422056cc53ce6b7670792",
+            hash: "11c5ab0ea887313eafcb37005f028830cbc3cfe728c0f46c6473121d203f7798"
+        };
+
+        // On submit: derive and compare in constant time
+
+        document.getElementById('passcode-submit').onclick = async function () {
+            const pass = document.getElementById('passcode-input').value;
+            if (!pass.trim()) {
+                document.getElementById('passcode-error').innerText = "Please enter passcode";
+                document.getElementById('passcode-input').focus();
+                document.querySelector('.side-tabs-container').style.display = 'none';
+                return;
+            }
+            const derived = await pbkdf2Hex(pass.trim(), stored.salt, stored.iterations, 32);
+            if (constantTimeEqual(derived, stored.hash)) {
+                document.getElementById('passcode-overlay').style.display = 'none';
+
+                // Show side tabs
+                document.querySelector('.side-tabs-container').style.display = 'block';
+
+                setTimeout(() => {
+                    const firstInput = document.querySelector('input,textarea');
+                    if (firstInput) firstInput.focus();
+                }, 100);
+            } else {
+                document.getElementById('passcode-error').innerText = "Wrong passcode";
+                document.getElementById('passcode-input').value = "";
+                document.getElementById('passcode-input').focus();
+
+
+                // Keep side tabs hidden
+                document.querySelector('.side-tabs-container').style.display = 'none';
+
+            }
+        };
+
+        document.getElementById('passcode-input').addEventListener('input', function () {
+            document.getElementById('passcode-error').innerText = "";
+        });
+
+        document.getElementById('passcode-input').addEventListener('keydown', function (e) {
+            if (e.key === "Enter") document.getElementById('passcode-submit').click();
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById('passcode-overlay').style.display = 'flex';
+
+
+            // Hide side tabs until authenticated
+            document.querySelector('.side-tabs-container').style.display = 'none';
+
+        });
+
+    </script>
 
 </body>
 
