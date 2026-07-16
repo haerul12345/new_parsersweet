@@ -132,8 +132,8 @@
                 /* width: 20% !important;
                 height: auto; */
 
-                width: 120px;
-                height: 120px;
+                width: 130px;
+                height: 130px;
                 flex-shrink: 0;
                 object-fit: contain;
 
@@ -191,6 +191,45 @@
                 /* horizontal center */
                 gap: 40px;
         }
+
+        .footer {
+                position: fixed;
+                bottom: 15px;
+                left: 50%;
+                transform: translateX(-50%);
+
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+
+                color: var(--text);
+                font-size: 15px;
+        }
+
+        #quote {
+                max-width: 600px;
+                font-style: italic;
+                color: var(--text);
+        }
+
+        #quote-container {
+                margin-top: 15px;
+
+                width: 500px;
+                max-width: 80%;
+
+                text-align: center;
+
+                color: var(--text);
+                font-size: 20px;
+                font-style: italic;
+
+                opacity: 0.8;
+
+
+                transition: opacity 0.5s ease;
+        }
 </style>
 
 <body>
@@ -215,8 +254,26 @@
                     var(--secondary));color:#fff;font-size:1em;">Submit</button>
                         <div id="passcode-error" style="color:red;margin-top:10px;"></div>
                 </div>
-
+                  <div id="quote-container">
+                <span id="daily-quote"></span>
         </div>
+        </div>
+
+        <!-- Footer -->
+        <!--         <footer>
+                ParserSweet v5.0 &copy; 2025–2026 hji
+        </footer> -->
+        <!-- <footer>
+                <ft id="app-version"></ft>
+        </footer> -->
+
+      
+
+
+        <footer class="footer">
+                <span id="app-version"></span>
+        </footer>
+
 
         <script>
 
@@ -323,10 +380,158 @@
                 });
 
 
+                document.addEventListener("DOMContentLoaded", () => {
+
+                        const quoteElement = document.getElementById("daily-quote");
+
+                        function showRandomQuote() {
+                                const randomQuote =
+                                        window.quotes[
+                                        Math.floor(Math.random() * window.quotes.length)
+                                        ];
+
+                                quoteElement.textContent = `❝ ${randomQuote} ❞`;
+                        }
+
+                        // Initial quote
+                        showRandomQuote();
+
+                        // Change every 15 seconds
+                        setInterval(showRandomQuote, 10000);
+
+                });
+
+                /*                 function showRandomQuote() {
+                
+                                        quoteElement.style.opacity = 0;
+                
+                                        setTimeout(() => {
+                
+                                                const randomQuote =
+                                                        window.quotes[
+                                                        Math.floor(Math.random() * window.quotes.length)
+                                                        ];
+                
+                                                quoteElement.textContent = randomQuote;
+                
+                                                quoteElement.style.opacity = 1;
+                
+                                        }, 500);
+                                } */
+
+
+                /* const list_quotes = [
+                "Small progress is still progress.",
+                "Done is better than perfect.",
+                "Consistency beats intensity.",
+                "One step at a time.",
+                "Focus on what you can control.",
+                "Every expert was once a beginner.",
+                "Keep moving forward.",
+                "Success is built daily.",
+                "Learn something every day.",
+                "Start before you are ready.",
+                "Quality is never an accident.",
+                "Stay curious.",
+                "Make it work, then make it better.",
+                "Progress over perfection.",
+                "Details matter.",
+                "Simple is powerful.",
+                "Discipline creates freedom.",
+                "Create more than you consume.",
+                "A bug found today saves trouble tomorrow.",
+                "Test early, test often.",
+                "Think before you build.",
+                "Every problem has a solution.",
+                "Keep improving.",
+                "Trust the process.",
+                "Your future self will thank you.",
+                "Be better than yesterday.",
+                "Action creates momentum.",
+                "Growth begins outside your comfort zone.",
+                "Patience is part of success.",
+                "Stay humble and keep learning.",
+                "Solve the problem, not the blame.",
+                "Success leaves clues.",
+                "Never stop iterating.",
+                "Fail fast, learn faster.",
+                "Excellence is a habit.",
+                "Focus creates results.",
+                "Good things take time.",
+                "Stay consistent.",
+                "Keep showing up.",
+                "Work quietly, win loudly.",
+                "Make each day count.",
+                "Improve one percent every day.",
+                "Test assumptions.",
+                "Verify, don't assume.",
+                "Data beats opinions.",
+                "Learn from mistakes.",
+                "Stay adaptable.",
+                "Build with purpose.",
+                "Challenge the status quo.",
+                "Curiosity drives innovation.",
+                "Make today productive.",
+                "The best time is now.",
+                "Start small.",
+                "Keep it simple.",
+                "Keep shipping.",
+                "Every challenge is an opportunity.",
+                "Success follows preparation.",
+                "Don't fear failure.",
+                "Be solution oriented.",
+                "Stay focused.",
+                "Keep learning new skills.",
+                "Practice makes progress.",
+                "Test the boundaries.",
+                "Quality over quantity.",
+                "Customer trust matters.",
+                "Think like a user.",
+                "Be the person who fixes problems.",
+                "Create value daily.",
+                "Hard work compounds.",
+                "Consistency compounds.",
+                "Stay positive.",
+                "Every line matters.",
+                "Every test matters.",
+                "Great things take effort.",
+                "Stay hungry to learn.",
+                "Be reliable.",
+                "Keep improving the process.",
+                "Find the root cause.",
+                "Document what matters.",
+                "Automation saves time.",
+                "Measure what matters.",
+                "Keep your standards high.",
+                "Stay resilient.",
+                "Be patient with progress.",
+                "Build confidence through action.",
+                "Learning never ends.",
+                "Take ownership.",
+                "Focus on outcomes.",
+                "Growth requires effort.",
+                "Make quality a habit.",
+                "Stay persistent.",
+                "Improve the system.",
+                "Keep things maintainable.",
+                "Write clear documentation.",
+                "Validate edge cases.",
+                "Think long term.",
+                "Keep your promises.",
+                "Success is a series of small wins.",
+                "Great teams build great products.",
+                "Quality starts with you."
+                ]; */
+
+
         </script>
+
+
 
         <script type="module" src="script.js"></script>
         <script type="module" src="theme.js"></script>
+        <script type="module" src="quotes.js"></script>
+
 
 </body>
 

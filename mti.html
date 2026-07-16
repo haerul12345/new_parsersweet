@@ -723,6 +723,20 @@
                         color: var(--text-muted);
                         letter-spacing: 0.5px;
                 }
+
+                #appToast {
+                        background-color: var(--bg-start) !important;
+                        color: var(--text) !important;
+                        border-color: var(--text) !important;
+
+                        width: fit-content;
+                        max-width: none;
+
+                        backdrop-filter: blur(10px);
+                        -webkit-backdrop-filter: blur(10px);
+
+                        border-radius: 12px;
+                }
         </style>
 </head>
 
@@ -842,6 +856,8 @@
                         </div>
                 </div>
 
+
+
                 <footer>
                         <ft id="app-version"></ft>
                 </footer>
@@ -853,6 +869,17 @@
                 <button class="btn" id="customAlertOk">OK</button>
         </div>
         <div id="infoAlert" class="info-alert"></div>
+
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div id="appToast" class="toast text-white border-0" role="alert">
+
+                        <div class="toast-body">
+                                Message
+                        </div>
+
+                </div>
+        </div>
+
 
         <!-- Script -->
         <script type="module" src="script.js"></script>
