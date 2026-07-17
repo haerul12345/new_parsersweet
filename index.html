@@ -571,27 +571,21 @@
 
                         let currentQuote = "";
 
-                        let typingInterval = null;
 
-                        function typeText(text, speed = 40) {
+                        function sleep(ms) {
+                                return new Promise(resolve => setTimeout(resolve, ms));
+                        }
 
-                                clearInterval(typingInterval);
+                        async function typeText(text, speed = 40) {
 
                                 quoteElement.textContent = "";
 
-                                let index = 0;
+                                for (let i = 0; i < text.length; i++) {
 
-                                typingInterval = setInterval(() => {
+                                        quoteElement.textContent += text[i];
 
-                                        quoteElement.textContent += text[index];
-
-                                        index++;
-
-                                        if (index >= text.length) {
-                                                clearInterval(typingInterval);
-                                        }
-
-                                }, speed);
+                                        await sleep(speed);
+                                }
                         }
 
                         function deleteText(speed = 30) {
@@ -630,20 +624,23 @@
                                 return window.quotes[index];
                         }
 
+                        /*                         async function showRandomQuote() {
+                        
+                                                        const randomQuote =
+                                                                `" ${getRandomQuote()} "`;
+                        
+                        
+                                                        if (currentQuote !== "") {
+                                                                await deleteText();
+                                                        }
+                        
+                                                        currentQuote = randomQuote;
+                        
+                                                        typeText(randomQuote);
+                                                } */
                         async function showRandomQuote() {
 
-                                /*                                 const randomQuote =
-                                                                        `" ${window.quotes[
-                                                                        Math.floor(
-                                                                                Math.random() * window.quotes.length
-                                                                        )
-                                                                        ]
-                                                                        } "`; */
-
-
-                                const randomQuote =
-                                        `" ${getRandomQuote()} "`;
-
+                                const randomQuote = `" ${getRandomQuote()} "`;
 
                                 if (currentQuote !== "") {
                                         await deleteText();
@@ -651,9 +648,8 @@
 
                                 currentQuote = randomQuote;
 
-                                typeText(randomQuote);
+                                await typeText(randomQuote);
                         }
-
 
                         showRandomQuote();
 
