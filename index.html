@@ -571,18 +571,24 @@
 
                         let currentQuote = "";
 
+                        let typingInterval = null;
+
                         function typeText(text, speed = 40) {
+
+                                clearInterval(typingInterval);
+
+                                quoteElement.textContent = "";
 
                                 let index = 0;
 
-                                const typing = setInterval(() => {
+                                typingInterval = setInterval(() => {
 
                                         quoteElement.textContent += text[index];
 
                                         index++;
 
                                         if (index >= text.length) {
-                                                clearInterval(typing);
+                                                clearInterval(typingInterval);
                                         }
 
                                 }, speed);
