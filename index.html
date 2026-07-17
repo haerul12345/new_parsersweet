@@ -566,11 +566,27 @@
                 let lastQuoteIndex = -1;
                 document.addEventListener("DOMContentLoaded", () => {
 
+
+                        document.addEventListener("visibilitychange", () => {
+
+                                if (!document.hidden) {
+
+                                        quoteElement.textContent = "";
+
+                                        currentQuote = "";
+
+                                        console.log("TAB RETURNED");
+
+                                }
+
+                        });
+
+
                         const quoteElement =
                                 document.getElementById("daily-quote");
 
                         let currentQuote = "";
-
+                        let quoteRunning = false;
 
                         function sleep(ms) {
                                 return new Promise(resolve => setTimeout(resolve, ms));
@@ -586,28 +602,41 @@
 
                                         await sleep(speed);
                                 }
+                                console.log("TYPE START");
                         }
 
-                        function deleteText(speed = 30) {
+                        /*                         function deleteText(speed = 30) {
+                                                        console.log("DELETE START");
+                                                        return new Promise(resolve => {
+                        
+                                                                const deleting = setInterval(() => {
+                        
+                                                                        quoteElement.textContent =
+                                                                                quoteElement.textContent.slice(0, -1);
+                        
+                                                                        if (quoteElement.textContent.length === 0) {
+                                                                                clearInterval(deleting);
+                                                                                resolve();
+                                                                        }
+                        
+                                                                }, speed);
+                        
+                                                        });
+                                                } */
 
-                                return new Promise(resolve => {
+                        async function deleteText(speed = 30) {
 
-                                        const deleting = setInterval(() => {
+                                console.log("DELETE START");
 
-                                                quoteElement.textContent =
-                                                        quoteElement.textContent.slice(0, -1);
+                                while (quoteElement.textContent.length > 0) {
 
-                                                if (quoteElement.textContent.length === 0) {
-                                                        clearInterval(deleting);
-                                                        resolve();
-                                                }
+                                        quoteElement.textContent =
+                                                quoteElement.textContent.slice(0, -1);
 
-                                        }, speed);
+                                        await sleep(speed);
+                                }
 
-                                });
                         }
-
-
 
                         function getRandomQuote() {
 
@@ -638,22 +667,65 @@
                         
                                                         typeText(randomQuote);
                                                 } */
+
+
+                        /*                         async function showRandomQuote() {
+                                                        console.log("NEW QUOTE");
+                                                        const randomQuote = `" ${getRandomQuote()} "`;
+                        
+                                                        if (currentQuote !== "") {
+                                                                await deleteText();
+                                                        }
+                        
+                                                        currentQuote = randomQuote;
+                        
+                                                        await typeText(randomQuote);
+                                                } */
+
                         async function showRandomQuote() {
 
-                                const randomQuote = `" ${getRandomQuote()} "`;
-
-                                if (currentQuote !== "") {
-                                        await deleteText();
+                                if (quoteRunning) {
+                                        console.log("SKIP - already running");
+                                        return;
                                 }
 
-                                currentQuote = randomQuote;
+                                quoteRunning = true;
 
-                                await typeText(randomQuote);
+                                try {
+
+                                        console.log("NEW QUOTE");
+
+                                        const randomQuote = `" ${getRandomQuote()} "`;
+
+                                        if (currentQuote !== "") {
+                                                await deleteText();
+                                        }
+
+                                        currentQuote = randomQuote;
+
+                                        await typeText(randomQuote);
+
+                                } finally {
+
+                                        quoteRunning = false;
+
+                                }
                         }
 
-                        showRandomQuote();
+                        /*                         showRandomQuote();
+                                                setInterval(showRandomQuote, 9000); */
 
-                        setInterval(showRandomQuote, 9000);
+                        async function quoteLoop() {
+
+                                while (true) {
+
+                                        await showRandomQuote();
+
+                                        await sleep(9000);
+                                }
+                        }
+
+                        quoteLoop();
 
                 });
 
