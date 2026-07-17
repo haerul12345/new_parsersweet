@@ -916,8 +916,8 @@
             transform: translateX(50%);
             transition: transform 0.3s ease;
 
-            background: var(--tab-active-bg);
-            color: var(--tab-text);
+  /*           background: var(--tab-active-bg);
+            color: var(--tab-text); */
 
 
             display: flex;
@@ -926,15 +926,26 @@
             writing-mode: vertical-rl;
             text-orientation: mixed;
 
-            background: linear-gradient(180deg,
+             background: linear-gradient(180deg,
                     var(--primary),
                     var(--secondary));
 
-            color: white;
+            color: white; 
 
-            font-weight: 600;
-            font-size: 12px;
 
+/*             background:
+                linear-gradient(rgba(0, 0, 0, 0.12),
+                    rgba(0, 0, 0, 0.12)),
+                linear-gradient(180deg,
+                    var(--primary),
+                    var(--secondary));
+
+            color: white; */
+
+
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.5px;
             border-radius: 12px 0 0 12px;
 
             box-shadow:
