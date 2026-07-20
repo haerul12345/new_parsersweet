@@ -222,7 +222,6 @@ const themes = {
     const selector =
         document.getElementById("themeSelector");
 
-
     if (
         selector &&
         window.location.pathname.endsWith("new_json.html")
@@ -248,6 +247,12 @@ const themes = {
         if (selector) {
             selector.value = theme;
         }
+
+
+        document.body.classList.toggle(
+            "bitter",
+            mode === "bitter"
+        );
 
         const selected =
             themes[theme][mode];
