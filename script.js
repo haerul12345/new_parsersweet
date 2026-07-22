@@ -6531,13 +6531,13 @@ function createTableFromObject(obj, isNested = false, isBreakdown = false) {
             const dateFormatted = formatMMDD(origDate);
 
             // Details table with header color matching default and default border color
-            let detailsTable = `<table style="margin-top:8px;border-collapse:collapse;width:100%;border:1px solid #ddd;">`;
+            let detailsTable = `<table style="margin-top:8px;border-collapse:collapse;width:100%;border:1px solid black;">`;
             detailsTable += `<thead><tr>`;
-            detailsTable += `<th style="text-align:left;padding:6px 8px;border:1px solid #ddd;background:#00AFDA;color:#fff;">Usage</th>`;
-            detailsTable += `<th style="text-align:left;padding:6px 8px;border:1px solid #ddd;background:#00AFDA;color:#fff;">Value</th>`;
+            detailsTable += `<th style="text-align:left;padding:6px 8px;border:1px solid black;background: var(--sweet-primary);color:#fff;">Usage</th>`;
+            detailsTable += `<th style="text-align:left;padding:6px 8px;border:1px solid black;background: var(--sweet-primary);color:#fff;">Value</th>`;
             detailsTable += `</tr></thead><tbody>`;
 
-            const row = (label, val) => `<tr><td style="padding:6px 8px;border:1px solid #ddd;font-size:12px;vertical-align:top;">${label}</td><td style="padding:6px 8px;border:1px solid #ddd;font-size:12px;vertical-align:top;">${val || ''}</td></tr>`;
+            const row = (label, val) => `<tr><td style="padding:6px 8px;border:1px solid black;font-size:12px;vertical-align:top;">${label}</td><td style="padding:6px 8px;border:1px solid black;font-size:12px;vertical-align:top;">${val || ''}</td></tr>`;
 
             detailsTable += row('Original message type identifier', origMsgType);
             detailsTable += row('Original System Trace Audit Number (STAN)', origSTAN);
