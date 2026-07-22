@@ -2,11 +2,24 @@
 <html>
 
 <head>
+
+        <script>
+                (() => {
+                        const theme = localStorage.getItem("selectedTheme");
+
+                        if (theme) {
+                                document.documentElement.setAttribute("data-theme", theme);
+                        }
+                })();
+        </script>
+
         <title>ParserSweet Access</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap"
                 rel="stylesheet">
+
+
 
 </head>
 
@@ -42,7 +55,7 @@
                 font-family: var(--font-family);
         }
 
-/*         body.bitter {
+        /*         body.bitter {
                 --card-border: rgba(255, 255, 255, 0.692);
         }
  */

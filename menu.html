@@ -175,6 +175,18 @@
 <html lang="en">
 
 <head>
+
+    <script>
+        (() => {
+            const theme = localStorage.getItem("selectedTheme");
+
+            if (theme) {
+                document.documentElement.setAttribute("data-theme", theme);
+            }
+        })();
+    </script>
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ParserSweet</title>
@@ -915,7 +927,7 @@
             transform: translateX(50%);
             transition: transform 0.3s ease;
 
-  /*           background: var(--tab-active-bg);
+            /*           background: var(--tab-active-bg);
             color: var(--tab-text); */
 
 
@@ -925,14 +937,14 @@
             writing-mode: vertical-rl;
             text-orientation: mixed;
 
-             background: linear-gradient(180deg,
+            background: linear-gradient(180deg,
                     var(--primary),
                     var(--secondary));
 
-            color: white; 
+            color: white;
 
 
-/*             background:
+            /*             background:
                 linear-gradient(rgba(0, 0, 0, 0.12),
                     rgba(0, 0, 0, 0.12)),
                 linear-gradient(180deg,
@@ -2157,7 +2169,7 @@
             </div>
 
 
-<!--             <div class="sweet-notice">
+            <!--             <div class="sweet-notice">
                 <div class="notice-icon">🥣</div>
 
                 <div class="notice-content">

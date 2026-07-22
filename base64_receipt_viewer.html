@@ -38,6 +38,16 @@
 <html>
 
 <head>
+
+        <script>
+                (() => {
+                        const theme = localStorage.getItem("selectedTheme");
+
+                        if (theme) {
+                                document.documentElement.setAttribute("data-theme", theme);
+                        }
+                })();
+        </script>
         <meta charset="UTF-8" />
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -825,7 +835,7 @@
 
                         <div id="grid" class="imgGrid"></div>
 
-<!-- 
+                        <!-- 
                         <div class="sweet-notice">
                                 <div class="notice-icon">🥣</div>
 
