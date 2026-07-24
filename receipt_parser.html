@@ -826,20 +826,22 @@
                         display: flex;
                         justify-content: center;
                         padding: 0.5rem;
-
-
+                        padding-bottom: 0.5rem;
+                        margin-bottom: 0.5rem;
                         max-height: 600px;
                         overflow-y: auto;
-
+                        overflow-x: hidden;
                 }
 
                 #receiptPreviewContainer .card {
                         width: 100%;
-                        margin-bottom: 0;
+                        margin-bottom: 2rem;
                 }
 
                 #receiptPreviewContainer .receipt-paper {
                         margin-bottom: 0;
+                        max-width: 100% !important;
+                        width: 100%;
                 }
 
                 #receiptPreviewContainer .receipt-watermark {
@@ -991,9 +993,21 @@
                 }
 
                 #receiptPreviewContainer {
-                        background: var(----bg-end);
+                        background: var(--bg-end);
                         border: 1px solid var(--panel-border) !important;
                         border-radius: 12px;
+                }
+
+                #receiptPreviewContainer .col-mid,
+                #receiptPreviewContainer .col-mid-number {
+                        width: auto;
+                        min-width: 0;
+                }
+
+                #receiptPreviewContainer .col-right {
+                        width: auto;
+                        min-width: 0;
+                        white-space: nowrap;
                 }
 
                 /* No button */
@@ -1057,6 +1071,10 @@
                 .thumbnail-slider {
                         width: 320px !important;
                         margin-bottom: 0;
+                }
+
+                .logcat-card {
+                        margin-top: 20px;
                 }
         </style>
 </head>
@@ -1194,7 +1212,7 @@
                                                         </div>
                                                 </div>
 
-                                                <div class="card panel mb-3">
+                                                <div class="card panel mb-3 logcat-card">
                                                         <div class="card-body">
                                                                 <div class="notice text-center">
                                                                         <div class="mb-2">
@@ -1320,7 +1338,7 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                                         Do you want to remove this receipt?
                                 </div>
 
-                                <div id="receiptPreviewContainer" class="border rounded p-2 bg-light">
+                                <div id="receiptPreviewContainer" class="border rounded p-4 bg-light">
                                 </div>
 
                                 <div class="modal-footer">
@@ -2163,7 +2181,7 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                         // <div class="col"> to <div>
                         return `
 <div>
-    <div class="card receipt h-100">
+    <div class="card receipt width: 100%">
       <div class="card-body">
         <div class="d-flex justify-content-center align-items-center receipt-header px-3 py-2">
           <div class="text-center">
@@ -2240,17 +2258,20 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                 }
 
 
+                /*                 function removeThisReceipt(btn) {
+                                        pendingRemoveButton = btn;
+                
+                                        const col = btn.closest(".col"); */
                 function removeThisReceipt(btn) {
                         pendingRemoveButton = btn;
 
-                        const col = btn.closest(".col");
-
+                        const cardWrapper = btn.closest(".receipt").parentElement;
                         const modal = new bootstrap.Modal(
                                 document.getElementById("removeReceiptModal")
                         )
 
-                        const card = col.querySelector(".card").cloneNode(true);
-
+                        // const card = col.querySelector(".card").cloneNode(true);
+                        const card = cardWrapper.cloneNode(true);
                         // Remove action buttons from preview
                         card.querySelectorAll("button").forEach(btn => btn.remove());
 
@@ -2363,14 +2384,21 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                         if (pendingRemoveButton) {
 
                                 const container = document.getElementById("receiptsContainer");
-                                const col = pendingRemoveButton.closest(".col");
+                                /*                                 const col = pendingRemoveButton.closest(".col");
+                                
+                                                                if (col) {
+                                                                        col.remove(); */
+                                const wrapper =
+                                        pendingRemoveButton.closest(".receipt")?.parentElement;
 
-                                if (col) {
-                                        col.remove();
+                                if (wrapper) {
+                                        wrapper.remove();
+
 
                                         showToast("✅ Receipt removed successfully.");
 
-                                        if (container && container.querySelectorAll(".col").length === 0) {
+                                        // if (container && container.querySelectorAll(".col").length === 0) 
+                                        if (!container.querySelector(".receipt")) {
                                                 container.innerHTML = `
                     <div class="col">
                         <div class="text-secondary small">
