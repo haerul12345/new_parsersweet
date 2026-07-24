@@ -90,7 +90,7 @@
                         --receipt-width-ch: 42ch;
                         /* default width */
                         --radius-md: 0.75rem;
-
+                        --receipt-card-width: 280px;
                 }
 
                 :root {
@@ -813,6 +813,14 @@
                         background-color: rgba(0, 0, 0, 0.25);
                 }
 
+                #receiptsContainer {
+                        display: grid;
+                        gap: 1rem;
+
+                        grid-template-columns:
+                                repeat(auto-fit,
+                                        minmax(var(--receipt-card-width), 1fr));
+                }
 
                 #receiptPreviewContainer {
                         display: flex;
@@ -1045,6 +1053,11 @@
                         outline: 2px solid var(--text-bright);
                         outline-offset: 2px;
                 }
+
+                .thumbnail-slider {
+                        width: 320px !important;
+                        margin-bottom: 0;
+                }
         </style>
 </head>
 
@@ -1103,15 +1116,6 @@
                 </div>
 
                 <div class="container">
-                        <!--                         <div class="utility-bar">
-                                <button class="theme-toggle" id="themeToggle">
-                                        <span class="swap">
-                                                <i class="bi bi-brightness-high-fill icon-sun"></i>
-                                                <i class="bi bi-moon-stars-fill icon-moon"></i>
-                                        </span>
-                                </button>
-                        </div> -->
-
 
                         <h1 class="page-title">Receipt Parser</h1>
                         <p class="subtitle">Parse receipt logs into clean paper-style output.</p>
@@ -1253,7 +1257,30 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                                         </div>
                                 </div>
 
+
+
                                 <!-- Output -->
+                                <div class="col-12">
+                                        <label for="thumbnailSize" class="form-label">
+                                                Thumbnail size:
+                                        </label>
+                                        <!-- 
+                                        <div class="d-flex align-items-center gap-3">
+                                                <input type="range" id="thumbnailSize" class="form-range" min="300"
+                                                        max="480" step="10" value="300">
+
+                                                <span id="thumbnailSizeLabel">300 px</span>
+                                        </div> -->
+
+                                        <div class="d-flex align-items-center gap-3">
+                                                <input type="range" id="thumbnailSize"
+                                                        class="form-range thumbnail-slider" min="300" max="480"
+                                                        step="10" value="300">
+
+                                                <span id="thumbnailSizeLabel">300</span>
+                                        </div>
+                                </div>
+
                                 <div class="card panel mb-5">
                                         <div class="card-header d-flex justify-content-between align-items-center">
                                                 <h2 class="h5 mb-0">📄 Parsed Receipts</h2>
@@ -1263,8 +1290,9 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                                                         (ZIP)</button>
                                         </div>
                                         <div class="card-body">
-                                                <div id="receiptsContainer"
-                                                        class="row g-3 row-cols-1 row-cols-sm-2 row-cols-lg-4">
+                                                <!-- <div id="receiptsContainer"
+                                                        class="row g-3 row-cols-1 row-cols-sm-2 row-cols-lg-4"> -->
+                                                <div id="receiptsContainer">
                                                         <div class="col">
                                                                 <div class="text-secondary small">No receipts parsed
                                                                         yet. Paste log data
@@ -1274,35 +1302,8 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                                                 </div>
                                         </div>
                                 </div>
-
-
-
-
-
-
                         </main>
-
-                        <!--                         <div class="sweet-notice">
-                                <div class="notice-icon">🥣</div>
-
-                                <div class="notice-content">
-                                        <h3>ParserSweet is still baking</h3>
-
-                                        <p>
-                                                We're mixing ingredients, fixing recipes, and adding new flavors.
-                                                Some features may be half-baked for now, but something delicious is
-                                                coming soon.
-                                        </p>
-
-                                        <span class="notice-badge">Work in Progress</span>
-                                </div>
-                        </div> -->
-
-
                 </div>
-
-
-
         </div>
 
         <div class="modal fade" id="removeReceiptModal" tabindex="-1">
@@ -1312,9 +1313,6 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                                 <div class="modal-header">
                                         <h5 class="modal-title w-100 text-center mb-0">Remove
                                                 Receipt</h5>
-                                        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal">
-                                        </button> -->
-
                                         <button class="close-btn" type="button" data-bs-dismiss="modal">&times;</button>
                                 </div>
 
@@ -1375,30 +1373,6 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                 let pendingRemoveButton = null;
 
                 /* =========================
-           THEME: light/dark toggle
-           ========================= */
-                /*                 (function initTheme() {
-                                        const root = document.documentElement;
-                                        const saved = localStorage.getItem("bs_theme");
-                                        if (saved === "light" || saved === "dark") root.setAttribute("data-bs-theme", saved);
-                
-                                        const btn = document.getElementById("themeToggle");
-                                        btn.addEventListener("click", () => {
-                                                const cur = root.getAttribute("data-bs-theme") || "dark";
-                                                const next = cur === "dark" ? "light" : "dark";
-                                                root.setAttribute("data-bs-theme", next);
-                                                localStorage.setItem("bs_theme", next);
-                                                // flash spin
-                                                btn.classList.remove("flash");
-                                                void btn.offsetWidth;
-                                                btn.classList.add("flash");
-                                                setTimeout(() => btn.classList.remove("flash"), 520);
-                                        });
-                                })();
-                
-                 */
-
-                /* =========================
            Copy button for Logcat filter
            ========================= */
                 document.getElementById("btnCopyFilter").addEventListener("click", async () => {
@@ -1417,9 +1391,6 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                         btn.innerHTML = '<i class="bi bi-clipboard-check"></i>';
                         setTimeout(() => (btn.innerHTML = old), 1400);
                 });
-
-
-
 
                 // =========================
                 // Paste button for Log Input
@@ -1468,8 +1439,6 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                                         const ok = document.execCommand("paste");
                                         const text = helper.value || "";
                                         document.body.removeChild(helper);
-
-
 
                                         return ok && text ? text : null;
                                 } catch {
@@ -1584,9 +1553,6 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                                 }
                         }
 
-                        //radios.forEach(r => r.addEventListener("change", (ev) => setWidthForFormat(ev.target.value)));
-
-
                         radios.forEach(r => r.addEventListener("change", (ev) => {
                                 clearAll();
                                 setWidthForFormat(ev.target.value);
@@ -1682,66 +1648,6 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                         return null;
                 }
 
-                /*
-                function splitIntoSections(raw) {
-                    const lines = raw.split(/\r?\n/);
-                    const sections = [];
-                    let current = null;
-        
-                    for (let i = 0; i < lines.length; i++) {
-                        const line = lines[i];
-        
-                        // Existing marker used by older logs
-                        if (line.includes("startPrintReceipt:")) {
-                            if (current) sections.push(current);
-                            current = { header: line, lines: [] };
-                            continue;
-                        }
-        
-                        // New marker: CBA-style receipts embedded in log lines
-                        if (line.includes("=== RECEIPT START")) {
-                            if (current) sections.push(current);
-                            current = { header: line, lines: [] };
-                            continue;
-                        }
-        
-                        // If we're inside a RECEIPT block, collect until the END marker
-                        if (current) {
-                            if (line.includes("=== RECEIPT END")) {
-                                sections.push(current);
-                                current = null;
-                                continue;
-                            }
-        
-                            // Strip common leading log margin (timestamps/pids) and convert NBSP to normal space
-                            // Keep interior spacing intact; remove only leading whitespace.
-                            const cleaned = line.replace(/^\s+/, "").replace(/\u00A0/g, " ");
-                            current.lines.push(cleaned);
-                        }
-                    }
-        
-                    // If a section was started but not closed, still include it
-                    if (current) sections.push(current);
-                    return sections;
-                }
-                */
-                /*
-                 function splitIntoSectionsCBA(raw) {
-                     const lines = raw.split(/\r?\n/);
-                     const sections = [];
-                     let current = null;
-                     for (const line of lines) {
-                         if (line.includes("startPrintReceipt:")) {
-                             if (current) sections.push(current);
-                             current = { header: line, lines: [] };
-                         } else if (current) {
-                             current.lines.push(line);
-                         }
-                     }
-                     if (current) sections.push(current);
-                     return sections;
-                 }
-                 */
                 function splitIntoSectionsCBA(raw) {
                         const lines = raw.split(/\r?\n/);
                         const sections = [];
@@ -1822,91 +1728,18 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                 function splitIntoSections(raw, format = "CBA") {
                         return format === "AMPOL" ? splitIntoSectionsAMPOL(raw) : splitIntoSectionsCBA(raw);
                 }
-                /*
-                        function splitIntoSections(raw) {
-                            const lines = raw.split(/\r?\n/);
-                            const sections = [];
-                            let current = null;
-                            for (const line of lines) {
-                                if (line.includes("startPrintReceipt:")) {
-                                    if (current) sections.push(current);
-                                    current = { header: line, lines: [] };
-                                } else if (current) {
-                                    current.lines.push(line);
-                                }
-                            }
-                            if (current) sections.push(current);
-                            return sections;
-                        }
-                
-                        */
+
                 function extractTimestampFromHeader(headerLine) {
                         const m = headerLine.match(/(?:(\d{4}-\d{2}-\d{2})\s+)?(\d{2}:\d{2}:\d{2}\.\d{3})/);
                         if (!m) return "Unknown time";
                         return m[1] ? `${m[1]} ${m[2]}` : m[2];
                 }
 
-
                 function extractDateFromHeader(headerLine) {
                         const m = headerLine.match(/(\d{4}-\d{2}-\d{2})/);
                         return m ? m[1] : "unknown-date";
                 }
 
-
-                /*
-                function splitColumns(line) {
-                    // tabs → split
-                    const leftTrimmed = line.replace(/^[ ]+/, "");
-                    if (!leftTrimmed.startsWith("\t") && leftTrimmed.includes("\t")) {
-                        const parts = leftTrimmed.split(/\t+/);
-                        const left = parts[0].trim();
-                        const right = parts.slice(1).join(" ").trim();
-                        if (left && right) return { left, right };					
-                    }
-                    // 2+ spaces → split
-                    const m = leftTrimmed.match(/^(.*?\S)\s{2,}(\S.*)$/);
-                    if (m) return { left: m[1].trim(), right: m[2].trim() };
-                    return null;
-                }*/
-                /*			
-                function splitColumns(line) {
-                    const leftTrimmed = line.replace(/^[ ]+/, "");
-                
-                    // Debug log
-                    console.log("Evaluating line:", JSON.stringify(leftTrimmed));
-                
-                    // Tabs → split
-                    if (!leftTrimmed.startsWith("\t") && leftTrimmed.includes("\t")) {
-                        const parts = leftTrimmed.split(/\t+/);
-                        const left = parts[0].trim();
-                        const right = parts.slice(1).join(" ").trim();
-                        if (left || right) {
-                            console.log("Tab split →", { left, right: right || "" });
-                            return { left, right: right || "" };
-                        }
-                    }
-                
-                    // 2+ spaces → split
-                    const m = leftTrimmed.match(/^(.*?\S)\s{2,}(\S.*)?$/);
-                    if (m) {
-                        const left = m[1].trim();
-                        const right = m[2] ? m[2].trim() : "";
-                        console.log("Space split →", { left, right });
-                        return { left, right };
-                    }
-                
-                    // NEW: Colon-only fallback (e.g., "AUTH CODE:")
-                    const colonMatch = leftTrimmed.match(/^(.+?:)\s*$/);
-                    if (colonMatch) {
-                        const left = colonMatch[1].trim();
-                        console.log("Colon-only match →", { left, right: "" });
-                        return { left, right: "" };
-                    }
-                
-                    console.log("No match found.");
-                    return null;
-                }
-                */
                 // ...existing code...
                 function splitColumns(line) {
                         const leftTrimmed = line.replace(/^[ ]+/, "");
@@ -2042,13 +1875,7 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
 
 
                                 }
-                                /*
-                                const cols = splitColumns(rawLine);
-                                if (cols) {
-                                    parsedLines.push({ type: "split", left: cols.left, right: cols.right });
-                                    continue;
-                                }
-                                */
+
                                 // AMPOL-specific rule: if a colon is present, split into two columns
                                 if (format === "AMPOL") {
                                         console.log("AMPOL"); // Add this line
@@ -2082,8 +1909,6 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                                                 parsedLines.push({ type: "empty", content: "" });
                                                 continue;
                                         }
-
-
 
                                         if (rawLine.includes("ENTRY")) {
                                                 const content = rawLine.replace(/^[\s\u00A0\u2002-\u200A]+/, "").replace(/\u00A0/g, " ").trimEnd();
@@ -2133,13 +1958,6 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                                         }
                                 }
 
-
-
-                                /*
-                                const leftContent = rawLine.replace(/^[ ]+/, "").trimEnd();
-                                wrapSoftByWidth(leftContent, width).forEach((p) => parsedLines.push({ type: "left", content: p }));
-                                */
-
                                 const leftContent = rawLine.replace(/^[ ]+/, "").trimEnd();
                                 if (format === "AMPOL") {
                                         wrapSoftByWidth(leftContent, width).forEach((p) => parsedLines.push({ type: "centered", content: p }));
@@ -2162,28 +1980,6 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
 
                         return { timestamp, receiptDate, lines: withBottom };
                 }
-                /*
-                function parseReceipts() {
-                    const input = document.getElementById("logInput").value;
-                    const container = document.getElementById("receiptsContainer");
-                    if (!input || !input.trim()) {
-                        container.innerHTML = `<div class="col"><div class="text-secondary small">No log data provided. Paste log data and click <em>Parse Receipts</em>.</div></div>`;
-                        return;
-                    }
-                    try {
-                        const sections = splitIntoSections(input);
-                        if (sections.length === 0) throw new Error('No "startPrintReceipt:" entries found.');
-                        let html = "";
-                        sections.forEach((sec, idx) => {
-                            const rec = parseReceiptSection(sec);
-                            if (rec) html += createReceiptHtml(rec, idx + 1);
-                        });
-                        container.innerHTML = html || `<div class="col"><div class="alert alert-danger">No receipts parsed.</div></div>`;
-                    } catch (err) {
-                        container.innerHTML = `<div class="col"><div class="alert alert-danger"><strong>Parsing Error:</strong><br>${err.message}</div></div>`;
-                    }
-                }
-                */
 
                 function parseReceipts() {
                         const input = document.getElementById("logInput").value;
@@ -2193,22 +1989,6 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                                 return;
                         }
                         try {
-                                /*  const selectedFormat = (typeof getSelectedMemoFormat === "function") ? getSelectedMemoFormat() : "CBA";
-                                 const sections = splitIntoSections(input, selectedFormat);
-                                 if (sections.length === 0) throw new Error('No "startPrintReceipt:" or "=== RECEIPT START" entries found.');
-                                 let html = "";
-                                 sections.forEach((sec, idx) => {
-                                     const rec = parseReceiptSection(sec, selectedFormat);
-                                     if (rec) html += createReceiptHtml(rec, idx + 1);
-                                 });
-                                 container.innerHTML = html || `<div class="col"><div class="alert alert-danger">No receipts parsed.</div></div>`;
-                 
-                                 const receiptCount = sections.length;
-                 
-                                 showToast(
-                                     `✅ Successfully parsed ${receiptCount} ${receiptCount === 1 ? "receipt" : "receipts"}.`
-                                 ); */
-
                                 const selectedFormat =
                                         (typeof getSelectedMemoFormat === "function")
                                                 ? getSelectedMemoFormat()
@@ -2257,9 +2037,6 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                                 );
 
                         } catch (err) {
-                                //container.innerHTML = `<div class="col"><div class="alert alert-danger"><strong>Parsing Error:</strong><br>${err.message}</div></div>`;
-
-
                                 container.innerHTML = `
 <div class="col d-flex justify-content-center">
     <div class="alert alert-danger mb-0"
@@ -2267,30 +2044,12 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
         <strong>Parsing Error:</strong><br>${err.message}
     </div>
 </div>`;
-
-
-
                         }
                 }
 
 
 
                 function createReceiptHtml(receipt, index) {
-                        /*             const keywords = [
-                                        { keyword: "MERCHANT COPY", type: "MERCHANT COPY" },
-                                        { keyword: "CUSTOMER COPY", type: "CUSTOMER COPY" },
-                                        { keyword: "CARDHOLDER COPY", type: "CUSTOMER COPY" },
-                                        { keyword: "DUPLICATE RECEIPT", type: "DUPLICATE" },
-                                        { keyword: "SETTLEMENT ENQUIRY", type: "SETTLEMENT ENQUIRY" },
-                                        { keyword: "SETTLEMENT CUTOVER", type: "SETTLEMENT CUTOVER" }
-                                    ];
-                                    const copyType =
-                                        keywords.find(({ keyword }) =>
-                                            receipt.lines.some(
-                                                (l) => l.type !== "empty" && typeof l.content === "string" && l.content.includes(keyword)
-                                            )
-                                        )?.type || "REPORT";
-                         */
 
                         const hasDuplicate = receipt.lines.some(
                                 (l) =>
@@ -2401,8 +2160,9 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                         const id = `receipt-${index}`;
 
                         // ✅ All parts stay inside the same .card-body
+                        // <div class="col"> to <div>
                         return `
-  <div class="col">
+<div>
     <div class="card receipt h-100">
       <div class="card-body">
         <div class="d-flex justify-content-center align-items-center receipt-header px-3 py-2">
@@ -2459,11 +2219,6 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                         return div.innerHTML;
                 }
 
-                /*         function clearAll() {
-                            document.getElementById("logInput").value = "";
-                            document.getElementById("receiptsContainer").innerHTML = `<div class="col"><div class="text-secondary small">No receipts parsed yet. Paste log data and click <em>Parse Receipts</em>.</div></div>`;
-                        } */
-
                 function clearAll() {
 
                         const hasReceipts =
@@ -2484,39 +2239,12 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                         }
                 }
 
-                // =========================
-                // Remove a single parsed receipt card
-                // =========================
-
-                /*         function removeThisReceipt(btn) {
-                              const container = document.getElementById("receiptsContainer");
-                             // Find the closest .col wrapper that holds the entire receipt card
-                             const col = btn.closest(".col");
-                             if (col) {
-                                 // Optional confirm:
-                                 if (!confirm("Remove this receipt?")) return;
-                 
-                                 col.remove();
-                 
-                                 if (container && container.querySelectorAll(".col").length === 0) {
-                                     container.innerHTML =
-                                         `<div class="col"><div class="text-secondary small">
-                            No receipts parsed yet. Paste log data and click <em>Parse Receipts</em>.
-                          </div></div>`;
-                                 }
-                             } 
-                        } */
-
 
                 function removeThisReceipt(btn) {
                         pendingRemoveButton = btn;
 
                         const col = btn.closest(".col");
-                        /* const receiptPaper = col.querySelector(".receipt-paper");
-            
-                        document.getElementById("receiptPreviewContainer").innerHTML =
-                            receiptPaper.outerHTML;
-            */
+
                         const modal = new bootstrap.Modal(
                                 document.getElementById("removeReceiptModal")
                         )
@@ -2533,6 +2261,29 @@ Soft wrap: long lines split at the last space on/just past the width limit."></t
                 }
 
 
+                (function initThumbnailSlider() {
+
+                        const slider = document.getElementById("thumbnailSize");
+                        const label = document.getElementById("thumbnailSizeLabel");
+
+                        if (!slider) return;
+
+                        function update() {
+                                const size = slider.value;
+
+                                label.textContent = `${size} px`;
+
+                                document.documentElement.style.setProperty(
+                                        "--receipt-card-width",
+                                        `${size}px`
+                                );
+                        }
+
+                        slider.addEventListener("input", update);
+
+                        update();
+
+                })();
 
                 /* =========================
            Export: PNG / ZIP

@@ -170,6 +170,11 @@
     - Rework Side Tabs and the features for each tab
     - Some minor bug fixes and improvements
     - Rework DE055 for MTI parser    
+    - Add copy button to copy DE55 or iccData table
+    - Add quote
+    - Enable passcode, separate index.html (passcode entry) and menu.html
+    - Fix FOUC
+    
 -->
 
 <html lang="en">
@@ -185,7 +190,6 @@
             }
         })();
     </script>
-
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -222,34 +226,6 @@
         }
 
         body {
-            background:
-                linear-gradient(135deg,
-                    var(--bg-start),
-                    var(--bg-end));
-        }
-
-        body.bitter {
-            --card-border: rgba(255, 255, 255, 0.692);
-        }
-
-        .main-card,
-        .parser-card {
-            background: var(--card-bg);
-            color: var(--text-bright);
-        }
-
-        .section-title {
-            color: var(--secondary);
-        }
-
-        .button-primary {
-            background:
-                linear-gradient(135deg,
-                    var(--primary),
-                    var(--secondary));
-        }
-
-        body {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -273,6 +249,26 @@
             padding: 0;
         }
 
+        body.bitter {
+            --card-border: rgba(255, 255, 255, 0.692);
+        }
+
+        .main-card,
+        .parser-card {
+            background: var(--card-bg);
+            color: var(--text-bright);
+        }
+
+        .section-title {
+            color: var(--secondary);
+        }
+
+        .button-primary {
+            background:
+                linear-gradient(135deg,
+                    var(--primary),
+                    var(--secondary));
+        }
 
         .toolbar {
             max-width: 1000px;
